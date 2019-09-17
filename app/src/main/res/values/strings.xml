@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Rboard Theme Manager</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome_message">Welcome to\nRboard Theme Manager</string>
+    <string name="selectRuntime">Select Runtime</string>
+    <string name="magiskModule">MAGISK MODULE</string>
+    <string name="magiskSummary">Will require installation of magisk zip module.</string>
+    <string name="systemSummary">Add or modify prop in /system/build.prop\nfast to install and uninstall. Might Break OTA.</string>
+    <string name="systemMod">SYSTEM MODIFICATION</string>
 </resources>
