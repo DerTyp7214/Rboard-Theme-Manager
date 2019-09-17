@@ -12,6 +12,7 @@
         <item name="toolbarStyle">@style/ActionBar</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="ActionBar" parent="Widget.MaterialComponents.Toolbar">

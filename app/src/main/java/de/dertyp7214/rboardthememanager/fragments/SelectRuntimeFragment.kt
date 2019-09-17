@@ -7,31 +7,54 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.viewmodels.IntroViewModel
 
 class SelectRuntimeFragment : Fragment() {
+
+    private lateinit var introViewModel: IntroViewModel
+    private lateinit var ac: FragmentActivity
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        ac = activity!!
+
+        introViewModel = ac.run {
+            ViewModelProviders.of(this)[IntroViewModel::class.java]
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v: View = inflater.inflate(R.layout.fragment_select_runtime, container, false)
+        val v = inflater.inflate(R.layout.fragment_select_runtime, container, false)
 
         val clickMagisk = v.findViewById<LinearLayout>(R.id.clickMagisk)
-        val radioMagik = v.findViewById<RadioButton>(R.id.radioMagisk)
+        val radioMagisk = v.findViewById<RadioButton>(R.id.radioMagisk)
         val clickSystem = v.findViewById<LinearLayout>(R.id.clickSystem)
         val radioSystem = v.findViewById<RadioButton>(R.id.radioSystem)
 
         clickMagisk.setOnClickListener {
-            radioMagik.isChecked = true
+            radioMagisk.isChecked = true
             radioSystem.isChecked = false
+            introViewModel.setMagisk(true)
+            introViewModel.setSystem(false)
         }
 
         clickSystem.setOnClickListener {
             radioSystem.isChecked = true
-            radioMagik.isChecked = false
+            radioMagisk.isChecked = false
+            introViewModel.setSystem(true)
+            introViewModel.setMagisk(false)
         }
+
+        radioMagisk.isChecked = introViewModel.selectRuntimeData.value?.magisk ?: false
+        radioSystem.isChecked = introViewModel.selectRuntimeData.value?.system ?: true
 
         return v
     }
