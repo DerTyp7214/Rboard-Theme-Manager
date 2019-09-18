@@ -8,12 +8,10 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -42,6 +40,7 @@ class IntroActivity : AppCompatActivity() {
         )
 
         indicator.createIndicators(3, index)
+        fragment.findNavController().navigate(R.id.welcomeFragment)
 
         floatingActionButton.setOnClickListener {
             index++
