@@ -5,11 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import de.dertyp7214.rboardthememanager.R
@@ -20,12 +25,12 @@ import kotlinx.android.synthetic.main.intro_navigator.*
 
 class IntroActivity : AppCompatActivity() {
 
-    var index: Int = 0
-    lateinit var introViewModel: IntroViewModel
+    private var index: Int = 0
+    private lateinit var introViewModel: IntroViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(de.dertyp7214.rboardthememanager.R.layout.activity_intro)
+        setContentView(R.layout.activity_intro)
 
         introViewModel = ViewModelProviders.of(this)[IntroViewModel::class.java]
         introViewModel.selectRuntimeData.value = SelectRuntimeData()
@@ -42,11 +47,36 @@ class IntroActivity : AppCompatActivity() {
             index++
             openPage()
         }
+
+        introViewModel.rboardStorage.observe(this, Observer {
+            val controller = fragment.findNavController()
+            val name = resources.getResourceEntryName(controller.currentDestination?.id ?: 0)
+            if (name == "permissionsFragment") {
+                floatingActionButton.isEnabled = it && introViewModel.gboardPermission()
+                if (it) floatingActionButton.backgroundTintList =
+                    ColorStateList.valueOf(getColor(R.color.colorAccent))
+                else floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+            }
+        })
+
+        introViewModel.gboardStorage.observe(this, Observer {
+            val controller = fragment.findNavController()
+            val name = resources.getResourceEntryName(controller.currentDestination?.id ?: 0)
+            if (name == "permissionsFragment") {
+                floatingActionButton.isEnabled = it && introViewModel.rboardPermission()
+                if (it) floatingActionButton.backgroundTintList =
+                    ColorStateList.valueOf(getColor(R.color.colorAccent))
+                else floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+            }
+        })
     }
 
     private fun openPage() {
         val controller = fragment.findNavController()
         val name = resources.getResourceEntryName(controller.currentDestination?.id ?: 0)
+        floatingActionButton.isEnabled = true
+        floatingActionButton.backgroundTintList =
+            ColorStateList.valueOf(getColor(R.color.colorAccent))
         when (index) {
             0 -> {
                 controller.navigate(R.id.action_selectRuntimeFragment_to_welcomeFragment)
@@ -56,6 +86,10 @@ class IntroActivity : AppCompatActivity() {
                 else controller.navigate(R.id.action_permissionsFragment_to_selectRuntimeFragment)
             }
             2 -> {
+                if (!introViewModel.rboardPermission() || !introViewModel.gboardPermission()) {
+                    floatingActionButton.isEnabled = false
+                    floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+                }
                 if (name == "selectRuntimeFragment") controller.navigate(R.id.action_selectRuntimeFragment_to_permissionsFragment)
                 else {
                     index--
@@ -95,7 +129,7 @@ class IntroActivity : AppCompatActivity() {
         when (requestCode) {
             1 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    introViewModel.setRboardPermission(true)
+                    introViewModel.rboardStorage.postValue(true)
                 } else {
                     Toast.makeText(
                         this,
@@ -115,7 +149,7 @@ class IntroActivity : AppCompatActivity() {
             val perm = it.requestedPermissions?.filterIndexed { index, p ->
                 p == "android.permission.READ_EXTERNAL_STORAGE" && ((it.requestedPermissionsFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0)
             }
-            perm != null
+            perm != null && perm.contains("android.permission.READ_EXTERNAL_STORAGE")
         } ?: false
     }
 }
