@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="103dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,19 +19,16 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:transitionName="splashImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="64dp"
-            android:layout_marginEnd="16dp"
             android:src="@drawable/welcome_keyboard"
+            android:transitionName="splashImage"
             tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:fontFamily="sans-serif"
             android:text="@string/welcome_message"
             android:textAlignment="center"

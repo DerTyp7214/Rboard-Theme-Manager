@@ -9,6 +9,7 @@ class IntroViewModel : ViewModel() {
     val selectRuntimeData = MutableLiveData<SelectRuntimeData>()
     val rboardStorage = MutableLiveData<Boolean>()
     val gboardStorage = MutableLiveData<Boolean>()
+    val open = MutableLiveData<Boolean>()
 
     fun setSystem(value: Boolean) {
         if (selectRuntimeData.value == null) selectRuntimeData.value =

@@ -104,6 +104,7 @@ class IntroActivity : AppCompatActivity() {
             getSharedPreferences("start", Context.MODE_PRIVATE).apply {
                 edit {
                     putBoolean("first", false)
+                    finish()
                 }
             }
         }

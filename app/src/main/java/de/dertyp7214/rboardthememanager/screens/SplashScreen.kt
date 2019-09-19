@@ -1,14 +1,16 @@
 package de.dertyp7214.rboardthememanager.screens
 
+import android.Manifest
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
-import de.dertyp7214.rboardthememanager.BuildConfig
+import androidx.core.content.ContextCompat
 import de.dertyp7214.rboardthememanager.R
 
 class SplashScreen : AppCompatActivity() {
@@ -18,7 +20,11 @@ class SplashScreen : AppCompatActivity() {
         setContentView(R.layout.activity_splash_screen)
 
         getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-            if (getBoolean("first", true)) runAnimation()
+            if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                    this@SplashScreen,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) runAnimation()
             else startApp()
         }
     }
@@ -36,6 +42,8 @@ class SplashScreen : AppCompatActivity() {
             start()
         }.doOnEnd {
             startActivity(Intent(this, IntroActivity::class.java))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            finish()
         }
     }
 
