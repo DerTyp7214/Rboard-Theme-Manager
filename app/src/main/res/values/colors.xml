@@ -5,4 +5,5 @@
     <color name="colorAccent">#4285F4</color>
     <color name="colorAccentTransparent">#B24285F4</color>
     <color name="primaryText">#000</color>
+    <color name="divider">#00FFFFFF</color>
 </resources>

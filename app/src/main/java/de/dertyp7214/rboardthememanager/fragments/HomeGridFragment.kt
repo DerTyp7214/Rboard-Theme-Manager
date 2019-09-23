@@ -3,7 +3,6 @@ package de.dertyp7214.rboardthememanager.fragments
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +11,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.getBitmap
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
@@ -75,10 +76,10 @@ class HomeGridFragment : Fragment() {
             val selection = list.map { it.selected }.contains(true)
             val dataClass = list[position]
 
-            val default = (context.resources.getDrawable(
-                R.drawable.default_theme,
+            val default = context.resources.getDrawable(
+                R.drawable.ic_keyboard,
                 null
-            ) as BitmapDrawable).bitmap
+            ).getBitmap(context)
             val color = dominantColor(dataClass.image ?: default)
 
             holder.themeImage.setImageBitmap(dataClass.image ?: default)
@@ -99,13 +100,31 @@ class HomeGridFragment : Fragment() {
             holder.card.setOnClickListener {
                 if (selection) {
                     list[position].selected = !list[position].selected
-                    notifyDataSetChanged()
+                    ObjectAnimator.ofFloat(
+                        holder.selectOverlay,
+                        "alpha",
+                        1F - holder.selectOverlay.alpha
+                    ).apply {
+                        duration = 100
+                        start()
+                    }.doOnEnd {
+                        notifyDataSetChanged()
+                    }
                 }
             }
 
             holder.card.setOnLongClickListener {
                 list[position].selected = true
-                notifyDataSetChanged()
+                ObjectAnimator.ofFloat(
+                    holder.selectOverlay,
+                    "alpha",
+                    1F
+                ).apply {
+                    duration = 100
+                    start()
+                }.doOnEnd {
+                    notifyDataSetChanged()
+                }
                 true
             }
         }
