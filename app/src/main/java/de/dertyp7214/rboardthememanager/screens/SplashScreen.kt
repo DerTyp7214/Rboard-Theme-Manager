@@ -27,13 +27,15 @@ class SplashScreen : AppCompatActivity() {
                 Locale.ROOT
             )}", versionCode = BuildConfig.VERSION_CODE, forceUpdate = false
         ) {
-            getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-                if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
-                        this@SplashScreen,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) runAnimation()
-                else startApp()
+            runOnUiThread {
+                getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+                    if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                            this@SplashScreen,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) runAnimation()
+                    else startApp()
+                }
             }
         }
     }
