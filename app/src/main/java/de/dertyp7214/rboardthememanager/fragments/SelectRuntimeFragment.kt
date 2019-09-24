@@ -1,15 +1,18 @@
 package de.dertyp7214.rboardthememanager.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import de.dertyp7214.rboardthememanager.viewmodels.IntroViewModel
 
 class SelectRuntimeFragment : Fragment() {
@@ -34,16 +37,21 @@ class SelectRuntimeFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_select_runtime, container, false)
 
+        val magiskInstalled = MagiskUtils.isMagiskInstalled()
+
+        val textMagisk = v.findViewById<TextView>(R.id.magiskText)
         val clickMagisk = v.findViewById<LinearLayout>(R.id.clickMagisk)
         val radioMagisk = v.findViewById<RadioButton>(R.id.radioMagisk)
         val clickSystem = v.findViewById<LinearLayout>(R.id.clickSystem)
         val radioSystem = v.findViewById<RadioButton>(R.id.radioSystem)
 
         clickMagisk.setOnClickListener {
-            radioMagisk.isChecked = true
-            radioSystem.isChecked = false
-            introViewModel.setMagisk(true)
-            introViewModel.setSystem(false)
+            if (magiskInstalled) {
+                radioMagisk.isChecked = true
+                radioSystem.isChecked = false
+                introViewModel.setMagisk(true)
+                introViewModel.setSystem(false)
+            }
         }
 
         clickSystem.setOnClickListener {
@@ -53,6 +61,13 @@ class SelectRuntimeFragment : Fragment() {
             introViewModel.setMagisk(false)
         }
 
+        textMagisk.setTextColor(
+            if (magiskInstalled) resources.getColor(
+                R.color.colorAccent,
+                null
+            ) else Color.LTGRAY
+        )
+        radioMagisk.isEnabled = magiskInstalled
         radioMagisk.isChecked = introViewModel.selectRuntimeData.value?.magisk ?: false
         radioSystem.isChecked = introViewModel.selectRuntimeData.value?.system ?: true
 

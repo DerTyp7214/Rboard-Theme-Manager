@@ -11,7 +11,10 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import de.dertyp7214.appupdater.core.checkUpdate
+import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
+import java.util.*
 
 class SplashScreen : AppCompatActivity() {
 
@@ -19,13 +22,19 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-            if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
-                    this@SplashScreen,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) runAnimation()
-            else startApp()
+        checkUpdate(
+            updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
+                Locale.ROOT
+            )}", versionCode = BuildConfig.VERSION_CODE, forceUpdate = false
+        ) {
+            getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+                if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                        this@SplashScreen,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) runAnimation()
+                else startApp()
+            }
         }
     }
 

@@ -79,7 +79,7 @@ class HomeGridFragment : Fragment() {
             val default = context.resources.getDrawable(
                 R.drawable.ic_keyboard,
                 null
-            ).getBitmap(context)
+            ).getBitmap()
             val color = dominantColor(dataClass.image ?: default)
 
             holder.themeImage.setImageBitmap(dataClass.image ?: default)

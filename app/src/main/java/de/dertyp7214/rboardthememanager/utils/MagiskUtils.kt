@@ -5,7 +5,7 @@ import com.jaredrummler.android.shell.Shell
 object MagiskUtils {
     fun isMagiskInstalled(): Boolean {
         val result = Shell.run("magisk")
-        return result.getStdout().startsWith("magisk", true)
+        return result.getStderr().startsWith("magisk", true)
     }
 
     fun getMagiskVersionString(): String {

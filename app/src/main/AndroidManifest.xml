@@ -21,6 +21,9 @@
         </activity>
         <activity android:name=".screens.HomeActivity" />
         <activity android:name=".screens.IntroActivity" />
+        <activity
+            android:name="de.dertyp7214.appupdater.Updater"
+            android:theme="@style/AppUpdaterTheme" />
     </application>
 
 </manifest>
