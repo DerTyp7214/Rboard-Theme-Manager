@@ -13,4 +13,5 @@
     <string name="rboardStorageSummary">Required for backup of stock keyboard sounds.</string>
     <string name="gboardStorage">GBOARD STORAGE</string>
     <string name="gboardStorageSummary">Gboard needs storage permission to read themes in device storage.</string>
+    <string name="grid_change">Change Grid</string>
 </resources>

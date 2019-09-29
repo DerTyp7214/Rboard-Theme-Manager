@@ -11,6 +11,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import com.topjohnwu.superuser.Shell
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
@@ -21,6 +22,9 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+
+        Shell.Config.setFlags(Shell.FLAG_USE_MAGISK_BUSYBOX and Shell.FLAG_REDIRECT_STDERR)
+        Shell.Config.verboseLogging(BuildConfig.DEBUG)
 
         checkUpdate(
             updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(

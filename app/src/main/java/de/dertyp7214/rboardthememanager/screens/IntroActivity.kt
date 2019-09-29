@@ -15,8 +15,13 @@ import androidx.core.content.edit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
+import de.dertyp7214.rboardthememanager.Config.MODULE_ID
+import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.fragments.SelectRuntimeData
+import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import de.dertyp7214.rboardthememanager.viewmodels.IntroViewModel
 import kotlinx.android.synthetic.main.activity_intro.*
 import kotlinx.android.synthetic.main.intro_navigator.*
@@ -100,6 +105,26 @@ class IntroActivity : AppCompatActivity() {
             indicator.animatePageSelected(index)
         } else {
             index = 3
+            if (introViewModel.selectRuntimeData.value?.magisk == true) {
+                if (!MagiskUtils.getModules().any { it.id == MODULE_ID }) {
+                    val meta = ModuleMeta(
+                        MODULE_ID,
+                        "Rboard Themes",
+                        "v20",
+                        "200",
+                        "RKBDI & DerTyp7214",
+                        "Module for Rboard Themes app"
+                    )
+                    val file = mapOf(
+                        Pair(
+                            "system.prop",
+                            "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=$MAGISK_THEME_LOC"
+                        ),
+                        Pair(THEME_LOCATION, null)
+                    )
+                    MagiskUtils.installModule(meta, file)
+                }
+            }
             startActivity(Intent(this, HomeActivity::class.java))
             getSharedPreferences("start", Context.MODE_PRIVATE).apply {
                 edit {

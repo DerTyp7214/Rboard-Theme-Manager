@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
+import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import de.dertyp7214.rboardthememanager.viewmodels.IntroViewModel
@@ -38,6 +39,13 @@ class SelectRuntimeFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_select_runtime, container, false)
 
         val magiskInstalled = MagiskUtils.isMagiskInstalled()
+        if (introViewModel.selected.value != true) {
+            MagiskUtils.getModules().any { it.id == MODULE_ID }.apply {
+                introViewModel.setMagisk(this)
+                introViewModel.setSystem(!this)
+            }
+            introViewModel.selected.value = true
+        }
 
         val textMagisk = v.findViewById<TextView>(R.id.magiskText)
         val clickMagisk = v.findViewById<LinearLayout>(R.id.clickMagisk)

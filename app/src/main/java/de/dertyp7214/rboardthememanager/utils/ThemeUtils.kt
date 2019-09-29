@@ -9,7 +9,7 @@ import kotlin.collections.ArrayList
 
 object ThemeUtils {
     fun loadThemes(): List<ThemeDataClass> {
-        val themeDir = File(THEME_LOCATION)
+        val themeDir = File("/$THEME_LOCATION")
         return themeDir.listFiles()?.filter {
             it.name.toLowerCase(Locale.ROOT).endsWith(".zip")
         }?.map {
