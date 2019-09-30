@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
+import com.topjohnwu.superuser.Shell
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
@@ -40,6 +41,8 @@ class SelectRuntimeFragment : Fragment() {
 
         val magiskInstalled = MagiskUtils.isMagiskInstalled()
         if (introViewModel.selected.value != true) {
+            if (introViewModel.magiskInstalled.value != true) introViewModel.magiskInstalled.value =
+                Shell.rootAccess()
             MagiskUtils.getModules().any { it.id == MODULE_ID }.apply {
                 introViewModel.setMagisk(this)
                 introViewModel.setSystem(!this)
@@ -52,6 +55,7 @@ class SelectRuntimeFragment : Fragment() {
         val radioMagisk = v.findViewById<RadioButton>(R.id.radioMagisk)
         val clickSystem = v.findViewById<LinearLayout>(R.id.clickSystem)
         val radioSystem = v.findViewById<RadioButton>(R.id.radioSystem)
+        val magiskInstalledText = v.findViewById<TextView>(R.id.magisk_installed)
 
         clickMagisk.setOnClickListener {
             if (magiskInstalled) {
@@ -78,6 +82,9 @@ class SelectRuntimeFragment : Fragment() {
         radioMagisk.isEnabled = magiskInstalled
         radioMagisk.isChecked = introViewModel.selectRuntimeData.value?.magisk ?: false
         radioSystem.isChecked = introViewModel.selectRuntimeData.value?.system ?: true
+
+        magiskInstalledText.visibility =
+            if (introViewModel.magiskInstalled.value == true) View.GONE else View.VISIBLE
 
         return v
     }

@@ -7,6 +7,7 @@ import de.dertyp7214.rboardthememanager.fragments.SelectRuntimeData
 class IntroViewModel : ViewModel() {
 
     val selectRuntimeData = MutableLiveData<SelectRuntimeData>()
+    val magiskInstalled = MutableLiveData<Boolean>()
     val rboardStorage = MutableLiveData<Boolean>()
     val gboardStorage = MutableLiveData<Boolean>()
     val selected = MutableLiveData<Boolean>()

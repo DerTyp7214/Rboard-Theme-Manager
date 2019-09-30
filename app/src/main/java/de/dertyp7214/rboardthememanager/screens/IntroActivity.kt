@@ -73,6 +73,12 @@ class IntroActivity : AppCompatActivity() {
                 else floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
             }
         })
+
+        introViewModel.magiskInstalled.observe(this, Observer {
+            floatingActionButton.isEnabled = it
+            floatingActionButton.backgroundTintList =
+                ColorStateList.valueOf(if (it) getColor(R.color.colorAccent) else Color.LTGRAY)
+        })
     }
 
     private fun openPage() {
@@ -86,6 +92,10 @@ class IntroActivity : AppCompatActivity() {
                 controller.navigate(R.id.action_selectRuntimeFragment_to_welcomeFragment)
             }
             1 -> {
+                if (introViewModel.magiskInstalled.value != true) {
+                    floatingActionButton.isEnabled = false
+                    floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+                }
                 if (name == "welcomeFragment") controller.navigate(R.id.action_welcomeFragment_to_selectRuntimeFragment)
                 else controller.navigate(R.id.action_permissionsFragment_to_selectRuntimeFragment)
             }

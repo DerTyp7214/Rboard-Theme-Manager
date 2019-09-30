@@ -12,6 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
         <activity android:name=".screens.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,6 +31,14 @@
         <activity
             android:name="de.dertyp7214.appupdater.Updater"
             android:theme="@style/AppUpdaterTheme" />
+
+        <service
+            android:name=".notification.Service"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
