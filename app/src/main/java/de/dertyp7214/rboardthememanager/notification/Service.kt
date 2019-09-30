@@ -16,7 +16,8 @@ class Service : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
 
         when (remoteMessage.from?.replace("/topics/", "")) {
-            "update" -> sendUpdateNotification(remoteMessage)
+            "update-release" -> sendUpdateNotification(remoteMessage)
+            "update-debug" -> sendUpdateNotification(remoteMessage)
         }
     }
 

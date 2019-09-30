@@ -31,7 +31,8 @@ class SplashScreen : AppCompatActivity() {
         Shell.Config.verboseLogging(BuildConfig.DEBUG)
 
         createNotificationChannel()
-        FirebaseMessaging.getInstance().subscribeToTopic("update")
+        FirebaseMessaging.getInstance()
+            .subscribeToTopic("update-${BuildConfig.BUILD_TYPE.toLowerCase(Locale.ROOT)}")
 
         checkUpdate(
             updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
