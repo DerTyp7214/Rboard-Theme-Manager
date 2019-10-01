@@ -18,4 +18,7 @@
     <string name="default_notification_channel_id">push_channel</string>
     <string name="channel_name">Push Notifications</string>
     <string name="channel_description">For updates and informations.</string>
+    <string name="title_themes">Themes</string>
+    <string name="title_downloads">Downloads</string>
+    <string name="title_sounds">Sounds</string>
 </resources>
