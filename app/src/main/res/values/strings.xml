@@ -21,4 +21,7 @@
     <string name="title_themes">Themes</string>
     <string name="title_downloads">Downloads</string>
     <string name="title_sounds">Sounds</string>
+    <string name="list_grid">Listlayout</string>
+    <string name="grid_small">Small Gridlayout</string>
+    <string name="grid_big">Big Gridlayout</string>
 </resources>

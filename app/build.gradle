@@ -54,6 +54,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.github.DerTyp7214:AppUpdater:v1.5'
+    implementation 'com.bignerdranch.android:simple-item-decoration:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

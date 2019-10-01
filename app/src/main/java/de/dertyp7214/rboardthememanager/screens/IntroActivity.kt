@@ -30,10 +30,13 @@ class IntroActivity : AppCompatActivity() {
 
     private var index: Int = 0
     private lateinit var introViewModel: IntroViewModel
+    private var colorDisabled = Color.LTGRAY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
+
+        colorDisabled = if (resources.getBoolean(R.bool.darkmode)) Color.DKGRAY else Color.LTGRAY
 
         introViewModel = ViewModelProviders.of(this)[IntroViewModel::class.java]
         introViewModel.selectRuntimeData.value = SelectRuntimeData()
@@ -59,7 +62,7 @@ class IntroActivity : AppCompatActivity() {
                 floatingActionButton.isEnabled = it && introViewModel.gboardPermission()
                 if (it) floatingActionButton.backgroundTintList =
                     ColorStateList.valueOf(getColor(R.color.colorAccent))
-                else floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+                else floatingActionButton.backgroundTintList = ColorStateList.valueOf(colorDisabled)
             }
         })
 
@@ -70,14 +73,14 @@ class IntroActivity : AppCompatActivity() {
                 floatingActionButton.isEnabled = it && introViewModel.rboardPermission()
                 if (it) floatingActionButton.backgroundTintList =
                     ColorStateList.valueOf(getColor(R.color.colorAccent))
-                else floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+                else floatingActionButton.backgroundTintList = ColorStateList.valueOf(colorDisabled)
             }
         })
 
         introViewModel.magiskInstalled.observe(this, Observer {
             floatingActionButton.isEnabled = it
             floatingActionButton.backgroundTintList =
-                ColorStateList.valueOf(if (it) getColor(R.color.colorAccent) else Color.LTGRAY)
+                ColorStateList.valueOf(if (it) getColor(R.color.colorAccent) else colorDisabled)
         })
     }
 
@@ -94,7 +97,7 @@ class IntroActivity : AppCompatActivity() {
             1 -> {
                 if (introViewModel.magiskInstalled.value != true) {
                     floatingActionButton.isEnabled = false
-                    floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+                    floatingActionButton.backgroundTintList = ColorStateList.valueOf(colorDisabled)
                 }
                 if (name == "welcomeFragment") controller.navigate(R.id.action_welcomeFragment_to_selectRuntimeFragment)
                 else controller.navigate(R.id.action_permissionsFragment_to_selectRuntimeFragment)
@@ -102,7 +105,7 @@ class IntroActivity : AppCompatActivity() {
             2 -> {
                 if (!introViewModel.rboardPermission() || !introViewModel.gboardPermission()) {
                     floatingActionButton.isEnabled = false
-                    floatingActionButton.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
+                    floatingActionButton.backgroundTintList = ColorStateList.valueOf(colorDisabled)
                 }
                 if (name == "selectRuntimeFragment") controller.navigate(R.id.action_selectRuntimeFragment_to_permissionsFragment)
                 else {

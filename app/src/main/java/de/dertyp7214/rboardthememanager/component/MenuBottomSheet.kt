@@ -13,15 +13,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.graphics.ColorUtils
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
+import de.dertyp7214.rboardthememanager.data.MenuItem
 
-class MenuBottomSheet : RoundedBottomSheetDialogFragment() {
-
-    private lateinit var homeViewModel: HomeViewModel
+class MenuBottomSheet(
+    private val items: List<MenuItem>
+) :
+    RoundedBottomSheetDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,18 +29,6 @@ class MenuBottomSheet : RoundedBottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.menu_bottom_sheet, container, false)
-
-        homeViewModel = activity!!.run {
-            ViewModelProviders.of(this)[HomeViewModel::class.java]
-        }
-
-        val items = arrayListOf(
-            Tripple(R.drawable.grid, R.string.grid_change, true),
-            Tripple(R.drawable.grid, R.string.grid_change, false),
-            Tripple(R.drawable.grid, R.string.grid_change, false),
-            Tripple(R.drawable.grid, R.string.grid_change, false),
-            Tripple(R.drawable.grid, R.string.grid_change, false)
-        )
 
         val recyclerView: RecyclerView = v.findViewById(R.id.recyclerView)
 
@@ -67,16 +55,20 @@ class MenuBottomSheet : RoundedBottomSheetDialogFragment() {
                 val accent = resources.getColor(R.color.colorAccent, null)
                 val primary = resources.getColor(R.color.primaryText, null)
 
-                holder.text.setText(item.second)
-                holder.text.setTextColor(if (item.third) accent else primary)
+                holder.text.setText(item.string)
+                holder.text.setTextColor(if (item.selected) accent else primary)
 
-                holder.icon.setImageResource(item.first)
-                holder.icon.imageTintList = ColorStateList.valueOf(accent)
+                holder.icon.setImageResource(item.icon)
+                holder.icon.imageTintList =
+                    ColorStateList.valueOf(if (item.selected) accent else primary)
 
                 ObjectAnimator.ofInt(
                     holder.card,
                     "cardBackgroundColor",
-                    if (item.third) ColorUtils.setAlphaComponent(accent, 77) else Color.TRANSPARENT
+                    if (item.selected) ColorUtils.setAlphaComponent(
+                        accent,
+                        77
+                    ) else Color.TRANSPARENT
                 ).apply {
                     setEvaluator(ArgbEvaluator())
                     duration = 200
@@ -84,10 +76,13 @@ class MenuBottomSheet : RoundedBottomSheetDialogFragment() {
                 }
 
                 holder.click.setOnClickListener {
-                    items.forEachIndexed { index, _ ->
-                        items[index].third = index == position
+                    if (!item.selected) {
+                        item.func(position)
+                        items.forEachIndexed { index, _ ->
+                            items[index].selected = index == position
+                        }
+                        notifyDataSetChanged()
                     }
-                    notifyDataSetChanged()
                 }
             }
         }

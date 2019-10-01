@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +18,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDecoration
+import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
+import de.dertyp7214.rboardthememanager.core.dpToPx
 import de.dertyp7214.rboardthememanager.core.getBitmap
+import de.dertyp7214.rboardthememanager.core.getStatusBarHeight
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enum.GridLayout
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
@@ -49,13 +53,28 @@ class HomeGridFragment : Fragment() {
         val adapter = GridThemeAdapter(context!!, themeList, homeViewModel)
 
         homeViewModel.gridLayoutObserve(this, Observer {
+            Log.d("CHANEEE", it.name)
             adapter.notifyDataSetChanged()
-            if (recyclerView.layoutManager is GridLayoutManager)
-                (recyclerView.layoutManager as GridLayoutManager).spanCount =
-                    if (it == GridLayout.SINGLE) 1 else 2
+            if (recyclerView.layoutManager is GridLayoutManager) {
+                val columns = if (it == GridLayout.SINGLE) 1 else 2
+                (recyclerView.layoutManager as GridLayoutManager).spanCount = columns
+                for (i in 0 until recyclerView.itemDecorationCount) {
+                    recyclerView.removeItemDecorationAt(0)
+                }
+                recyclerView.addItemDecoration(
+                    GridTopOffsetItemDecoration(
+                        context!!.getStatusBarHeight(),
+                        columns
+                    )
+                )
+                recyclerView.addItemDecoration(
+                    GridBottomOffsetItemDecoration(
+                        56.dpToPx(context!!).toInt(),
+                        columns
+                    )
+                )
+            }
         })
-
-        MenuBottomSheet().show(fragmentManager!!, "")
 
         Thread {
             themeList.clear()
@@ -70,14 +89,24 @@ class HomeGridFragment : Fragment() {
             }
         }.start()
 
-        val layoutManager =
-            GridLayoutManager(
-                context,
-                if (homeViewModel.getGridLayout() == GridLayout.SINGLE) 1 else 2
-            )
+        val columns = if (homeViewModel.getGridLayout() == GridLayout.SINGLE) 1 else 2
+
+        val layoutManager = GridLayoutManager(context, columns)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         recyclerView.setHasFixedSize(true)
+        recyclerView.addItemDecoration(
+            GridTopOffsetItemDecoration(
+                context!!.getStatusBarHeight(),
+                columns
+            )
+        )
+        recyclerView.addItemDecoration(
+            GridBottomOffsetItemDecoration(
+                56.dpToPx(context!!).toInt(),
+                columns
+            )
+        )
 
         return v
     }
