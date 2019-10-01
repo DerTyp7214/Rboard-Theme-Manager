@@ -2,16 +2,44 @@ package de.dertyp7214.rboardthememanager.viewmodels
 
 import android.app.Activity
 import android.content.Context.MODE_PRIVATE
+import android.os.Parcelable
 import androidx.core.content.edit
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import de.dertyp7214.rboardthememanager.enum.GridLayout
+import de.dertyp7214.rboardthememanager.data.ThemeDataClass
+import de.dertyp7214.rboardthememanager.enums.GridLayout
 
 class HomeViewModel : ViewModel() {
 
     private val gridLayout = MutableLiveData<GridLayout>()
+    private val themes = MutableLiveData<ArrayList<ThemeDataClass>>()
+    private val recyclerViewState = MutableLiveData<Parcelable>()
+
+    fun getRecyclerViewState(): Parcelable? {
+        return recyclerViewState.value
+    }
+
+    fun setRecyclerViewState(state: Parcelable?) {
+        recyclerViewState.value = state
+    }
+
+    fun themesExist(): Boolean {
+        return themes.value != null
+    }
+
+    fun getThemes(): ArrayList<ThemeDataClass> {
+        return themes.value ?: ArrayList()
+    }
+
+    fun setThemes(list: ArrayList<ThemeDataClass>) {
+        themes.value = list
+    }
+
+    fun themesObserve(owner: LifecycleOwner, observer: Observer<ArrayList<ThemeDataClass>>) {
+        themes.observe(owner, observer)
+    }
 
     fun gridLayoutObserve(owner: LifecycleOwner, observer: Observer<GridLayout>) {
         gridLayout.observe(owner, observer)

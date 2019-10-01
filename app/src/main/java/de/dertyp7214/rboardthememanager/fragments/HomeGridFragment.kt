@@ -5,12 +5,12 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
@@ -20,12 +20,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.core.dpToPx
-import de.dertyp7214.rboardthememanager.core.getBitmap
-import de.dertyp7214.rboardthememanager.core.getStatusBarHeight
+import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
-import de.dertyp7214.rboardthememanager.enum.GridLayout
+import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
@@ -45,15 +44,20 @@ class HomeGridFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_home_grid, container, false)
 
+        val fabAdd = v.findViewById<FloatingActionButton>(R.id.fabAdd)
         recyclerView = v.findViewById(R.id.theme_list)
         homeViewModel = activity!!.run {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
 
+        fabAdd.setMargin(bottomMargin = context!!.getNavigationBarHeight() + 61.dpToPx(context!!).toInt())
+        fabAdd.setOnClickListener {
+            Toast.makeText(context!!, "Add theme", Toast.LENGTH_LONG).show()
+        }
+
         val adapter = GridThemeAdapter(context!!, themeList, homeViewModel)
 
         homeViewModel.gridLayoutObserve(this, Observer {
-            Log.d("CHANEEE", it.name)
             adapter.notifyDataSetChanged()
             if (recyclerView.layoutManager is GridLayoutManager) {
                 val columns = if (it == GridLayout.SINGLE) 1 else 2
@@ -76,18 +80,35 @@ class HomeGridFragment : Fragment() {
             }
         })
 
-        Thread {
-            themeList.clear()
-            themeList.addAll(loadThemes().sortedBy { it.name.toLowerCase(Locale.ROOT) })
-            activity!!.runOnUiThread {
-                adapter.notifyDataSetChanged()
-                ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
-                    duration = 300
-                    startDelay = 200
-                    start()
-                }
+        homeViewModel.gridLayoutObserve(this, Observer {
+            adapter.notifyDataSetChanged()
+            ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
+                duration = 300
+                startDelay = 200
+                start()
             }
-        }.start()
+        })
+
+        if (!homeViewModel.themesExist()) {
+            Thread {
+                themeList.clear()
+                themeList.addAll(loadThemes().sortedBy { it.name.toLowerCase(Locale.ROOT) })
+                activity!!.runOnUiThread {
+                    homeViewModel.setThemes(themeList)
+                    adapter.notifyDataSetChanged()
+                    ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
+                        duration = 300
+                        startDelay = 200
+                        start()
+                    }
+                }
+            }.start()
+        } else {
+            themeList.clear()
+            themeList.addAll(homeViewModel.getThemes())
+            adapter.notifyDataSetChanged()
+            recyclerView.alpha = 1F
+        }
 
         val columns = if (homeViewModel.getGridLayout() == GridLayout.SINGLE) 1 else 2
 
@@ -108,7 +129,18 @@ class HomeGridFragment : Fragment() {
             )
         )
 
+        homeViewModel.getRecyclerViewState().apply {
+            if (this != null) {
+                recyclerView.layoutManager?.onRestoreInstanceState(this)
+            }
+        }
+
         return v
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        homeViewModel.setRecyclerViewState(recyclerView.layoutManager?.onSaveInstanceState())
     }
 
     class GridThemeAdapter(

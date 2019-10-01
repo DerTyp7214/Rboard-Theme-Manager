@@ -1,4 +1,4 @@
-package de.dertyp7214.rboardthememanager.enum
+package de.dertyp7214.rboardthememanager.enums
 
 enum class GridLayout {
     SINGLE,

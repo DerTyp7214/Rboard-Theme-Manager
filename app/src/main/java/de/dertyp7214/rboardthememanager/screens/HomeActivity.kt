@@ -3,18 +3,27 @@ package de.dertyp7214.rboardthememanager.screens
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updatePadding
+import androidx.databinding.BindingAdapter
+import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.ViewModelProviders
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
+import de.dertyp7214.rboardthememanager.core.delayed
+import de.dertyp7214.rboardthememanager.core.doOnApplyWindowInsets
 import de.dertyp7214.rboardthememanager.data.MenuItem
-import de.dertyp7214.rboardthememanager.enum.GridLayout
+import de.dertyp7214.rboardthememanager.enums.GridLayout
+import de.dertyp7214.rboardthememanager.fragments.DownloadFragment
+import de.dertyp7214.rboardthememanager.fragments.HomeGridFragment
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.bottom_navigation.*
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var bottomSheet: MenuBottomSheet
+    private var currentFragment = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +38,30 @@ class HomeActivity : AppCompatActivity() {
 
         homeViewModel = ViewModelProviders.of(this)[HomeViewModel::class.java]
         homeViewModel.loadFromStorage(this)
+
+        supportFragmentManager.beginTransaction().apply {
+            replace(fragment.id, HomeGridFragment())
+            commit()
+        }
+
+        homeNav.setOnNavigationItemSelectedListener {
+            if (currentFragment != it.itemId) {
+                currentFragment = it.itemId
+                when (it.itemId) {
+                    R.id.navigation_themes -> supportFragmentManager.beginTransaction().apply {
+                        replace(fragment.id, HomeGridFragment())
+                        setTransition(TRANSIT_FRAGMENT_OPEN)
+                        delayed(100) { commit() }
+                    }
+                    R.id.navigation_downloads -> supportFragmentManager.beginTransaction().apply {
+                        replace(fragment.id, DownloadFragment())
+                        setTransition(TRANSIT_FRAGMENT_OPEN)
+                        delayed(100) { commit() }
+                    }
+                }
+            }
+            true
+        }
 
         menuButton.setOnClickListener {
             bottomSheet = MenuBottomSheet(arrayListOf(
@@ -58,6 +91,14 @@ class HomeActivity : AppCompatActivity() {
                 }
             ))
             bottomSheet.show(supportFragmentManager, "")
+        }
+    }
+
+    @BindingAdapter("paddingBottomSystemWindowInsets")
+    fun applySystemWindowBottomInset(view: View, applyBottomInset: Boolean) {
+        view.doOnApplyWindowInsets { view, insets, padding ->
+            val bottom = if (applyBottomInset) insets.systemWindowInsetBottom else 0
+            view.updatePadding(bottom = padding.bottom + bottom)
         }
     }
 }

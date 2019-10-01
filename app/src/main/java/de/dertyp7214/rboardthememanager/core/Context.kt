@@ -1,6 +1,8 @@
 package de.dertyp7214.rboardthememanager.core
 
 import android.content.Context
+import android.os.Handler
+import androidx.core.os.postDelayed
 
 
 fun Context.getStatusBarHeight(): Int {
@@ -19,4 +21,8 @@ fun Context.getNavigationBarHeight(): Int {
         result = resources.getDimensionPixelSize(resourceId)
     }
     return result
+}
+
+fun Context.delayed(delay: Long, callback: () -> Unit) {
+    Handler().postDelayed(delay) { callback() }
 }
