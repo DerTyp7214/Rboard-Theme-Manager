@@ -6,5 +6,9 @@
     <color name="colorAccent">#4285F4</color>
     <color name="colorAccentTransparent">#B24285F4</color>
     <color name="primaryText">#000</color>
+    <color name="primaryTextSec">#99000000</color>
     <color name="divider">#00FFFFFF</color>
+    <color name="inputBorder">#330C0C0C</color>
+    <color name="inputBackground">#E1E1E1</color>
+    <color name="menuBackground">#ECECEC</color>
 </resources>

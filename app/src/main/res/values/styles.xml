@@ -34,4 +34,11 @@
         <item name="android:navigationBarColor">@color/colorPrimary</item>
     </style>
 
+    <style name="PopupMenu" parent="@style/Widget.MPM.Menu">
+        <item name="android:popupBackground">@drawable/popup_background</item>
+        <item name="mpm_primaryTextColor">@color/primaryText</item>
+        <item name="mpm_secondaryTextColor">@color/primaryTextSec</item>
+        <item name="mpm_activeIconColor">@color/primaryTextSec</item>
+    </style>
+
 </resources>

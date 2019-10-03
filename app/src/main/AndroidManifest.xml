@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="de.dertyp7214.rboardthememanager">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -11,7 +12,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:windowSoftInputMode="stateVisible|adjustResize"
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup">
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/notification_icon" />
@@ -26,10 +29,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screens.HomeActivity" />
+        <activity android:name=".screens.HomeActivity"/>
         <activity android:name=".screens.IntroActivity" />
         <activity
-            android:name="de.dertyp7214.appupdater.Updater"
+            android:name=".updater.Updater"
             android:theme="@style/AppUpdaterTheme" />
 
         <service

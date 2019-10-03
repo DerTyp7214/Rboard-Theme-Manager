@@ -2,15 +2,16 @@ package de.dertyp7214.rboardthememanager.screens
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.updatePadding
-import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.ViewModelProviders
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
 import de.dertyp7214.rboardthememanager.core.delayed
-import de.dertyp7214.rboardthememanager.core.doOnApplyWindowInsets
+import de.dertyp7214.rboardthememanager.core.hideKeyboard
 import de.dertyp7214.rboardthememanager.data.MenuItem
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.fragments.DownloadFragment
@@ -18,6 +19,7 @@ import de.dertyp7214.rboardthememanager.fragments.HomeGridFragment
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.bottom_navigation.*
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -63,6 +65,31 @@ class HomeActivity : AppCompatActivity() {
             true
         }
 
+        searchButton.setOnClickListener { _ ->
+            val bottomSheet = InputBottomSheet(View.OnKeyListener { _, _, _ ->
+                true
+            }, { text, it ->
+                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                it.dismiss()
+            }) { input, _ ->
+                val popupMenu = popupMenu {
+                    style = R.style.PopupMenu
+                    section {
+                        item {
+                            label = "Test"
+                            icon = R.drawable.ic_list
+                            callback = {
+                                Toast.makeText(this@HomeActivity, "TEST", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+                popupMenu.show(this, input)
+                hideKeyboard()
+            }
+            bottomSheet.show(supportFragmentManager, "")
+        }
+
         menuButton.setOnClickListener {
             bottomSheet = MenuBottomSheet(arrayListOf(
                 MenuItem(
@@ -91,14 +118,6 @@ class HomeActivity : AppCompatActivity() {
                 }
             ))
             bottomSheet.show(supportFragmentManager, "")
-        }
-    }
-
-    @BindingAdapter("paddingBottomSystemWindowInsets")
-    fun applySystemWindowBottomInset(view: View, applyBottomInset: Boolean) {
-        view.doOnApplyWindowInsets { view, insets, padding ->
-            val bottom = if (applyBottomInset) insets.systemWindowInsetBottom else 0
-            view.updatePadding(bottom = padding.bottom + bottom)
         }
     }
 }

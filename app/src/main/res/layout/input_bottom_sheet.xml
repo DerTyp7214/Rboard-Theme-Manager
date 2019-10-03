@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="10dp"
+    android:paddingTop="2dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="10dp"
+    tools:ignore="DisableBaselineAlignment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:textColorHint="@color/primaryTextSec"
+        app:boxBackgroundColor="@color/inputBackground"
+        app:boxBackgroundMode="outline"
+        app:boxCollapsedPaddingTop="0dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeColor="@color/inputBorder"
+        app:boxStrokeWidth="1dp"
+        app:endIconDrawable="@drawable/ic_more_vert"
+        app:endIconMode="custom"
+        app:hintEnabled="false"
+        app:startIconDrawable="@drawable/ic_search"
+        app:startIconTintMode="multiply">
+
+        <de.dertyp7214.rboardthememanager.component.CustomTextInputEditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/search_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textColor="@color/primaryText"
+            android:textColorHint="@color/primaryTextSec"
+            android:textCursorDrawable="@drawable/cursor"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

@@ -4,14 +4,9 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-apply plugin: 'kotlin-kapt'
-
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
-    dataBinding {
-        enabled = true
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -60,6 +55,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.github.DerTyp7214:AppUpdater:v1.5'
     implementation 'com.bignerdranch.android:simple-item-decoration:1.0.0'
+    implementation 'com.github.zawadz88.materialpopupmenu:material-popup-menu:4.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

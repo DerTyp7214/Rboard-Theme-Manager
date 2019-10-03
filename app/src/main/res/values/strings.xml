@@ -24,4 +24,5 @@
     <string name="list_grid">Listlayout</string>
     <string name="grid_small">Small Gridlayout</string>
     <string name="grid_big">Big Gridlayout</string>
+    <string name="search_hint">Search Themes</string>
 </resources>
