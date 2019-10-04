@@ -28,9 +28,11 @@
         app:boxStrokeColor="@color/inputBorder"
         app:boxStrokeWidth="1dp"
         app:endIconDrawable="@drawable/ic_more_vert"
+        app:endIconTint="@color/primaryText"
         app:endIconMode="custom"
         app:hintEnabled="false"
         app:startIconDrawable="@drawable/ic_search"
+        app:startIconTint="@color/primaryText"
         app:startIconTintMode="multiply">
 
         <de.dertyp7214.rboardthememanager.component.CustomTextInputEditText
