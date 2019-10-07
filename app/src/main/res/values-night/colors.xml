@@ -8,7 +8,7 @@
     <color name="primaryText">#FFF</color>
     <color name="primaryTextSec">#99FFFFFF</color>
     <color name="divider">#66C4C4C4</color>
-    <color name="inputBorder">#33F4F4F4</color>
+    <color name="inputBorder">#26FFFFFF</color>
     <color name="inputBackground">#1F1F1F</color>
     <color name="menuBackground">#282828</color>
 </resources>

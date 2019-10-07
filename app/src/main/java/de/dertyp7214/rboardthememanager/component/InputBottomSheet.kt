@@ -7,8 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputLayout
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.dpToPx
+import de.dertyp7214.rboardthememanager.core.setMargin
+import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 
 class InputBottomSheet(
     private val keyListener: View.OnKeyListener,
@@ -16,6 +21,12 @@ class InputBottomSheet(
     private val onMenu: (input: View, bottomSheet: InputBottomSheet) -> Unit = { _, _ -> }
 ) :
     RoundedBottomSheetDialogFragment() {
+
+    constructor() : this(View.OnKeyListener { _, _, _ -> true }, { _, _ -> }, { _, _ -> }) {
+        dismiss()
+    }
+
+    private var inputLayout: TextInputLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,10 +36,10 @@ class InputBottomSheet(
         val v = inflater.inflate(R.layout.input_bottom_sheet, container, false)
 
         val input = v.findViewById<CustomTextInputEditText>(R.id.editText)
-        val inputLayout = v.findViewById<TextInputLayout>(R.id.inputLayout)
+        inputLayout = v.findViewById<TextInputLayout>(R.id.inputLayout)
 
-        inputLayout.setStartIconOnClickListener { onSubmit(input.text, this) }
-        inputLayout.setEndIconOnClickListener { onMenu(it, this) }
+        inputLayout!!.setStartIconOnClickListener { onSubmit(input.text, this) }
+        inputLayout!!.setEndIconOnClickListener { onMenu(it, this) }
 
         input.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH)
         input.setOnKeyListener(keyListener)
@@ -43,5 +54,15 @@ class InputBottomSheet(
         }
 
         return v
+    }
+
+    fun setKeyBoardHeightObserver(
+        lifecycleOwner: FragmentActivity,
+        homeViewModel: HomeViewModel
+    ): InputBottomSheet {
+        homeViewModel.keyboardHeightObserver(lifecycleOwner, Observer {
+            inputLayout?.setMargin(bottomMargin = (it + 5.dpToPx(lifecycleOwner).toInt()))
+        })
+        return this
     }
 }

@@ -12,8 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:windowSoftInputMode="stateVisible|adjustResize"
         android:theme="@style/AppTheme"
+        android:windowSoftInputMode="stateAlwaysVisible|adjustPan"
         tools:ignore="AllowBackup">
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screens.HomeActivity"/>
+        <activity android:name=".screens.HomeActivity" />
         <activity android:name=".screens.IntroActivity" />
         <activity
             android:name=".updater.Updater"

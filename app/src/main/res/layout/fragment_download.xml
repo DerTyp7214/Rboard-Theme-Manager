@@ -2,4 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="de.dertyp7214.rboardthememanager.fragments.DownloadFragment"/>
+    tools:context="de.dertyp7214.rboardthememanager.fragments.DownloadFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

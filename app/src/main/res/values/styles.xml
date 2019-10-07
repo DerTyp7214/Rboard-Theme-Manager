@@ -16,6 +16,11 @@
         <item name="android:windowContentTransitions">true</item>
     </style>
 
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/inputBorder</item>
+        <item name="boxStrokeWidth">1dp</item>
+    </style>
+
     <style name="ActionBar" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextColor">@color/primaryText</item>
     </style>

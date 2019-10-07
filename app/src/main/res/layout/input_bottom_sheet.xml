@@ -13,7 +13,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_weight="1"
@@ -27,6 +27,7 @@
         app:boxCornerRadiusTopStart="12dp"
         app:boxStrokeColor="@color/inputBorder"
         app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="1dp"
         app:endIconDrawable="@drawable/ic_more_vert"
         app:endIconTint="@color/primaryText"
         app:endIconMode="custom"

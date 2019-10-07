@@ -23,6 +23,10 @@ class MenuBottomSheet(
 ) :
     RoundedBottomSheetDialogFragment() {
 
+    constructor() : this(ArrayList()) {
+        dismiss()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -16,6 +16,19 @@ class HomeViewModel : ViewModel() {
     private val gridLayout = MutableLiveData<GridLayout>()
     private val themes = MutableLiveData<ArrayList<ThemeDataClass>>()
     private val recyclerViewState = MutableLiveData<Parcelable>()
+    private val keyboardHeight = MutableLiveData<Int>()
+
+    fun getKeyboardHeight(): Int {
+        return keyboardHeight.value ?: 0
+    }
+
+    fun setKeyboardHeight(value: Int) {
+        keyboardHeight.value = value
+    }
+
+    fun keyboardHeightObserver(owner: LifecycleOwner, observer: Observer<Int>) {
+        keyboardHeight.observe(owner, observer)
+    }
 
     fun getRecyclerViewState(): Parcelable? {
         return recyclerViewState.value

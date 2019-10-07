@@ -25,6 +25,7 @@ import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
+import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightObserver
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
@@ -82,32 +83,33 @@ class HomeGridFragment : Fragment() {
 
         homeViewModel.gridLayoutObserve(this, Observer {
             adapter.notifyDataSetChanged()
-            ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
-                duration = 300
-                startDelay = 200
-                start()
-            }
         })
 
-        if (!homeViewModel.themesExist()) {
-            Thread {
-                themeList.clear()
-                themeList.addAll(loadThemes().sortedBy { it.name.toLowerCase(Locale.ROOT) })
-                activity!!.runOnUiThread {
-                    homeViewModel.setThemes(themeList)
-                    adapter.notifyDataSetChanged()
-                    ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
-                        duration = 300
-                        startDelay = 200
-                        start()
+        context!!.delayed(200) {
+            if (!homeViewModel.themesExist()) {
+                Thread {
+                    themeList.clear()
+                    themeList.addAll(loadThemes().sortedBy { it.name.toLowerCase(Locale.ROOT) })
+                    activity?.runOnUiThread {
+                        homeViewModel.setThemes(themeList)
+                        adapter.notifyDataSetChanged()
+                        ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
+                            duration = 300
+                            startDelay = 200
+                            start()
+                        }
                     }
+                }.start()
+            } else {
+                themeList.clear()
+                themeList.addAll(homeViewModel.getThemes())
+                adapter.notifyDataSetChanged()
+                ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
+                    duration = 300
+                    startDelay = 200
+                    start()
                 }
-            }.start()
-        } else {
-            themeList.clear()
-            themeList.addAll(homeViewModel.getThemes())
-            adapter.notifyDataSetChanged()
-            recyclerView.alpha = 1F
+            }
         }
 
         val columns = if (homeViewModel.getGridLayout() == GridLayout.SINGLE) 1 else 2

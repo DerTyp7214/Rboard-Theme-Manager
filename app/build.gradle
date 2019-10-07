@@ -56,6 +56,7 @@ dependencies {
     implementation 'com.github.DerTyp7214:AppUpdater:v1.5'
     implementation 'com.bignerdranch.android:simple-item-decoration:1.0.0'
     implementation 'com.github.zawadz88.materialpopupmenu:material-popup-menu:4.0.0'
+    implementation 'com.mindorks.android:prdownloader:0.6.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -10,26 +10,41 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
-import de.dertyp7214.rboardthememanager.core.delayed
 import de.dertyp7214.rboardthememanager.core.hideKeyboard
 import de.dertyp7214.rboardthememanager.data.MenuItem
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.fragments.DownloadFragment
 import de.dertyp7214.rboardthememanager.fragments.HomeGridFragment
+import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightObserver
+import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightProvider
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.bottom_navigation.*
 
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
+
+    override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
+        try {
+            homeViewModel.setKeyboardHeight(height)
+        } catch (e: Exception) {
+        }
+    }
 
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var bottomSheet: MenuBottomSheet
+    private var keyboardHeightProvider: KeyboardHeightProvider? = null
     private var currentFragment = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        keyboardHeightProvider = KeyboardHeightProvider(this)
+
+        homeNav.post {
+            keyboardHeightProvider?.start()
+        }
 
         val dark = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         val light = dark or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -53,12 +68,12 @@ class HomeActivity : AppCompatActivity() {
                     R.id.navigation_themes -> supportFragmentManager.beginTransaction().apply {
                         replace(fragment.id, HomeGridFragment())
                         setTransition(TRANSIT_FRAGMENT_OPEN)
-                        delayed(100) { commit() }
+                        commit()
                     }
                     R.id.navigation_downloads -> supportFragmentManager.beginTransaction().apply {
                         replace(fragment.id, DownloadFragment())
                         setTransition(TRANSIT_FRAGMENT_OPEN)
-                        delayed(100) { commit() }
+                        commit()
                     }
                 }
             }
@@ -86,7 +101,7 @@ class HomeActivity : AppCompatActivity() {
                 }
                 popupMenu.show(this, input)
                 hideKeyboard()
-            }
+            }.setKeyBoardHeightObserver(this, homeViewModel)
             bottomSheet.show(supportFragmentManager, "")
         }
 
@@ -119,5 +134,22 @@ class HomeActivity : AppCompatActivity() {
             ))
             bottomSheet.show(supportFragmentManager, "")
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        keyboardHeightProvider?.setKeyboardHeightObserver(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        keyboardHeightProvider?.setKeyboardHeightObserver(object : KeyboardHeightObserver {
+            override fun onKeyboardHeightChanged(height: Int, orientation: Int) {}
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        keyboardHeightProvider?.close()
     }
 }
