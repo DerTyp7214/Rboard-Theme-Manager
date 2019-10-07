@@ -1,7 +1,6 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -14,6 +13,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,10 +22,10 @@ import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDec
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.component.SelectedThemeBottomSheet
 import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
-import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightObserver
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
@@ -56,7 +56,7 @@ class HomeGridFragment : Fragment() {
             Toast.makeText(context!!, "Add theme", Toast.LENGTH_LONG).show()
         }
 
-        val adapter = GridThemeAdapter(context!!, themeList, homeViewModel)
+        val adapter = GridThemeAdapter(activity!!, themeList, homeViewModel)
 
         homeViewModel.gridLayoutObserve(this, Observer {
             adapter.notifyDataSetChanged()
@@ -146,7 +146,7 @@ class HomeGridFragment : Fragment() {
     }
 
     class GridThemeAdapter(
-        private val context: Context,
+        private val context: FragmentActivity,
         private val list: List<ThemeDataClass>,
         private val homeViewModel: HomeViewModel
     ) :
@@ -221,6 +221,11 @@ class HomeGridFragment : Fragment() {
                     }.doOnEnd {
                         notifyDataSetChanged()
                     }
+                } else {
+                    SelectedThemeBottomSheet(dataClass, default, color, isColorLight(color)).show(
+                        context.supportFragmentManager,
+                        ""
+                    )
                 }
             }
 
