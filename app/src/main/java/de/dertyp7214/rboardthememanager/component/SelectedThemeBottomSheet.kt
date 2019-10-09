@@ -12,6 +12,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.ThemeHelper
@@ -20,7 +22,8 @@ class SelectedThemeBottomSheet(
     private val theme: ThemeDataClass,
     private val defaultImage: Bitmap,
     private val color: Int,
-    private val isDark: Boolean
+    private val isDark: Boolean,
+    private val deleteCallback: () -> Unit = {}
 ) : RoundedBottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +33,7 @@ class SelectedThemeBottomSheet(
         val v = inflater.inflate(R.layout.selected_theme_bottomsheet, container, false)
 
         val applyButton = v.findViewById<LinearLayout>(R.id.apply)
+        val deleteButton = v.findViewById<LinearLayout>(R.id.delete)
         val themeName = v.findViewById<TextView>(R.id.theme_name)
         val themeIcon = v.findViewById<ImageView>(R.id.theme_image)
         val card: CardView = v.findViewById(R.id.card)
@@ -52,6 +56,26 @@ class SelectedThemeBottomSheet(
         themeName.text = theme.name
         themeName.setTextColor(if (!isDark) Color.WHITE else Color.BLACK)
         themeIcon.setImageBitmap(theme.image ?: defaultImage)
+
+        deleteButton.setOnClickListener {
+            MaterialDialog(context!!).show {
+                cornerRadius(12F)
+                message(res = R.string.delete_theme_confirm)
+                positiveButton(res = R.string.yes) {
+                    if (SuFile(theme.path).delete()) {
+                        Toast.makeText(context, R.string.theme_deleted, Toast.LENGTH_LONG).show()
+                        deleteCallback()
+                    } else {
+                        Toast.makeText(context, R.string.error, Toast.LENGTH_LONG).show()
+                    }
+                    it.dismiss()
+                    this@SelectedThemeBottomSheet.dismiss()
+                }
+                negativeButton(res = R.string.no) {
+                    it.dismiss()
+                }
+            }
+        }
 
         applyButton.setOnClickListener {
             val response = ThemeHelper.applyTheme("${theme.name}.zip")

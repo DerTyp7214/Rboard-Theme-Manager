@@ -10,7 +10,6 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
-import de.dertyp7214.rboardthememanager.core.hideKeyboard
 import de.dertyp7214.rboardthememanager.data.MenuItem
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.fragments.DownloadFragment
@@ -81,10 +80,10 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
         }
 
         searchButton.setOnClickListener { _ ->
-            val bottomSheet = InputBottomSheet(View.OnKeyListener { _, _, _ ->
+            val bottomSheet = InputBottomSheet(homeViewModel.getFilter(), View.OnKeyListener { _, _, _ ->
                 true
             }, { text, it ->
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                homeViewModel.setFilter(text.toString())
                 it.dismiss()
             }) { input, _ ->
                 val popupMenu = popupMenu {
@@ -94,13 +93,13 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                             label = "Test"
                             icon = R.drawable.ic_list
                             callback = {
-                                Toast.makeText(this@HomeActivity, "TEST", Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@HomeActivity, "TEST", Toast.LENGTH_LONG)
+                                    .show()
                             }
                         }
                     }
                 }
                 popupMenu.show(this, input)
-                hideKeyboard()
             }.setKeyBoardHeightObserver(this, homeViewModel)
             bottomSheet.show(supportFragmentManager, "")
         }

@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -35,6 +36,8 @@ import kotlin.collections.ArrayList
 
 class HomeGridFragment : Fragment() {
 
+    private val tmpList = ArrayList<ThemeDataClass>()
+    private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var recyclerView: RecyclerView
     private val themeList = ArrayList<ThemeDataClass>()
@@ -46,12 +49,21 @@ class HomeGridFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_home_grid, container, false)
 
         val fabAdd = v.findViewById<FloatingActionButton>(R.id.fabAdd)
+        refreshLayout = v.findViewById(R.id.refreshLayout)
         recyclerView = v.findViewById(R.id.theme_list)
         homeViewModel = activity!!.run {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
 
-        fabAdd.setMargin(bottomMargin = context!!.getNavigationBarHeight() + 61.dpToPx(context!!).toInt())
+        refreshLayout.setProgressViewOffset(true, 0, context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt())
+        refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
+        refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
+        refreshLayout.setOnRefreshListener {
+            homeViewModel.setRefetch(true)
+        }
+
+        refreshLayout.isRefreshing = true
+        fabAdd.setMargin(bottomMargin = context!!.getNavigationBarHeight() + 54.dpToPx(context!!).toInt())
         fabAdd.setOnClickListener {
             Toast.makeText(context!!, "Add theme", Toast.LENGTH_LONG).show()
         }
@@ -81,8 +93,53 @@ class HomeGridFragment : Fragment() {
             }
         })
 
+        homeViewModel.observeRefetch(this, Observer {
+            if (it) {
+                homeViewModel.setFilter(homeViewModel.getFilter())
+            }
+        })
+
         homeViewModel.gridLayoutObserve(this, Observer {
             adapter.notifyDataSetChanged()
+        })
+
+        homeViewModel.themesObserve(this, Observer {
+            if (tmpList.isEmpty() || it.size > tmpList.size) tmpList.apply {
+                clear()
+                addAll(it)
+            }
+        })
+
+        homeViewModel.observeFilter(this, Observer { filter ->
+            refreshLayout.isRefreshing = true
+            ObjectAnimator.ofFloat(recyclerView, "alpha", 0F).apply {
+                duration = 300
+                startDelay = 200
+                start()
+            }
+            Thread {
+                themeList.clear()
+                themeList.addAll((if (!homeViewModel.getRefetch()) tmpList else loadThemes()).filter {
+                    filter.isBlank() || it.name.contains(
+                        filter
+                    )
+                }.sortedBy {
+                    it.name.toLowerCase(
+                        Locale.ROOT
+                    )
+                })
+                activity?.runOnUiThread {
+                    homeViewModel.setThemes(themeList)
+                    adapter.notifyDataSetChanged()
+                    refreshLayout.isRefreshing = false
+                    if (homeViewModel.getRefetch()) homeViewModel.setRefetch(false)
+                    ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
+                        duration = 300
+                        startDelay = 200
+                        start()
+                    }
+                }
+            }.start()
         })
 
         context!!.delayed(200) {
@@ -93,6 +150,7 @@ class HomeGridFragment : Fragment() {
                     activity?.runOnUiThread {
                         homeViewModel.setThemes(themeList)
                         adapter.notifyDataSetChanged()
+                        refreshLayout.isRefreshing = false
                         ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
                             duration = 300
                             startDelay = 200
@@ -104,6 +162,7 @@ class HomeGridFragment : Fragment() {
                 themeList.clear()
                 themeList.addAll(homeViewModel.getThemes())
                 adapter.notifyDataSetChanged()
+                refreshLayout.isRefreshing = false
                 ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
                     duration = 300
                     startDelay = 200
@@ -222,7 +281,9 @@ class HomeGridFragment : Fragment() {
                         notifyDataSetChanged()
                     }
                 } else {
-                    SelectedThemeBottomSheet(dataClass, default, color, isColorLight(color)).show(
+                    SelectedThemeBottomSheet(dataClass, default, color, isColorLight(color)) {
+                        homeViewModel.setRefetch(true)
+                    }.show(
                         context.supportFragmentManager,
                         ""
                     )

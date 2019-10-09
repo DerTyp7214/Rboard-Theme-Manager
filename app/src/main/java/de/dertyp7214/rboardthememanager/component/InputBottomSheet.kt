@@ -16,13 +16,14 @@ import de.dertyp7214.rboardthememanager.core.setMargin
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 
 class InputBottomSheet(
+    private val text: String = "",
     private val keyListener: View.OnKeyListener,
     private val onSubmit: (input: Editable?, bottomSheet: InputBottomSheet) -> Unit,
     private val onMenu: (input: View, bottomSheet: InputBottomSheet) -> Unit = { _, _ -> }
 ) :
     RoundedBottomSheetDialogFragment() {
 
-    constructor() : this(View.OnKeyListener { _, _, _ -> true }, { _, _ -> }, { _, _ -> }) {
+    constructor() : this("", View.OnKeyListener { _, _, _ -> true }, { _, _ -> }, { _, _ -> }) {
         dismiss()
     }
 
@@ -36,11 +37,12 @@ class InputBottomSheet(
         val v = inflater.inflate(R.layout.input_bottom_sheet, container, false)
 
         val input = v.findViewById<CustomTextInputEditText>(R.id.editText)
-        inputLayout = v.findViewById<TextInputLayout>(R.id.inputLayout)
+        inputLayout = v.findViewById(R.id.inputLayout)
 
         inputLayout!!.setStartIconOnClickListener { onSubmit(input.text, this) }
         inputLayout!!.setEndIconOnClickListener { onMenu(it, this) }
 
+        if (!text.isBlank()) input.setText(text)
         input.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH)
         input.setOnKeyListener(keyListener)
         input.setOnEditorActionListener { _, i, keyEvent ->

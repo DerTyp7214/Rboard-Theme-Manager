@@ -17,6 +17,32 @@ class HomeViewModel : ViewModel() {
     private val themes = MutableLiveData<ArrayList<ThemeDataClass>>()
     private val recyclerViewState = MutableLiveData<Parcelable>()
     private val keyboardHeight = MutableLiveData<Int>()
+    private val filter = MutableLiveData<String>()
+    private val refetch = MutableLiveData<Boolean>()
+
+    fun getRefetch(): Boolean {
+        return refetch.value == true
+    }
+
+    fun setRefetch(r: Boolean) {
+        refetch.value = r
+    }
+
+    fun observeRefetch(owner: LifecycleOwner, observer: Observer<Boolean>) {
+        refetch.observe(owner, observer)
+    }
+
+    fun getFilter(): String {
+        return filter.value ?: ""
+    }
+
+    fun setFilter(f: String) {
+        filter.value = f
+    }
+
+    fun observeFilter(owner: LifecycleOwner, observer: Observer<String>) {
+        filter.observe(owner, observer)
+    }
 
     fun getKeyboardHeight(): Int {
         return keyboardHeight.value ?: 0

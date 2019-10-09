@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
@@ -25,6 +26,7 @@ import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.helper.DownloadHelper
 import de.dertyp7214.rboardthememanager.helper.DownloadListener
 import de.dertyp7214.rboardthememanager.helper.ZipHelper
+import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -34,6 +36,7 @@ import kotlin.text.Charsets.UTF_8
 class DownloadFragment : Fragment() {
 
     private lateinit var adapter: Adapter
+    private lateinit var homeViewModel: HomeViewModel
 
     private val list = ArrayList<PackItem>()
 
@@ -43,7 +46,13 @@ class DownloadFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_download, container, false)
 
-        adapter = Adapter(context!!, list)
+        homeViewModel = activity!!.run {
+            ViewModelProviders.of(this)[HomeViewModel::class.java]
+        }
+
+        adapter = Adapter(context!!, list) {
+            homeViewModel.setRefetch(true)
+        }
 
         val recyclerView = v.findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -76,7 +85,7 @@ class DownloadFragment : Fragment() {
         return v
     }
 
-    class Adapter(private val context: Context, private val list: ArrayList<PackItem>) :
+    class Adapter(private val context: Context, private val list: ArrayList<PackItem>, private val callback: () -> Unit) :
         RecyclerView.Adapter<Adapter.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
@@ -123,6 +132,7 @@ class DownloadFragment : Fragment() {
 
                         override fun end(path: String) {
                             ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
+                            callback()
                         }
                     })
                     .start()
