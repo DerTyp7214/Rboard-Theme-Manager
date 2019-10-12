@@ -35,6 +35,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="magiskVersionCode">Magisk VersionCode: %d</string>
-    <string name="magiskVersionString">Magisk VersionString: %d</string>
-    <string name="magiskFullString">Magisk FullString: %d</string>
+    <string name="magiskVersionString">Magisk VersionString: %s</string>
+    <string name="magiskFullString">Magisk FullString: %s</string>
 </resources>

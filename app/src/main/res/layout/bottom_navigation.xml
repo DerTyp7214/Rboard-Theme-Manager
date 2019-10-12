@@ -1,55 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="-12dp"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient_bottom_nav"
-            android:orientation="horizontal"
-            android:paddingBottom="12dp">
+            android:layout_marginBottom="-12dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
 
-            <ImageButton
-                android:id="@+id/menuButton"
-                android:layout_width="56dp"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                app:srcCompat="@drawable/ic_menu"
-                tools:ignore="ContentDescription" />
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/homeNav"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:elevation="0dp"
-                app:itemIconTint="@drawable/drawer_item_color"
-                app:itemTextColor="@drawable/drawer_item_color"
-                app:labelVisibilityMode="selected"
-                app:menu="@menu/navigation" />
+                android:background="@drawable/gradient_bottom_nav"
+                android:orientation="horizontal"
+                android:paddingBottom="12dp">
 
-            <ImageButton
-                android:id="@+id/searchButton"
-                android:layout_width="56dp"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                app:srcCompat="@drawable/ic_search"
-                tools:ignore="ContentDescription" />
+                <ImageButton
+                    android:id="@+id/menuButton"
+                    android:layout_width="56dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackground"
+                    app:srcCompat="@drawable/ic_menu"
+                    tools:ignore="ContentDescription" />
 
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-</FrameLayout>
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/homeNav"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    app:elevation="0dp"
+                    app:itemIconTint="@drawable/drawer_item_color"
+                    app:itemTextColor="@drawable/drawer_item_color"
+                    app:labelVisibilityMode="selected"
+                    app:menu="@menu/navigation" />
+
+                <ImageButton
+                    android:id="@+id/searchButton"
+                    android:layout_width="56dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackground"
+                    app:srcCompat="@drawable/ic_search"
+                    tools:ignore="ContentDescription" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+</layout>

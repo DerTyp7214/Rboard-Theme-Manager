@@ -1,166 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.WelcomeFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="0sp"
-        app:cardElevation="2sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        tools:context=".fragments.WelcomeFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="61dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="44dp"
-                android:src="@drawable/ic_permissions"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="23dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/permissionTitle"
-                android:textColor="@color/primaryText"
-                android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
-
-        <View
-            android:background="@color/divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp" />
-
-        <LinearLayout
-            android:id="@+id/clickRboardStorage"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            app:cardCornerRadius="0sp"
+            app:cardElevation="2sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="61dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="44dp"
+                    android:src="@drawable/ic_permissions"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="match_parent"
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_medium"
-                    android:letterSpacing=".17"
-                    android:text="@string/rboardStorage"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="17dp"
-                    android:fontFamily="@font/roboto"
-                    android:letterSpacing=".1"
-                    android:text="@string/rboardStorageSummary"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/permissionTitle"
                     android:textColor="@color/primaryText"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/radioRboard"
-                android:layout_width="58dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:clickable="false" />
-
-        </LinearLayout>
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
-            android:id="@+id/clickGboardStorage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
 
             <LinearLayout
+                android:id="@+id/clickRboardStorage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/textView5"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_medium"
-                    android:letterSpacing=".17"
-                    android:text="@string/gboardStorage"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="17dp"
                     android:layout_weight="1"
-                    android:fontFamily="@font/roboto"
-                    android:letterSpacing=".1"
-                    android:text="@string/gboardStorageSummary"
-                    android:textColor="@color/primaryText"
-                    android:textSize="16sp"
-                    tools:ignore="NestedWeights" />
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:letterSpacing=".17"
+                        android:text="@string/rboardStorage"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="17dp"
+                        android:fontFamily="@font/roboto"
+                        android:letterSpacing=".1"
+                        android:text="@string/rboardStorageSummary"
+                        android:textColor="@color/primaryText"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/radioRboard"
+                    android:layout_width="58dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="false" />
 
             </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/radioGboard"
-                android:layout_width="58dp"
+            <LinearLayout
+                android:id="@+id/clickGboardStorage"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="false"
-                android:clickable="false" />
+                android:layout_marginTop="10dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:letterSpacing=".17"
+                        android:text="@string/gboardStorage"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="17dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/roboto"
+                        android:letterSpacing=".1"
+                        android:text="@string/gboardStorageSummary"
+                        android:textColor="@color/primaryText"
+                        android:textSize="16sp"
+                        tools:ignore="NestedWeights" />
+
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/radioGboard"
+                    android:layout_width="58dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:clickable="false" />
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

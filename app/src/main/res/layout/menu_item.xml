@@ -1,42 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="true"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="5dp"
-    app:cardElevation="0dp"
-    android:focusable="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
-        android:id="@+id/click"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:clickable="true"
-        android:padding="8dp"
-        tools:ignore="UseCompoundDrawables"
-        android:focusable="true">
+        android:focusable="true"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="0dp">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
-            tools:ignore="ContentDescription" />
+        <LinearLayout
+            android:id="@+id/click"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            tools:ignore="UseCompoundDrawables">
 
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_weight="1"
-            android:text="TextView"
-            android:textColor="@color/primaryText" />
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textColor="@color/primaryText" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

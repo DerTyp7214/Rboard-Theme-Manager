@@ -1,5 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <data>
+
         <variable
             name="magisk"
             type="de.dertyp7214.rboardthememanager.data.MagiskInfo" />
@@ -11,21 +13,21 @@
         android:orientation="vertical">
 
         <TextView
-            android:textColor="@color/primaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/magiskVersionCode(magisk.versionCode)}" />
+            android:text="@{@string/magiskVersionCode(magisk.versionNumber)}"
+            android:textColor="@color/primaryText" />
 
         <TextView
-            android:textColor="@color/primaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/magiskVersionNumber(magisk.versionNumber)}" />
+            android:text="@{@string/magiskVersionString(magisk.versionCode)}"
+            android:textColor="@color/primaryText" />
 
         <TextView
-            android:textColor="@color/primaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/magiskFullString(magisk.fullString)}" />
+            android:text="@{@string/magiskFullString(magisk.fullString)}"
+            android:textColor="@color/primaryText" />
     </LinearLayout>
 </layout>

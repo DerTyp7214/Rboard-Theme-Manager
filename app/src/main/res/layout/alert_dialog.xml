@@ -1,53 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardBackgroundColor="@color/colorPrimaryLight"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="50dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="10dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/body"
-            android:textColor="@color/primaryTextSec"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/long_text" />
+        android:layout_margin="50dp"
+        app:cardBackgroundColor="@color/colorPrimaryLight"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="end"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <com.google.android.material.button.MaterialButton
-                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                app:rippleColor="@color/colorAccent"
-                android:id="@+id/btnNo"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/body"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:textAllCaps="false"
-                android:text="@android:string/cancel"
-                android:textColor="@color/colorAccent" />
+                android:text="@string/long_text"
+                android:textColor="@color/primaryTextSec" />
 
-            <com.google.android.material.button.MaterialButton
-                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                app:rippleColor="@color/colorAccent"
-                android:id="@+id/btnYes"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:text="@android:string/ok"
-                android:textColor="@color/colorAccent" />
+                android:layout_marginTop="20dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNo"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="@android:string/cancel"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorAccent"
+                    app:rippleColor="@color/colorAccent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnYes"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@android:string/ok"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorAccent"
+                    app:rippleColor="@color/colorAccent" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</layout>

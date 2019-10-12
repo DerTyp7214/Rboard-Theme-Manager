@@ -1,70 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card"
-    app:cardCornerRadius="12dp"
-    android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:layout_margin="10dp"
-    android:background="?android:attr/selectableItemBackground">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="160dp"
+        android:layout_margin="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="12dp">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:ignore="UselessParent">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/theme_image"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/default_theme"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                android:id="@+id/theme_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="7dp"
-                android:text="Theme Name"
-                android:textAlignment="center"
-                android:textColor="@color/primaryText" />
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/theme_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/default_theme"
+                    tools:ignore="ContentDescription" />
 
-        <LinearLayout
-            android:id="@+id/select_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@color/colorAccentTransparent"
-            android:gravity="center"
-            android:orientation="vertical">
+                <TextView
+                    android:id="@+id/theme_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="7dp"
+                    android:text="Theme Name"
+                    android:textAlignment="center"
+                    android:textColor="@color/primaryText" />
 
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="40dp"
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/select_overlay"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_selected_theme_grid" />
+                android:alpha="0"
+                android:background="@color/colorAccentTransparent"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/theme_name_selected"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="7dp"
-                android:text="Theme Name"
-                android:textAlignment="center"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-    </FrameLayout>
-</androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_selected_theme_grid" />
+
+                <TextView
+                    android:id="@+id/theme_name_selected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="7dp"
+                    android:text="Theme Name"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
