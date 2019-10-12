@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.screens
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -20,7 +21,6 @@ import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.bottom_navigation.*
 
-
 class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
 
     override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
@@ -38,6 +38,8 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        startActivity(Intent(this, InfoScreen::class.java))
 
         keyboardHeightProvider = KeyboardHeightProvider(this)
 
