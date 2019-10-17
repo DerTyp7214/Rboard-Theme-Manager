@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.data.MagiskInfo
 import de.dertyp7214.rboardthememanager.databinding.FragmentInfoBinding
+import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 
 class InfoFragment : Fragment() {
 
@@ -20,7 +21,11 @@ class InfoFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_info, container, false)
         binding = FragmentInfoBinding.bind(v)
 
-        binding.magisk = MagiskInfo("WUUUUT", 1337, "JA LOL")
+        binding.magisk = MagiskInfo(
+            MagiskUtils.getMagiskVersionString(),
+            MagiskUtils.getMagiskVersionNumber().toInt(),
+            MagiskUtils.getMagiskVersionFullString()
+        )
 
         return v
     }

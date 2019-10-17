@@ -15,13 +15,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/magiskVersionCode(magisk.versionNumber)}"
+            android:text="@{@string/magiskVersionNumber(magisk.versionNumber)}"
             android:textColor="@color/primaryText" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/magiskVersionString(magisk.versionCode)}"
+            android:text="@{@string/magiskVersionCode(magisk.versionCode)}"
             android:textColor="@color/primaryText" />
 
         <TextView
