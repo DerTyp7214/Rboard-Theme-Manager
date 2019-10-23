@@ -19,7 +19,6 @@ import com.topjohnwu.superuser.Shell
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.updater.Updater
 import java.util.*
 
 class SplashScreen : AppCompatActivity() {
@@ -36,7 +35,7 @@ class SplashScreen : AppCompatActivity() {
             .subscribeToTopic("update-${BuildConfig.BUILD_TYPE.toLowerCase(Locale.ROOT)}")
 
         checkUpdate(
-            clazz = Updater::class.java,
+            clazz = null,
             updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
                 Locale.ROOT
             )}", versionCode = BuildConfig.VERSION_CODE, forceUpdate = false
