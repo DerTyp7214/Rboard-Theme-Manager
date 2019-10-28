@@ -5,12 +5,13 @@ import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import com.topjohnwu.superuser.io.SuFileOutputStream
+import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
 import java.io.File
 
 object ThemeHelper {
     @SuppressLint("SdCardPath")
     fun applyTheme(name: String): Boolean {
-        val inputPackageName = "com.google.android.inputmethod.latin"
+        val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName =
             "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
         val content = SuFileInputStream(SuFile(fileName)).use {
