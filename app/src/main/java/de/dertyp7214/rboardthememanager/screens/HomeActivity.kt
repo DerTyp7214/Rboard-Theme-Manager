@@ -3,7 +3,6 @@ package de.dertyp7214.rboardthememanager.screens
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.ViewModelProviders
@@ -15,6 +14,7 @@ import de.dertyp7214.rboardthememanager.data.MenuItem
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.fragments.DownloadFragment
 import de.dertyp7214.rboardthememanager.fragments.HomeGridFragment
+import de.dertyp7214.rboardthememanager.fragments.SoundsFragment
 import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightObserver
 import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightProvider
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
@@ -38,8 +38,6 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
-        startActivity(Intent(this, InfoScreen::class.java))
 
         keyboardHeightProvider = KeyboardHeightProvider(this)
 
@@ -76,63 +74,78 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                         setTransition(TRANSIT_FRAGMENT_OPEN)
                         commit()
                     }
+                    R.id.navigation_sounds -> supportFragmentManager.beginTransaction().apply {
+                        replace(fragment.id, SoundsFragment())
+                        setTransition(TRANSIT_FRAGMENT_OPEN)
+                        commit()
+                    }
                 }
             }
             true
         }
 
         searchButton.setOnClickListener { _ ->
-            val bottomSheet = InputBottomSheet(homeViewModel.getFilter(), View.OnKeyListener { _, _, _ ->
-                true
-            }, { text, it ->
-                homeViewModel.setFilter(text.toString())
-                it.dismiss()
-            }) { input, _ ->
-                val popupMenu = popupMenu {
-                    style = R.style.PopupMenu
-                    section {
-                        item {
-                            label = "Test"
-                            icon = R.drawable.ic_list
-                            callback = {
-                                Toast.makeText(this@HomeActivity, "TEST", Toast.LENGTH_LONG)
-                                    .show()
+            val bottomSheet =
+                InputBottomSheet(homeViewModel.getFilter(), View.OnKeyListener { _, _, _ ->
+                    true
+                }, { text, it ->
+                    homeViewModel.setFilter(text.toString())
+                    it.dismiss()
+                }) { input, _ ->
+                    val popupMenu = popupMenu {
+                        style = R.style.PopupMenu
+                        section {
+                            item {
+                                labelRes = R.string.list_grid
+                                icon = R.drawable.ic_list
+                                callback = {
+                                    homeViewModel.setGridLayout(
+                                        GridLayout.SINGLE,
+                                        this@HomeActivity
+                                    )
+                                    bottomSheet.dismiss()
+                                }
+                            }
+                            item {
+                                labelRes = R.string.grid_small
+                                icon = R.drawable.grid
+                                callback = {
+                                    homeViewModel.setGridLayout(GridLayout.SMALL, this@HomeActivity)
+                                    bottomSheet.dismiss()
+                                }
+                            }
+                            item {
+                                labelRes = R.string.grid_big
+                                icon = R.drawable.grid
+                                callback = {
+                                    homeViewModel.setGridLayout(GridLayout.BIG, this@HomeActivity)
+                                    bottomSheet.dismiss()
+                                }
                             }
                         }
                     }
-                }
-                popupMenu.show(this, input)
-            }.setKeyBoardHeightObserver(this, homeViewModel)
+                    popupMenu.show(this, input)
+                }.setKeyBoardHeightObserver(this, homeViewModel)
             bottomSheet.show(supportFragmentManager, "")
         }
 
         menuButton.setOnClickListener {
             bottomSheet = MenuBottomSheet(arrayListOf(
                 MenuItem(
-                    R.drawable.ic_list,
-                    R.string.list_grid,
-                    homeViewModel.getGridLayout() == GridLayout.SINGLE
+                    R.drawable.data,
+                    R.string.data,
+                    false
                 ) {
-                    homeViewModel.setGridLayout(GridLayout.SINGLE, this)
-                    bottomSheet.dismiss()
+                    startActivity(Intent(this, InfoScreen::class.java))
                 },
                 MenuItem(
-                    R.drawable.grid,
-                    R.string.grid_small,
-                    homeViewModel.getGridLayout() == GridLayout.SMALL
+                    R.drawable.about,
+                    R.string.about,
+                    false
                 ) {
-                    homeViewModel.setGridLayout(GridLayout.SMALL, this)
-                    bottomSheet.dismiss()
-                },
-                MenuItem(
-                    R.drawable.grid,
-                    R.string.grid_big,
-                    homeViewModel.getGridLayout() == GridLayout.BIG
-                ) {
-                    homeViewModel.setGridLayout(GridLayout.BIG, this)
-                    bottomSheet.dismiss()
+                    startActivity(Intent(this, AboutActivity::class.java))
                 }
-            ))
+            ), "")
             bottomSheet.show(supportFragmentManager, "")
         }
     }

@@ -48,4 +48,20 @@
         <item name="mpm_activeIconColor">@color/primaryTextSec</item>
     </style>
 
+    <style name="darkAlertDialogFullScreen" parent="@style/Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">#EBEBEB</item>
+        <item name="android:colorAccent">?attr/colorAccent</item>
+        <item name="android:colorButtonNormal">?attr/colorAccent</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:colorControlActivated">?attr/colorAccent</item>
+        <item name="android:windowBackground">#F7F7F7</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:navigationBarColor">#EBEBEB</item>
+        <item name="android:statusBarColor">#EBEBEB</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
 </resources>

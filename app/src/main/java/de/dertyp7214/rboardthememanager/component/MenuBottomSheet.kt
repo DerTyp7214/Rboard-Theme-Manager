@@ -19,7 +19,8 @@ import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.data.MenuItem
 
 class MenuBottomSheet(
-    private val items: List<MenuItem>
+    private val items: List<MenuItem>,
+    private val title: String = ""
 ) :
     RoundedBottomSheetDialogFragment() {
 
@@ -33,6 +34,8 @@ class MenuBottomSheet(
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.menu_bottom_sheet, container, false)
+
+        v.findViewById<TextView>(R.id.title).text = title
 
         val recyclerView: RecyclerView = v.findViewById(R.id.recyclerView)
 

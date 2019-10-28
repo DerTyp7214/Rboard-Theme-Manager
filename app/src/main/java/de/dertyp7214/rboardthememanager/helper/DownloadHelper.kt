@@ -1,10 +1,15 @@
 package de.dertyp7214.rboardthememanager.helper
 
 import android.content.Context
+import android.widget.ImageView
+import android.widget.ProgressBar
+import com.afollestad.materialdialogs.MaterialDialog
 import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import de.dertyp7214.rboardthememanager.R
 import java.io.File
+
 
 class DownloadHelper(private val context: Context) {
 
@@ -56,6 +61,21 @@ class DownloadHelper(private val context: Context) {
                 }
             })
     }
+}
+
+fun downloadDialog(context: Context): Pair<ProgressBar, MaterialDialog> {
+    lateinit var progressBar: ProgressBar
+    val dialog = MaterialDialog(context).show {
+        setContentView(R.layout.download_alert)
+        cancelable(false)
+        cancelOnTouchOutside(false)
+        progressBar = findViewById(R.id.progressbar_downloading)
+        val imageView = findViewById<ImageView>(R.id.dialog_image_view)
+        imageView.viewTreeObserver.addOnGlobalLayoutListener {
+            progressBar.scaleY = imageView.measuredHeight.toFloat()
+        }
+    }
+    return Pair(progressBar, dialog)
 }
 
 interface DownloadListener {

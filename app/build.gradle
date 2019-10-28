@@ -51,7 +51,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
     implementation 'com.jaredrummler:android-shell:1.0.0'
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.github.DerTyp7214:AppUpdater:v1.5'
@@ -61,6 +61,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.1.1'
     implementation 'com.afollestad.material-dialogs:lifecycle:3.1.1'
     implementation 'com.afollestad.material-dialogs:core:3.1.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
 
 apply plugin: 'com.google.gms.google-services'

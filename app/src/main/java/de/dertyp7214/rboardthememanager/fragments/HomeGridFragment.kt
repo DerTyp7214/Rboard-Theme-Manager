@@ -55,7 +55,11 @@ class HomeGridFragment : Fragment() {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
 
-        refreshLayout.setProgressViewOffset(true, 0, context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt())
+        refreshLayout.setProgressViewOffset(
+            true,
+            0,
+            context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt()
+        )
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
         refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
         refreshLayout.setOnRefreshListener {
@@ -63,7 +67,7 @@ class HomeGridFragment : Fragment() {
         }
 
         refreshLayout.isRefreshing = true
-        fabAdd.setMargin(bottomMargin = context!!.getNavigationBarHeight() + 54.dpToPx(context!!).toInt())
+        fabAdd.setMargin(bottomMargin = 64.dpToPx(context!!).toInt())
         fabAdd.setOnClickListener {
             Toast.makeText(context!!, "Add theme", Toast.LENGTH_LONG).show()
         }
@@ -145,8 +149,10 @@ class HomeGridFragment : Fragment() {
         context!!.delayed(200) {
             if (!homeViewModel.themesExist()) {
                 Thread {
-                    themeList.clear()
-                    themeList.addAll(loadThemes().sortedBy { it.name.toLowerCase(Locale.ROOT) })
+                    loadThemes().apply {
+                        themeList.clear()
+                        themeList.addAll(sortedBy { it.name.toLowerCase(Locale.ROOT) })
+                    }
                     activity?.runOnUiThread {
                         homeViewModel.setThemes(themeList)
                         adapter.notifyDataSetChanged()

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,7 @@ import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.helper.DownloadHelper
 import de.dertyp7214.rboardthememanager.helper.DownloadListener
 import de.dertyp7214.rboardthememanager.helper.ZipHelper
+import de.dertyp7214.rboardthememanager.helper.downloadDialog
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import org.json.JSONArray
 import org.json.JSONObject
@@ -52,6 +54,7 @@ class DownloadFragment : Fragment() {
 
         adapter = Adapter(context!!, list) {
             homeViewModel.setRefetch(true)
+            Toast.makeText(context, R.string.downloaded, Toast.LENGTH_SHORT).show()
         }
 
         val recyclerView = v.findViewById<RecyclerView>(R.id.recyclerView)
@@ -85,7 +88,11 @@ class DownloadFragment : Fragment() {
         return v
     }
 
-    class Adapter(private val context: Context, private val list: ArrayList<PackItem>, private val callback: () -> Unit) :
+    class Adapter(
+        private val context: Context,
+        private val list: ArrayList<PackItem>,
+        private val callback: () -> Unit
+    ) :
         RecyclerView.Adapter<Adapter.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
@@ -107,6 +114,9 @@ class DownloadFragment : Fragment() {
             holder.author.text = "by ${pack.author}"
 
             holder.layout.setOnClickListener {
+                val pair = downloadDialog(context).apply {
+                    first.isIndeterminate = false
+                }
                 DownloadHelper(context)
                     .from(pack.url)
                     .to(
@@ -123,7 +133,7 @@ class DownloadFragment : Fragment() {
                         }
 
                         override fun progress(progress: Int, current: Long, total: Long) {
-                            Log.d("PROGRESS", "$progress ${current}/${total}")
+                            pair.first.progress = progress
                         }
 
                         override fun error(error: String) {
@@ -131,7 +141,9 @@ class DownloadFragment : Fragment() {
                         }
 
                         override fun end(path: String) {
+                            pair.first.isIndeterminate = true
                             ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
+                            pair.second.dismiss()
                             callback()
                         }
                     })

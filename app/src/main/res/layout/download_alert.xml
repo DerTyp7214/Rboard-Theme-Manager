@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="16dp"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:background="@color/colorPrimary"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="140dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="20dp"
+        card:layout_constraintBottom_toBottomOf="@id/dialog_image_view"
+        card:layout_constraintEnd_toEndOf="@id/dialog_image_view"
+        card:layout_constraintStart_toStartOf="@id/dialog_image_view"
+        card:layout_constraintTop_toTopOf="@id/dialog_image_view">
+
+        <ProgressBar
+            android:id="@+id/progressbar_downloading"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:indeterminate="true"
+            android:indeterminateTint="#1DE9B6"
+            android:maxHeight="999dp"
+            android:minHeight="888dp"
+            android:progressTint="#1DE9B6" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/dialog_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:accessibilityLiveRegion="none"
+        android:adjustViewBounds="true"
+        android:src="@drawable/downloading"
+        android:visibility="visible"
+        card:layout_constraintEnd_toEndOf="parent"
+        card:layout_constraintStart_toStartOf="parent"
+        card:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+</androidx.constraintlayout.widget.ConstraintLayout>

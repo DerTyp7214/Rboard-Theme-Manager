@@ -1,33 +1,145 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="magisk"
             type="de.dertyp7214.rboardthememanager.data.MagiskInfo" />
+
+        <variable
+            name="versions"
+            type="de.dertyp7214.rboardthememanager.data.Versions" />
+
+        <variable
+            name="themes"
+            type="de.dertyp7214.rboardthememanager.data.Themes" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/magiskVersionNumber(magisk.versionNumber)}"
-            android:textColor="@color/primaryText" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{@string/magiskVersionCode(magisk.versionCode)}"
-            android:textColor="@color/primaryText" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:drawableStart="@drawable/android_head"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/colorAccent"
+                    android:gravity="center_vertical"
+                    android:letterSpacing=".2"
+                    android:text="@string/device"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="@{@string/magiskIsInstalled(magisk.versionCode)}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="@{@string/gboardVersion(versions.gboard)}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="@{@string/androidVersion(versions.android)}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="@{@string/rboardVersion(versions.rboard)}" />
+
+                <TextView
+                    android:id="@+id/textView10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:drawableStart="@drawable/theme"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/colorAccent"
+                    android:gravity="center_vertical"
+                    android:letterSpacing=".2"
+                    android:text="@string/themes"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="@{@string/themesMode(themes.mode)}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="@{@string/themesCount(themes.count)}" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/divider" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/installModule"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{@string/magiskFullString(magisk.fullString)}"
-            android:textColor="@color/primaryText" />
-    </LinearLayout>
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="@color/colorAccent"
+            app:elevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/puzzle"
+            app:tint="@android:color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

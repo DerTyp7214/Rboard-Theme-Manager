@@ -37,4 +37,25 @@
     <string name="magiskVersionNumber">Magisk VersionCode: %d</string>
     <string name="magiskVersionCode">Magisk VersionString: %s</string>
     <string name="magiskFullString">Magisk FullString: %s</string>
+    <string name="sound_placeholder">Soon™</string>
+    <string name="downloading">Downloading</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="about">About</string>
+    <string name="paypal_typ_summary">Developer of this Application</string>
+    <string name="paypal_typ_title">Donate DerTyp7214</string>
+    <string name="paypal_rk_title">Donate RKBDI</string>
+    <string name="paypal_rk_summary">Creator of many themes and the Magisk Module</string>
+    <string name="device">Device</string>
+    <string name="themes">Themes</string>
+    <string name="themesMode">Themes installed using %s</string>
+    <string name="themesCount">%s themes installed</string>
+    <string name="loading">Loading</string>
+    <string name="magisk">Magisk</string>
+    <string name="root">Root</string>
+    <string name="magiskIsInstalled">Magisk version %s</string>
+    <string name="androidVersion">Android version %s</string>
+    <string name="gboardVersion">Gboard version %s</string>
+    <string name="rboardVersion">Rboard Theme Manager version %s</string>
+    <string name="about_title">About Application</string>
+    <string name="data">Info</string>
 </resources>

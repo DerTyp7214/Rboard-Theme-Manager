@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="stateAlwaysVisible|adjustPan"
         tools:ignore="AllowBackup">
-        <activity android:name=".screens.InfoScreen"></activity>
+        <activity android:name=".screens.AboutActivity"></activity>
+        <activity android:name=".screens.InfoScreen" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
