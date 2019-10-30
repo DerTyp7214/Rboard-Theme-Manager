@@ -1,19 +1,29 @@
 package de.dertyp7214.rboardthememanager.helper
 
 import android.annotation.SuppressLint
+import com.dertyp7214.logs.helpers.Logger
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import com.topjohnwu.superuser.io.SuFileOutputStream
 import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
+import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import java.io.File
+import java.io.InputStream
 
 object ThemeHelper {
+
+    fun installTheme(inputStream: InputStream, name: String): Boolean {
+        inputStream.copyTo(SuFileOutputStream(File(MAGISK_THEME_LOC, name)))
+        return true
+    }
+
     @SuppressLint("SdCardPath")
     fun applyTheme(name: String): Boolean {
         val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName =
             "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
+        Logger.log(Logger.Companion.Type.INFO, "APPLY", "$name $inputPackageName $fileName")
         val content = SuFileInputStream(SuFile(fileName)).use {
             it.bufferedReader().readText()
         }.let {
@@ -48,5 +58,7 @@ object ThemeHelper {
 }
 
 fun String.runAsCommand(): Boolean {
-    return Shell.getShell().newJob().add(this).exec().isSuccess
+    return Shell.getShell().newJob().add(this).exec().isSuccess.apply {
+        Logger.log(Logger.Companion.Type.INFO, "RUN COMMAND", "$this ${this@runAsCommand}")
+    }
 }

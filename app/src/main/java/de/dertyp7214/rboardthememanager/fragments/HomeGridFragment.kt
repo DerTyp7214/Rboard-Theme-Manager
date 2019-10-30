@@ -1,12 +1,16 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,14 +23,18 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.afollestad.materialdialogs.MaterialDialog
+import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.SelectedThemeBottomSheet
 import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
+import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
@@ -41,6 +49,8 @@ class HomeGridFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var recyclerView: RecyclerView
     private val themeList = ArrayList<ThemeDataClass>()
+
+    private val addTheme = 187
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,9 +77,13 @@ class HomeGridFragment : Fragment() {
         }
 
         refreshLayout.isRefreshing = true
-        fabAdd.setMargin(bottomMargin = 64.dpToPx(context!!).toInt())
+        fabAdd.setMargin(bottomMargin = 68.dpToPx(context!!).toInt())
         fabAdd.setOnClickListener {
-            Toast.makeText(context!!, "Add theme", Toast.LENGTH_LONG).show()
+            val intent = Intent()
+                .setType("application/zip")
+                .setAction(Intent.ACTION_GET_CONTENT);
+
+            startActivityForResult(Intent.createChooser(intent, "Select a theme"), addTheme);
         }
 
         val adapter = GridThemeAdapter(activity!!, themeList, homeViewModel)
@@ -107,10 +121,17 @@ class HomeGridFragment : Fragment() {
             adapter.notifyDataSetChanged()
         })
 
-        homeViewModel.themesObserve(this, Observer {
-            if (tmpList.isEmpty() || it.size > tmpList.size) tmpList.apply {
+        homeViewModel.themesObserve(this, Observer { list ->
+            if (tmpList.isEmpty() || list.size > tmpList.size) tmpList.apply {
                 clear()
-                addAll(it)
+                addAll(list)
+                forEach {
+                    Logger.log(
+                        Logger.Companion.Type.INFO,
+                        "LOAD THEMES",
+                        "${it.selected} | ${it.name} | ${it.path}"
+                    )
+                }
             }
         })
 
@@ -205,6 +226,27 @@ class HomeGridFragment : Fragment() {
         return v
     }
 
+    @SuppressLint("InflateParams")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
+            MaterialDialog(activity!!).show {
+                setContentView(R.layout.popup_name)
+                val input = findViewById<EditText>(R.id.name)
+                val ok = findViewById<MaterialButton>(R.id.yes)
+                val cancel = findViewById<MaterialButton>(R.id.no)
+                ok.setOnClickListener {
+                    if (ThemeHelper.installTheme(
+                        activity!!.contentResolver.openInputStream(data.data!!)!!,
+                        input.text.toString()
+                    )) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_LONG).show()
+                    dismiss()
+                }
+                cancel.setOnClickListener { dismiss() }
+            }
+        }
+    }
+
     override fun onDetach() {
         super.onDetach()
         homeViewModel.setRecyclerViewState(recyclerView.layoutManager?.onSaveInstanceState())
@@ -240,6 +282,7 @@ class HomeGridFragment : Fragment() {
 
         override fun getItemCount(): Int = list.size
 
+        @SuppressLint("SetTextI18n", "DefaultLocale")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val selection = list.map { it.selected }.contains(true)
             val dataClass = list[position]
@@ -261,8 +304,10 @@ class HomeGridFragment : Fragment() {
             holder.themeImage.setImageBitmap(dataClass.image ?: default)
             holder.themeImage.alpha = if (dataClass.image != null) 1F else .3F
 
-            holder.themeName.text = dataClass.name
-            holder.themeNameSelect.text = dataClass.name
+            holder.themeName.text =
+                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == ThemeHelper.getActiveTheme()) "(applied)" else ""}"
+            holder.themeNameSelect.text =
+                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == ThemeHelper.getActiveTheme()) "(applied)" else ""}"
 
             holder.themeName.setTextColor(if (isColorLight(color)) Color.BLACK else Color.WHITE)
 

@@ -11,7 +11,7 @@ fun JSONObject.safeParse(string: String): JSONObject {
     }
 }
 
-fun JSONArray.safeParse(string: String): JSONArray {
+fun safeParse(string: String): JSONArray {
     return try {
         JSONArray(string)
     } catch (e: Exception) {

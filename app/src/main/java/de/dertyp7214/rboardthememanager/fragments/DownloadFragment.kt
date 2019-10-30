@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
@@ -29,7 +30,6 @@ import de.dertyp7214.rboardthememanager.helper.DownloadListener
 import de.dertyp7214.rboardthememanager.helper.ZipHelper
 import de.dertyp7214.rboardthememanager.helper.downloadDialog
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.net.URL
@@ -69,7 +69,7 @@ class DownloadFragment : Fragment() {
         )
 
         Thread {
-            val json = JSONArray().safeParse(URL(PACKS_URL).readText(UTF_8))
+            val json = safeParse(URL(PACKS_URL).readText(UTF_8))
             json.forEach { o, _ ->
                 if (o is JSONObject && o.has("author") && o.has("url") && o.has("title"))
                     list.add(
@@ -77,7 +77,13 @@ class DownloadFragment : Fragment() {
                             o.getString("title"),
                             o.getString("author"),
                             o.getString("url")
-                        )
+                        ).apply {
+                            Logger.log(
+                                Logger.Companion.Type.INFO,
+                                "DOWNLOAD ITEM",
+                                "$name | $author | $url"
+                            )
+                        }
                     )
             }
             activity?.runOnUiThread {

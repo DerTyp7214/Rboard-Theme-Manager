@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.ViewModelProviders
 import com.github.zawadz88.materialpopupmenu.popupMenu
+import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
@@ -31,7 +32,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
     }
 
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var bottomSheet: MenuBottomSheet
+    private var bottomSheet: MenuBottomSheet? = null
     private var keyboardHeightProvider: KeyboardHeightProvider? = null
     private var currentFragment = 0
 
@@ -103,7 +104,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                                         GridLayout.SINGLE,
                                         this@HomeActivity
                                     )
-                                    bottomSheet.dismiss()
+                                    bottomSheet?.dismiss()
                                 }
                             }
                             item {
@@ -111,7 +112,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                                 icon = R.drawable.grid
                                 callback = {
                                     homeViewModel.setGridLayout(GridLayout.SMALL, this@HomeActivity)
-                                    bottomSheet.dismiss()
+                                    bottomSheet?.dismiss()
                                 }
                             }
                             item {
@@ -119,7 +120,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                                 icon = R.drawable.grid
                                 callback = {
                                     homeViewModel.setGridLayout(GridLayout.BIG, this@HomeActivity)
-                                    bottomSheet.dismiss()
+                                    bottomSheet?.dismiss()
                                 }
                             }
                         }
@@ -145,8 +146,19 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                 ) {
                     startActivity(Intent(this, AboutActivity::class.java))
                 }
-            ), "")
-            bottomSheet.show(supportFragmentManager, "")
+            ).apply {
+                if (BuildConfig.DEBUG) {
+                    add(MenuItem(
+                        R.drawable.logs,
+                        R.string.logs,
+                        false
+                    ) {
+                        startActivity(Intent(this@HomeActivity, LogsScreen::class.java))
+                    })
+                }
+            }, ""
+            )
+            bottomSheet?.show(supportFragmentManager, "")
         }
     }
 

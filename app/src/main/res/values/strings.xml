@@ -58,4 +58,12 @@
     <string name="rboardVersion">Rboard Theme Manager version %s</string>
     <string name="about_title">About Application</string>
     <string name="data">Info</string>
+    <string name="logs">Logs</string>
+    <string name="delete">Delete</string>
+    <string name="cleared">Logs cleared</string>
+    <string name="share">Share</string>
+    <string name="share_error">Error while uploading!</string>
+    <string name="title_name_popup">Choose a name for the Theme</string>
+    <string name="name">Name</string>
+    <string name="theme_added">Theme added</string>
 </resources>

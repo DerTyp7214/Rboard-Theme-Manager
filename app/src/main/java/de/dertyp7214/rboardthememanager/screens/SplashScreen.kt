@@ -47,7 +47,10 @@ class SplashScreen : AppCompatActivity() {
                             Manifest.permission.READ_EXTERNAL_STORAGE
                         ) != PackageManager.PERMISSION_GRANTED
                     ) runAnimation()
-                    else startApp()
+                    else {
+                        startApp()
+                        finish()
+                    }
                 }
             }
         }

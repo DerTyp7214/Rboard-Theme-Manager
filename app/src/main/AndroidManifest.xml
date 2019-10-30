@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".Application"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -15,7 +16,8 @@
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="stateAlwaysVisible|adjustPan"
         tools:ignore="AllowBackup">
-        <activity android:name=".screens.AboutActivity"></activity>
+        <activity android:name=".screens.LogsScreen" />
+        <activity android:name=".screens.AboutActivity" />
         <activity android:name=".screens.InfoScreen" />
 
         <meta-data
@@ -34,9 +36,8 @@
         </activity>
         <activity android:name=".screens.HomeActivity" />
         <activity android:name=".screens.IntroActivity" />
-        <activity
-            android:name=".updater.Updater"
-            android:theme="@style/AppUpdaterTheme" />
+        <activity android:name="com.dertyp7214.logs.helpers.CrashReportDialog" />
+        <activity android:name="com.dertyp7214.logs.screens.Logs" />
 
         <service
             android:name=".notification.Service"
