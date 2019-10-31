@@ -52,7 +52,7 @@
                     android:id="@+id/paypal_typ"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/paypal_typ_title"
+                    android:text="@string/typ_title"
                     android:textColor="@color/primaryText"
                     android:textSize="18sp" />
 
@@ -60,7 +60,7 @@
                     android:id="@+id/paypal_typ_sum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/paypal_typ_summary"
+                    android:text="@string/typ_summary"
                     android:textColor="@color/primaryTextSec"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -96,7 +96,7 @@
                     android:id="@+id/paypal_rk"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/paypal_rk_title"
+                    android:text="@string/rk_title"
                     android:textColor="@color/primaryText"
                     android:textSize="18sp" />
 
@@ -104,7 +104,7 @@
                     android:id="@+id/paypal_rk_sum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/paypal_rk_summary"
+                    android:text="@string/rk_summary"
                     android:textColor="@color/primaryTextSec"
                     android:textSize="16sp" />
             </LinearLayout>

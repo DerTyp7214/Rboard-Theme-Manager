@@ -6,13 +6,18 @@
         <item name="md_color_button_text">@color/colorAccent</item>
         <item name="md_ripple_color">@color/colorAccent</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="background">@color/colorPrimary</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:textColorPrimary">@color/primaryText</item>
+        <item name="android:textColorSecondary">@color/primaryTextSec</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
         <item name="android:statusBarColor">@color/colorPrimaryTransparent</item>
         <item name="toolbarStyle">@style/ActionBar</item>
+        <item name="colorBackgroundFloating">@color/colorPrimaryLight</item>
+        <item name="android:colorBackgroundFloating">@color/colorPrimaryLight</item>
+        <item name="android:colorControlHighlight">@color/ripple</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowContentTransitions">true</item>

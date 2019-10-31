@@ -41,10 +41,10 @@
     <string name="downloading">Downloading</string>
     <string name="downloaded">Downloaded</string>
     <string name="about">About</string>
-    <string name="paypal_typ_summary">Developer of this Application</string>
-    <string name="paypal_typ_title">Donate DerTyp7214</string>
-    <string name="paypal_rk_title">Donate RKBDI</string>
-    <string name="paypal_rk_summary">Creator of many themes and the Magisk Module</string>
+    <string name="typ_summary">Developer of this Application</string>
+    <string name="typ_title">DerTyp7214</string>
+    <string name="rk_title">RKBDI</string>
+    <string name="rk_summary">Creator of many themes and the Magisk Module</string>
     <string name="device">Device</string>
     <string name="themes">Themes</string>
     <string name="themesMode">Themes installed using %s</string>
