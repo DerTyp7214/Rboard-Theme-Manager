@@ -7,6 +7,7 @@ import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 object ThemeUtils {
     fun loadThemes(): List<ThemeDataClass> {
         val themeDir =
@@ -16,7 +17,7 @@ object ThemeUtils {
         }?.map {
             val imageFile = File(THEME_LOCATION, it.name.removeSuffix(".zip"))
             if (imageFile.exists()) ThemeDataClass(
-                BitmapFactory.decodeFile(imageFile.absolutePath),
+                BitmapFactory.decodeFile(imageFile.path),
                 it.name.removeSuffix(".zip"),
                 it.absolutePath
             )

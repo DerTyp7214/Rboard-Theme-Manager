@@ -34,6 +34,23 @@ class SplashScreen : AppCompatActivity() {
         FirebaseMessaging.getInstance()
             .subscribeToTopic("update-${BuildConfig.BUILD_TYPE.toLowerCase(Locale.ROOT)}")
 
+        getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+            if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                    this@SplashScreen,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) runAnimation()
+            else {
+                checkUpdate {
+                    startApp()
+                    finish()
+                }
+            }
+        }
+    }
+
+    private fun checkUpdate(callback: () -> Unit) {
+        callback()
         checkUpdate(
             clazz = null,
             updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
@@ -41,17 +58,7 @@ class SplashScreen : AppCompatActivity() {
             )}", versionCode = BuildConfig.VERSION_CODE, forceUpdate = false
         ) {
             runOnUiThread {
-                getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-                    if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
-                            this@SplashScreen,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) runAnimation()
-                    else {
-                        startApp()
-                        finish()
-                    }
-                }
+                callback()
             }
         }
     }
@@ -68,9 +75,11 @@ class SplashScreen : AppCompatActivity() {
             interpolator = AccelerateDecelerateInterpolator()
             start()
         }.doOnEnd {
-            startActivity(Intent(this, IntroActivity::class.java))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-            finish()
+            checkUpdate {
+                startActivity(Intent(this, IntroActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                finish()
+            }
         }
     }
 

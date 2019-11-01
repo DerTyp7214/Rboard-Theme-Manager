@@ -35,6 +35,7 @@ import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.helper.ThemeHelper
+import de.dertyp7214.rboardthememanager.helper.TimeLogger
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
@@ -81,14 +82,15 @@ class HomeGridFragment : Fragment() {
         fabAdd.setOnClickListener {
             val intent = Intent()
                 .setType("application/zip")
-                .setAction(Intent.ACTION_GET_CONTENT);
+                .setAction(Intent.ACTION_GET_CONTENT)
 
-            startActivityForResult(Intent.createChooser(intent, "Select a theme"), addTheme);
+            startActivityForResult(Intent.createChooser(intent, "Select a theme"), addTheme)
         }
 
         val adapter = GridThemeAdapter(activity!!, themeList, homeViewModel)
 
         homeViewModel.gridLayoutObserve(this, Observer {
+            recyclerView.stopScroll()
             adapter.notifyDataSetChanged()
             if (recyclerView.layoutManager is GridLayoutManager) {
                 val columns = if (it == GridLayout.SINGLE) 1 else 2
@@ -118,12 +120,13 @@ class HomeGridFragment : Fragment() {
         })
 
         homeViewModel.gridLayoutObserve(this, Observer {
+            recyclerView.stopScroll()
             adapter.notifyDataSetChanged()
         })
 
         homeViewModel.themesObserve(this, Observer { list ->
             if (tmpList.isEmpty() || list.size > tmpList.size) tmpList.apply {
-                clear()
+                clear(adapter)
                 addAll(list)
                 forEach {
                     Logger.log(
@@ -143,7 +146,7 @@ class HomeGridFragment : Fragment() {
                 start()
             }
             Thread {
-                themeList.clear()
+                themeList.clear(adapter)
                 themeList.addAll((if (!homeViewModel.getRefetch()) tmpList else loadThemes()).filter {
                     filter.isBlank() || it.name.contains(
                         filter
@@ -155,6 +158,7 @@ class HomeGridFragment : Fragment() {
                 })
                 activity?.runOnUiThread {
                     homeViewModel.setThemes(themeList)
+                    recyclerView.stopScroll()
                     adapter.notifyDataSetChanged()
                     refreshLayout.isRefreshing = false
                     if (homeViewModel.getRefetch()) homeViewModel.setRefetch(false)
@@ -171,11 +175,12 @@ class HomeGridFragment : Fragment() {
             if (!homeViewModel.themesExist()) {
                 Thread {
                     loadThemes().apply {
-                        themeList.clear()
+                        themeList.clear(adapter)
                         themeList.addAll(sortedBy { it.name.toLowerCase(Locale.ROOT) })
                     }
                     activity?.runOnUiThread {
                         homeViewModel.setThemes(themeList)
+                        recyclerView.stopScroll()
                         adapter.notifyDataSetChanged()
                         refreshLayout.isRefreshing = false
                         ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
@@ -186,8 +191,9 @@ class HomeGridFragment : Fragment() {
                     }
                 }.start()
             } else {
-                themeList.clear()
+                themeList.clear(adapter)
                 themeList.addAll(homeViewModel.getThemes())
+                recyclerView.stopScroll()
                 adapter.notifyDataSetChanged()
                 refreshLayout.isRefreshing = false
                 ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
@@ -204,6 +210,7 @@ class HomeGridFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         recyclerView.setHasFixedSize(true)
+        recyclerView.setItemViewCacheSize(200)
         recyclerView.addItemDecoration(
             GridTopOffsetItemDecoration(
                 context!!.getStatusBarHeight(),
@@ -228,7 +235,7 @@ class HomeGridFragment : Fragment() {
 
     @SuppressLint("InflateParams")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
             MaterialDialog(activity!!).show {
                 setContentView(R.layout.popup_name)
@@ -237,9 +244,10 @@ class HomeGridFragment : Fragment() {
                 val cancel = findViewById<MaterialButton>(R.id.no)
                 ok.setOnClickListener {
                     if (ThemeHelper.installTheme(
-                        activity!!.contentResolver.openInputStream(data.data!!)!!,
-                        input.text.toString()
-                    )) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_LONG).show()
+                            activity!!.contentResolver.openInputStream(data.data!!)!!,
+                            input.text.toString()
+                        )
+                    ) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_LONG).show()
                     dismiss()
                 }
                 cancel.setOnClickListener { dismiss() }
@@ -258,6 +266,21 @@ class HomeGridFragment : Fragment() {
         private val homeViewModel: HomeViewModel
     ) :
         RecyclerView.Adapter<GridThemeAdapter.ViewHolder>() {
+
+        private var recyclerView: RecyclerView? = null
+
+        private var activeTheme = ""
+        private val default = context.resources.getDrawable(
+            R.drawable.ic_keyboard,
+            null
+        ).getBitmap()
+
+        override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+            super.onAttachedToRecyclerView(recyclerView)
+            this.recyclerView = recyclerView
+            activeTheme = ThemeHelper.getActiveTheme()
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
                 LayoutInflater.from(parent.context).inflate(
@@ -284,14 +307,18 @@ class HomeGridFragment : Fragment() {
 
         @SuppressLint("SetTextI18n", "DefaultLocale")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val timingLogger = TimeLogger("HomeGridFragment", "OnBind Adapter", false)
+            timingLogger.reset()
             val selection = list.map { it.selected }.contains(true)
             val dataClass = list[position]
 
-            val default = context.resources.getDrawable(
-                R.drawable.ic_keyboard,
-                null
-            ).getBitmap()
+            timingLogger.addSplit("Init")
+
+            timingLogger.addSplit("Image")
+
             val color = dominantColor(dataClass.image ?: default)
+
+            timingLogger.addSplit("Color")
 
             if (holder.gradient != null) {
                 val gradient = GradientDrawable(
@@ -301,22 +328,34 @@ class HomeGridFragment : Fragment() {
                 holder.gradient.background = gradient
             }
 
+            timingLogger.addSplit("Gradient")
+
             holder.themeImage.setImageBitmap(dataClass.image ?: default)
             holder.themeImage.alpha = if (dataClass.image != null) 1F else .3F
 
+            timingLogger.addSplit("Apply Image")
+
             holder.themeName.text =
-                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == ThemeHelper.getActiveTheme()) "(applied)" else ""}"
+                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == activeTheme) "(applied)" else ""}"
             holder.themeNameSelect.text =
-                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == ThemeHelper.getActiveTheme()) "(applied)" else ""}"
+                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == activeTheme) "(applied)" else ""}"
+
+            timingLogger.addSplit("Titles")
 
             holder.themeName.setTextColor(if (isColorLight(color)) Color.BLACK else Color.WHITE)
+
+            timingLogger.addSplit("Text Color")
 
             if (dataClass.selected)
                 holder.selectOverlay.alpha = 1F
             else
                 holder.selectOverlay.alpha = 0F
 
+            timingLogger.addSplit("Selection Overlay")
+
             holder.card.setCardBackgroundColor(color)
+
+            timingLogger.addSplit("Card Background")
 
             holder.card.setOnClickListener {
                 if (selection) {
@@ -329,6 +368,7 @@ class HomeGridFragment : Fragment() {
                         duration = 100
                         start()
                     }.doOnEnd {
+                        recyclerView?.stopScroll()
                         notifyDataSetChanged()
                     }
                 } else {
@@ -341,6 +381,8 @@ class HomeGridFragment : Fragment() {
                 }
             }
 
+            timingLogger.addSplit("Click Listener")
+
             holder.card.setOnLongClickListener {
                 list[position].selected = true
                 ObjectAnimator.ofFloat(
@@ -351,10 +393,15 @@ class HomeGridFragment : Fragment() {
                     duration = 100
                     start()
                 }.doOnEnd {
+                    recyclerView?.stopScroll()
                     notifyDataSetChanged()
                 }
                 true
             }
+
+            timingLogger.addSplit("Longclick Listener")
+
+            timingLogger.dumpToLog()
         }
 
         class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {

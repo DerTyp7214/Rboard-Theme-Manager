@@ -13,4 +13,5 @@
     <color name="inputBackground">#1F1F1F</color>
     <color name="menuBackground">#282828</color>
     <color name="ripple">#63D1D1D1</color>
+    <color name="backgroundDim">#8B000000</color>
 </resources>

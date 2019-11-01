@@ -13,5 +13,6 @@
     <color name="inputBackground">#E1E1E1</color>
     <color name="menuBackground">#ECECEC</color>
     <color name="ripple">#59616161</color>
+    <color name="backgroundDim">#8BFFFFFF</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">@color/inputBorder</color>
 </resources>

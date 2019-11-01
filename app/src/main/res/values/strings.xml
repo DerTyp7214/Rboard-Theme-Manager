@@ -66,4 +66,13 @@
     <string name="title_name_popup">Choose a name for the Theme</string>
     <string name="name">Name</string>
     <string name="theme_added">Theme added</string>
+    <string name="typ_twitter">https://twitter.com/DerTyp7214</string>
+    <string name="typ_github">https://github.com/DerTyp7214</string>
+    <string name="rk_twitter">https://twitter.com/RKBDI</string>
+    <string name="rk_github">https://github.com/RadekBledowski</string>
+    <string name="twitter">Twitter</string>
+    <string name="github">GitHub</string>
+    <string name="paypal">PayPal</string>
+    <string name="typ_paypal">https://paypal.me/JosuaLengwenath</string>
+    <string name="rk_paypal">https://paypal.me/rkbdi</string>
 </resources>

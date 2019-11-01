@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Rboard-Theme-Manager.iml" filepath="$PROJECT_DIR$/Rboard-Theme-Manager.iml" group="Rboard-Theme-Manager" />
-      <module fileurl="file://$PROJECT_DIR$/app/Rboard-Theme-Manager-app.iml" filepath="$PROJECT_DIR$/app/Rboard-Theme-Manager-app.iml" group="Rboard-Theme-Manager/app" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Rboard-Theme-Manager/app" />
     </modules>
   </component>
 </project>

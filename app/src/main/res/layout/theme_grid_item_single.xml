@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="0dp">
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp">
 
         <FrameLayout
             android:layout_width="match_parent"
