@@ -50,7 +50,6 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun checkUpdate(callback: () -> Unit) {
-        callback()
         checkUpdate(
             clazz = null,
             updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
