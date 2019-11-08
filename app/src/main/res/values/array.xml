@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="theme_prefs">
+        <item>Follow System Theme</item>
+        <item>Light Theme</item>
+        <item>Dark Theme</item>
+        <item>Follow Battery Saver</item>
+    </string-array>
+</resources>

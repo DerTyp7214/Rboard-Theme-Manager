@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="stateAlwaysVisible|adjustPan"
         tools:ignore="AllowBackup">
+        <activity android:name=".screens.Settings"></activity>
         <activity android:name=".screens.LogsScreen" />
         <activity android:name=".screens.AboutActivity" />
         <activity android:name=".screens.InfoScreen" />

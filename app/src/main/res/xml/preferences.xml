@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2019.
+  ~ Created by Josua Lengwenath
+  -->
+
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="general"
+        android:title="General">
+
+        <DropDownPreference
+            android:title="@string/theme_pref"
+            android:key="theme"
+            android:entries="@array/theme_prefs"
+            android:entryValues="@array/theme_prefs"
+            android:defaultValue="Select" />
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>

@@ -138,6 +138,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                     false
                 ) {
                     startActivity(Intent(this, InfoScreen::class.java))
+                    bottomSheet?.dismiss()
                 },
                 MenuItem(
                     R.drawable.about,
@@ -145,6 +146,15 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                     false
                 ) {
                     startActivity(Intent(this, AboutActivity::class.java))
+                    bottomSheet?.dismiss()
+                },
+                MenuItem(
+                    R.drawable.settings,
+                    R.string.settings,
+                    false
+                ) {
+                    startActivity(Intent(this, Settings::class.java))
+                    bottomSheet?.dismiss()
                 }
             ).apply {
                 if (BuildConfig.DEBUG) {
@@ -154,6 +164,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                         false
                     ) {
                         startActivity(Intent(this@HomeActivity, LogsScreen::class.java))
+                        bottomSheet?.dismiss()
                     })
                 }
             }, ""

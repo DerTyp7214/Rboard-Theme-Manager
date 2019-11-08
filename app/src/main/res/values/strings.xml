@@ -75,4 +75,6 @@
     <string name="paypal">PayPal</string>
     <string name="typ_paypal">https://paypal.me/JosuaLengwenath</string>
     <string name="rk_paypal">https://paypal.me/rkbdi</string>
+    <string name="settings">Settings</string>
+    <string name="theme_pref">Theme</string>
 </resources>
