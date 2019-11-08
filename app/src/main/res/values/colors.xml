@@ -14,5 +14,7 @@
     <color name="menuBackground">#ECECEC</color>
     <color name="ripple">#59616161</color>
     <color name="backgroundDim">#8BFFFFFF</color>
+    <color name="disabled_fg">#10000000</color>
+    <color name="disabledText">#616161</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">@color/inputBorder</color>
 </resources>

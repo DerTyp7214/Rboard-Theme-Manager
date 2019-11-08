@@ -9,13 +9,12 @@ import com.topjohnwu.superuser.io.SuFileOutputStream
 import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import java.io.File
-import java.io.InputStream
 
 object ThemeHelper {
 
-    fun installTheme(inputStream: InputStream, name: String): Boolean {
-        inputStream.copyTo(SuFileOutputStream(File(MAGISK_THEME_LOC, name)))
-        return true
+    fun installTheme(zip: File): Boolean {
+        val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
+        return "cp ${zip.absolutePath} ${installPath.absolutePath} && chmod 644 ${installPath.absolutePath}".runAsCommand()
     }
 
     @SuppressLint("SdCardPath")
@@ -58,7 +57,16 @@ object ThemeHelper {
 }
 
 fun String.runAsCommand(): Boolean {
-    return Shell.getShell().newJob().add(this).exec().isSuccess.apply {
+    return Shell.getShell().newJob().add(this).exec().apply {
+        if (err.size > 0) Logger.log(
+            Logger.Companion.Type.ERROR, "RUN COMMAND",
+            err.toTypedArray().contentToString()
+        )
+        if (out.size > 0) Logger.log(
+            Logger.Companion.Type.DEBUG, "RUN COMMAND",
+            out.toTypedArray().contentToString()
+        )
+    }.isSuccess.apply {
         Logger.log(Logger.Companion.Type.INFO, "RUN COMMAND", "$this ${this@runAsCommand}")
     }
 }

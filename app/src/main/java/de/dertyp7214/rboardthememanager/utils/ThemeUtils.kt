@@ -2,11 +2,11 @@ package de.dertyp7214.rboardthememanager.utils
 
 import android.graphics.BitmapFactory
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
+import de.dertyp7214.rboardthememanager.Config.themeCount
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 object ThemeUtils {
     fun loadThemes(): List<ThemeDataClass> {
@@ -22,6 +22,6 @@ object ThemeUtils {
                 it.absolutePath
             )
             else ThemeDataClass(null, it.name.removeSuffix(".zip"), it.absolutePath)
-        } ?: ArrayList()
+        }.apply { if (this != null) themeCount = size } ?: ArrayList()
     }
 }

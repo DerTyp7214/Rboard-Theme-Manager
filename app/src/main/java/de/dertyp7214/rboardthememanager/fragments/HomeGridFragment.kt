@@ -6,11 +6,13 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -23,11 +25,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.SelectedThemeBottomSheet
@@ -40,6 +40,7 @@ import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -149,7 +150,8 @@ class HomeGridFragment : Fragment() {
                 themeList.clear(adapter)
                 themeList.addAll((if (!homeViewModel.getRefetch()) tmpList else loadThemes()).filter {
                     filter.isBlank() || it.name.contains(
-                        filter
+                        filter,
+                        true
                     )
                 }.sortedBy {
                     it.name.toLowerCase(
@@ -233,25 +235,12 @@ class HomeGridFragment : Fragment() {
         return v
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "SdCardPath")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
-            MaterialDialog(activity!!).show {
-                setContentView(R.layout.popup_name)
-                val input = findViewById<EditText>(R.id.name)
-                val ok = findViewById<MaterialButton>(R.id.yes)
-                val cancel = findViewById<MaterialButton>(R.id.no)
-                ok.setOnClickListener {
-                    if (ThemeHelper.installTheme(
-                            activity!!.contentResolver.openInputStream(data.data!!)!!,
-                            input.text.toString()
-                        )
-                    ) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_LONG).show()
-                    dismiss()
-                }
-                cancel.setOnClickListener { dismiss() }
-            }
+            val zip = File("/storage/emulated/0/${getRealPathFromURI(data.data!!).split(":").last()}")
+            if (ThemeHelper.installTheme(zip)) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -416,5 +405,32 @@ class HomeGridFragment : Fragment() {
                 null
             }
         }
+    }
+
+    fun getRealPathFromURI(uri: Uri): String {
+        var filePath = uri.path
+        if (filePath?.startsWith("/storage") == true)
+            return filePath
+
+        val wholeID = DocumentsContract.getDocumentId(uri)
+
+        val id = wholeID.split(":")[1]
+
+        val column = arrayOf(MediaStore.Files.FileColumns.DATA)
+
+        val sel = MediaStore.Files.FileColumns.DATA + " LIKE '%" + id + "%'"
+
+        val cursor = context!!.contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            column, sel, null, null
+        )
+
+        val columnIndex = cursor!!.getColumnIndex(column[0])
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex)
+        }
+        cursor.close()
+        return filePath!!
     }
 }

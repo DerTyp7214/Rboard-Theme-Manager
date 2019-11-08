@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.component
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -25,6 +26,7 @@ class SelectedThemeBottomSheet(
     private val isDark: Boolean,
     private val deleteCallback: () -> Unit = {}
 ) : RoundedBottomSheetDialogFragment() {
+    @SuppressLint("DefaultLocale")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,7 +55,7 @@ class SelectedThemeBottomSheet(
 
         card.setCardBackgroundColor(color)
 
-        themeName.text = theme.name
+        themeName.text = theme.name.split("_").joinToString(" ") { it.capitalize() }
         themeName.setTextColor(if (!isDark) Color.WHITE else Color.BLACK)
         themeIcon.setImageBitmap(theme.image ?: defaultImage)
 

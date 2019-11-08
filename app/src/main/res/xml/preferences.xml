@@ -6,7 +6,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:key="general"
-        android:title="General">
+        android:title="@string/ui">
 
         <DropDownPreference
             android:title="@string/theme_pref"
@@ -14,5 +14,6 @@
             android:entries="@array/theme_prefs"
             android:entryValues="@array/theme_prefs"
             android:defaultValue="Select" />
+        <com.dertyp7214.logs.preferences.LogModeLegacy />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

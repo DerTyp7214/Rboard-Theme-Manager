@@ -15,7 +15,6 @@ import androidx.core.content.edit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.R
@@ -131,7 +130,7 @@ class IntroActivity : AppCompatActivity() {
                     val file = mapOf(
                         Pair(
                             "system.prop",
-                            "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=$MAGISK_THEME_LOC"
+                            "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=/$THEME_LOCATION"
                         ),
                         Pair(THEME_LOCATION, null)
                     )

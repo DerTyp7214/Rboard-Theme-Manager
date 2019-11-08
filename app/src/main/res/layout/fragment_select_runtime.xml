@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.graphics.Color" />
+        <variable
+            name="systemEnabled"
+            type="de.dertyp7214.rboardthememanager.data.SystemEnabled" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -117,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@{systemEnabled.enabled ? android.R.attr.selectableItemBackground : Color.TRANSPARENT}"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="16dp">
@@ -130,7 +137,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textView5"
+                        android:id="@+id/systemTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
@@ -141,7 +148,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/textView"
+                        android:id="@+id/systemSummary"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_marginTop="17dp"
@@ -160,6 +167,7 @@
                     android:layout_width="58dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:enabled="@{systemEnabled.enabled}"
                     android:checked="true"
                     android:clickable="false" />
 

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.Config
+import de.dertyp7214.rboardthememanager.Config.themeCount
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.data.MagiskInfo
 import de.dertyp7214.rboardthememanager.data.Themes
@@ -23,10 +24,6 @@ import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
 class InfoFragment : Fragment() {
 
     private lateinit var binding: FragmentInfoBinding
-
-    companion object {
-        private var themeCount: Int? = null
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -44,8 +44,8 @@ class Settings : PreferenceFragmentCompat() {
             AppCompatDelegate.setDefaultNightMode(index)
         }
 
-        preferenceManager.findPreference("theme").apply {
-            if (this != null && this is DropDownPreference) {
+        preferenceManager.findPreference<DropDownPreference>("theme").apply {
+            if (this != null) {
                 pref = this
                 val default =
                     sharedPreferences.getInt("theme_pref", AppCompatDelegate.getDefaultNightMode())

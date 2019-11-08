@@ -53,9 +53,9 @@ class AboutFragment : Fragment() {
             )
         }
 
-        Picasso.get().load(typImage)
+        Picasso.get().load(typImage).placeholder(R.drawable.ic_person)
             .into(v.findViewById<ImageView>(R.id.typ_image))
-        Picasso.get().load(rkImage)
+        Picasso.get().load(rkImage).placeholder(R.drawable.ic_person)
             .into(v.findViewById<ImageView>(R.id.rk_image))
 
         return v
@@ -72,17 +72,7 @@ class AboutFragment : Fragment() {
             setContentView(R.layout.user_popup)
             val displayMetrics = DisplayMetrics()
             activity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
-            /*window?.setLayout(displayMetrics.widthPixels, displayMetrics.heightPixels)
-            window?.setBackgroundDrawable(
-                ColorDrawable(
-                    context.resources.getColor(
-                        R.color.backgroundDim,
-                        null
-                    )
-                )
-            )
-            window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)*/
-            Picasso.get().load(imageUrl).fit()
+            Picasso.get().load(imageUrl).fit().placeholder(R.drawable.ic_person)
                 .into(findViewById<MaskedImageView>(R.id.userProfileImage))
             findViewById<TextView>(R.id.userName).text = name
             findViewById<LinearLayout>(R.id.clickTwitter).setOnClickListener {

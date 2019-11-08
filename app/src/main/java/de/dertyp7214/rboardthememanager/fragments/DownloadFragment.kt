@@ -148,7 +148,7 @@ class DownloadFragment : Fragment() {
 
                         override fun end(path: String) {
                             pair.first.isIndeterminate = true
-                            Logger.log(Logger.Companion.Type.DEBUG, "DOWNLOAD_ZIP", "from: $MAGISK_THEME_LOC to $path")
+                            Logger.log(Logger.Companion.Type.INFO, "DOWNLOAD_ZIP", "from: $MAGISK_THEME_LOC to $path")
                             ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
                             pair.second.dismiss()
                             callback()

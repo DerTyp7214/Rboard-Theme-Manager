@@ -10,4 +10,6 @@ object Config {
 
     const val PACKS_URL =
         "https://raw.githubusercontent.com/GboardThemes/Packs/master/download_list.json"
+
+    var themeCount: Int? = null
 }
