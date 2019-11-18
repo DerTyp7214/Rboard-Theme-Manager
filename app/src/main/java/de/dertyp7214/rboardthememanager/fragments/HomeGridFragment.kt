@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -78,6 +79,15 @@ class HomeGridFragment : Fragment() {
             homeViewModel.setRefetch(true)
         }
 
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0)
+                    fabAdd.hide()
+                else if (dy < 0)
+                    fabAdd.show()
+            }
+        })
+
         refreshLayout.isRefreshing = true
         fabAdd.setMargin(bottomMargin = 68.dpToPx(context!!).toInt())
         fabAdd.setOnClickListener {
@@ -92,7 +102,7 @@ class HomeGridFragment : Fragment() {
 
         homeViewModel.gridLayoutObserve(this, Observer {
             recyclerView.stopScroll()
-            adapter.notifyDataSetChanged()
+            adapter.dataSetChanged()
             if (recyclerView.layoutManager is GridLayoutManager) {
                 val columns = if (it == GridLayout.SINGLE) 1 else 2
                 (recyclerView.layoutManager as GridLayoutManager).spanCount = columns
@@ -122,7 +132,8 @@ class HomeGridFragment : Fragment() {
 
         homeViewModel.gridLayoutObserve(this, Observer {
             recyclerView.stopScroll()
-            adapter.notifyDataSetChanged()
+            adapter.dataSetChanged()
+            recyclerView.scheduleLayoutAnimation()
         })
 
         homeViewModel.themesObserve(this, Observer { list ->
@@ -141,11 +152,7 @@ class HomeGridFragment : Fragment() {
 
         homeViewModel.observeFilter(this, Observer { filter ->
             refreshLayout.isRefreshing = true
-            ObjectAnimator.ofFloat(recyclerView, "alpha", 0F).apply {
-                duration = 300
-                startDelay = 200
-                start()
-            }
+            themeList.clear(adapter)
             Thread {
                 themeList.clear(adapter)
                 themeList.addAll((if (!homeViewModel.getRefetch()) tmpList else loadThemes()).filter {
@@ -161,14 +168,10 @@ class HomeGridFragment : Fragment() {
                 activity?.runOnUiThread {
                     homeViewModel.setThemes(themeList)
                     recyclerView.stopScroll()
-                    adapter.notifyDataSetChanged()
+                    adapter.dataSetChanged()
                     refreshLayout.isRefreshing = false
                     if (homeViewModel.getRefetch()) homeViewModel.setRefetch(false)
-                    ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
-                        duration = 300
-                        startDelay = 200
-                        start()
-                    }
+                    recyclerView.scheduleLayoutAnimation()
                 }
             }.start()
         })
@@ -183,26 +186,18 @@ class HomeGridFragment : Fragment() {
                     activity?.runOnUiThread {
                         homeViewModel.setThemes(themeList)
                         recyclerView.stopScroll()
-                        adapter.notifyDataSetChanged()
+                        adapter.dataSetChanged()
                         refreshLayout.isRefreshing = false
-                        ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
-                            duration = 300
-                            startDelay = 200
-                            start()
-                        }
+                        recyclerView.scheduleLayoutAnimation()
                     }
                 }.start()
             } else {
                 themeList.clear(adapter)
                 themeList.addAll(homeViewModel.getThemes())
                 recyclerView.stopScroll()
-                adapter.notifyDataSetChanged()
+                adapter.dataSetChanged()
                 refreshLayout.isRefreshing = false
-                ObjectAnimator.ofFloat(recyclerView, "alpha", 1F).apply {
-                    duration = 300
-                    startDelay = 200
-                    start()
-                }
+                recyclerView.scheduleLayoutAnimation()
             }
         }
 
@@ -239,8 +234,13 @@ class HomeGridFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
-            val zip = File("/storage/emulated/0/${getRealPathFromURI(data.data!!).split(":").last()}")
-            if (ThemeHelper.installTheme(zip)) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_SHORT).show()
+            val zip =
+                File("/storage/emulated/0/${getRealPathFromURI(data.data!!).split(":").last()}")
+            if (ThemeHelper.installTheme(zip)) Toast.makeText(
+                context,
+                R.string.theme_added,
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -257,6 +257,7 @@ class HomeGridFragment : Fragment() {
         RecyclerView.Adapter<GridThemeAdapter.ViewHolder>() {
 
         private var recyclerView: RecyclerView? = null
+        private var lastPosition = recyclerView?.layoutManager?.let { (it as GridLayoutManager).findLastVisibleItemPosition() } ?: 0
 
         private var activeTheme = ""
         private val default = context.resources.getDrawable(
@@ -391,6 +392,20 @@ class HomeGridFragment : Fragment() {
             timingLogger.addSplit("Longclick Listener")
 
             timingLogger.dumpToLog()
+            setAnimation(holder.card, position)
+        }
+
+        fun dataSetChanged() {
+            lastPosition = recyclerView?.layoutManager?.let { (it as GridLayoutManager).findLastVisibleItemPosition() } ?: 0
+            notifyDataSetChanged()
+        }
+
+        private fun setAnimation(viewToAnimate: View, position: Int) {
+            if (position > lastPosition) {
+                val animation = AnimationUtils.loadAnimation(context, R.anim.item_animation_fall_down)
+                viewToAnimate.startAnimation(animation)
+                lastPosition = position
+            }
         }
 
         class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {

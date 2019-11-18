@@ -29,8 +29,9 @@
                     android:id="@+id/theme_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:alpha="0"
-                    android:background="@color/colorPrimary"
+                    android:alpha="1"
+                    android:background="@color/colorPrimaryTransparent"
+                    android:layoutAnimation="@anim/layout_animation"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager">
 
                 </androidx.recyclerview.widget.RecyclerView>
