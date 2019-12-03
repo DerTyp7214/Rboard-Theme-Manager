@@ -1,0 +1,12 @@
+name: Java CI
+
+on: [deployment]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Gradle Android
+      uses: Raul6469/android-gradle-action@1.0.0
