@@ -34,22 +34,38 @@ class SplashScreen : AppCompatActivity() {
         FirebaseMessaging.getInstance()
             .subscribeToTopic("update-${BuildConfig.BUILD_TYPE.toLowerCase(Locale.ROOT)}")
 
-        getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-            if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
-                    this@SplashScreen,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) runAnimation()
-            else {
-                checkUpdate {
-                    startApp()
-                    finish()
+        getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
+            if (getBoolean("registered", false)) {
+                getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+                    if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                            this@SplashScreen,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) runAnimation()
+                    else {
+                        checkUpdate {
+                            startApp()
+                            finish()
+                        }
+                    }
                 }
+            } else {
+                startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
             }
         }
     }
 
     private fun checkUpdate(callback: () -> Unit) {
+        var checking = true
+        Thread {
+            Thread.sleep(1000)
+            if (checking) {
+                checking = false
+                runOnUiThread {
+                    callback()
+                }
+            }
+        }.start()
         checkUpdate(
             clazz = null,
             updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
@@ -57,7 +73,10 @@ class SplashScreen : AppCompatActivity() {
             )}", versionCode = BuildConfig.VERSION_CODE, forceUpdate = false
         ) {
             runOnUiThread {
-                callback()
+                if (checking) {
+                    checking = false
+                    callback()
+                }
             }
         }
     }

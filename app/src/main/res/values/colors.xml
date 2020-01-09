@@ -17,4 +17,6 @@
     <color name="disabled_fg">#10000000</color>
     <color name="disabledText">#616161</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">@color/inputBorder</color>
+    <color name="success">#4CAF50</color>
+    <color name="failed">#F44336</color>
 </resources>

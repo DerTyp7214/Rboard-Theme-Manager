@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth"
+    app:startDestination="@id/authMainFragment">
+
+    <fragment
+        android:id="@+id/authMainFragment"
+        android:name="de.dertyp7214.rboardthememanager.fragments.AuthMainFragment"
+        android:label="@string/label_nav_auth_main"
+        tools:layout="@layout/fragment_auth_main">
+        <action
+            android:id="@+id/action_authMainFragment_to_authSuccessFragment"
+            app:destination="@id/authSuccessFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left" />
+        <action
+            android:id="@+id/action_authMainFragment_to_authFailedFragment"
+            app:destination="@id/authFailedFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left" />
+        <action
+            android:id="@+id/action_authMainFragment_to_authLoginFragment"
+            app:destination="@id/authLoginFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/authLoginFragment"
+        android:name="de.dertyp7214.rboardthememanager.fragments.AuthLoginFragment"
+        android:label="@string/label_nav_auth_login"
+        tools:layout="@layout/fragment_auth_login">
+        <action
+            android:id="@+id/action_authLoginFragment_to_authSuccessFragment"
+            app:destination="@id/authSuccessFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left" />
+        <action
+            android:id="@+id/action_authLoginFragment_to_authFailedFragment"
+            app:destination="@id/authFailedFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left" />
+        <action
+            android:id="@+id/action_authLoginFragment_to_authMainFragment"
+            app:destination="@id/authMainFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/authSuccessFragment"
+        android:name="de.dertyp7214.rboardthememanager.fragments.AuthSuccessFragment"
+        android:label="@string/label_nav_auth_success"
+        tools:layout="@layout/fragment_auth_success">
+        <action
+            android:id="@+id/action_authSuccessFragment_to_authMainFragment"
+            app:destination="@id/authMainFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_authSuccessFragment_to_authLoginFragment"
+            app:destination="@id/authLoginFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/authFailedFragment"
+        android:name="de.dertyp7214.rboardthememanager.fragments.AuthFailedFragment"
+        android:label="@string/label_nav_auth_failed"
+        tools:layout="@layout/fragment_auth_failed">
+        <action
+            android:id="@+id/action_authFailedFragment_to_authMainFragment"
+            app:destination="@id/authMainFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_authFailedFragment_to_authLoginFragment"
+            app:destination="@id/authLoginFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+    </fragment>
+</navigation>

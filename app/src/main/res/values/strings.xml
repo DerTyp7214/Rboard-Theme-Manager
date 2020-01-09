@@ -78,4 +78,21 @@
     <string name="settings">Settings</string>
     <string name="theme_pref">Theme</string>
     <string name="ui">Ui</string>
+    <string name="key">Activation Key</string>
+    <string name="mainAuth">Please enter your Activation Key and Email.</string>
+    <string name="alreadyRegistered">Already Registered</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="loginAuth">Please enter your registered Email.</string>
+    <string name="label_nav_auth_main">fragment_auth_main</string>
+    <string name="label_nav_auth_login">fragment_auth_login</string>
+    <string name="label_nav_auth_success">fragment_auth_success</string>
+    <string name="label_nav_auth_failed">fragment_auth_failed</string>
+    <string name="press_back_again">Press back again to exit the app.</string>
+    <string name="success">success</string>
+    <string name="next">Next</string>
+    <string name="failed">failed</string>
+    <string name="retry">Retry</string>
+    <string name="background">Background</string>
 </resources>
