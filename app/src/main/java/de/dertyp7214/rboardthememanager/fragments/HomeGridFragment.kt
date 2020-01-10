@@ -176,7 +176,7 @@ class HomeGridFragment : Fragment() {
             }.start()
         })
 
-        context!!.delayed(200) {
+        context?.delayed(200) {
             if (!homeViewModel.themesExist()) {
                 Thread {
                     loadThemes().apply {
@@ -422,7 +422,7 @@ class HomeGridFragment : Fragment() {
         }
     }
 
-    fun getRealPathFromURI(uri: Uri): String {
+    private fun getRealPathFromURI(uri: Uri): String {
         var filePath = uri.path
         if (filePath?.startsWith("/storage") == true)
             return filePath
@@ -435,17 +435,17 @@ class HomeGridFragment : Fragment() {
 
         val sel = MediaStore.Files.FileColumns.DATA + " LIKE '%" + id + "%'"
 
-        val cursor = context!!.contentResolver.query(
+        val cursor = context?.contentResolver?.query(
             MediaStore.Files.getContentUri("external"),
             column, sel, null, null
         )
 
-        val columnIndex = cursor!!.getColumnIndex(column[0])
+        val columnIndex = cursor?.getColumnIndex(column[0])
 
-        if (cursor.moveToFirst()) {
+        if (cursor?.moveToFirst() == true && columnIndex != null) {
             filePath = cursor.getString(columnIndex)
         }
-        cursor.close()
+        cursor?.close()
         return filePath!!
     }
 }
