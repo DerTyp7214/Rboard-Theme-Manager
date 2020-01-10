@@ -35,7 +35,7 @@ class SplashScreen : AppCompatActivity() {
             .subscribeToTopic("update-${BuildConfig.BUILD_TYPE.toLowerCase(Locale.ROOT)}")
 
         getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
-            if (getBoolean("registered", false)) {
+            if (getBoolean("registered", false) && /* TODO: REMOVE*/ false) {
                 getSharedPreferences("start", Context.MODE_PRIVATE).apply {
                     if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
                             this@SplashScreen,

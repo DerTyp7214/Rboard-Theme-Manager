@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/root"
     tools:context="de.dertyp7214.rboardthememanager.fragments.AuthMainFragment">
 
     <LinearLayout
@@ -30,7 +33,7 @@
             android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/key_input"
+            android:id="@+id/key_parent"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -43,6 +46,7 @@
             app:hintTextColor="@color/primaryTextSec">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/key_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/key"
@@ -57,7 +61,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/email_input"
+            android:id="@+id/email_parent"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -70,6 +74,7 @@
             app:hintTextColor="@color/primaryTextSec">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"

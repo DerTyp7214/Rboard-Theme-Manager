@@ -95,4 +95,5 @@
     <string name="failed">failed</string>
     <string name="retry">Retry</string>
     <string name="background">Background</string>
+    <string name="inputError">Can not be empty!</string>
 </resources>
