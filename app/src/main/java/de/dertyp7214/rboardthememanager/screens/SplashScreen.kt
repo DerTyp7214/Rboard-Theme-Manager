@@ -56,27 +56,15 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun checkUpdate(callback: () -> Unit) {
-        var checking = true
-        Thread {
-            Thread.sleep(1000)
-            if (checking) {
-                checking = false
-                runOnUiThread {
-                    callback()
-                }
-            }
-        }.start()
         checkUpdate(
             clazz = null,
+            timeout = 1000,
             updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
                 Locale.ROOT
             )}", versionCode = BuildConfig.VERSION_CODE, forceUpdate = false
         ) {
             runOnUiThread {
-                if (checking) {
-                    checking = false
-                    callback()
-                }
+                callback()
             }
         }
     }

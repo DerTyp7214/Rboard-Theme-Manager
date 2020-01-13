@@ -19,14 +19,35 @@
 
         </FrameLayout>
 
-        <include
-            android:id="@+id/include2"
-            layout="@layout/bottom_navigation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <include
+                android:id="@+id/include2"
+                layout="@layout/bottom_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/select_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="100dp"
+                android:alpha="0"
+                android:scaleX="0"
+                android:scaleY="0"
+                android:background="?attr/colorPrimary"
+                android:elevation="8dp"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:menu="@menu/select_toolbar" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

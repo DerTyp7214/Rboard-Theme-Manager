@@ -1,10 +1,12 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -13,12 +15,13 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
-import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -26,10 +29,15 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
+import com.dertyp7214.preferencesplus.core.setMargins
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.SelectedThemeBottomSheet
 import de.dertyp7214.rboardthememanager.core.*
@@ -44,6 +52,7 @@ import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.max
 
 class HomeGridFragment : Fragment() {
 
@@ -51,15 +60,20 @@ class HomeGridFragment : Fragment() {
     private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var recyclerView: RecyclerView
+    private lateinit var toolbar: Toolbar
     private val themeList = ArrayList<ThemeDataClass>()
 
     private val addTheme = 187
+
+    private var animatingToolbar = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.fragment_home_grid, container, false)
+
+        toolbar = activity!!.findViewById<Toolbar>(R.id.select_toolbar)
 
         val fabAdd = v.findViewById<FloatingActionButton>(R.id.fabAdd)
         refreshLayout = v.findViewById(R.id.refreshLayout)
@@ -77,6 +91,7 @@ class HomeGridFragment : Fragment() {
         refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
         refreshLayout.setOnRefreshListener {
             homeViewModel.setRefetch(true)
+            toggleToolbar(false)
         }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -98,7 +113,51 @@ class HomeGridFragment : Fragment() {
             startActivityForResult(Intent.createChooser(intent, "Select a theme"), addTheme)
         }
 
-        val adapter = GridThemeAdapter(activity!!, themeList, homeViewModel)
+        val adapter =
+            GridThemeAdapter(activity!!, themeList, homeViewModel, addItemSelect = { _, _ ->
+                toolbar.title = "${themeList.count { it.selected }}"
+            }, removeItemSelect = { _, _ ->
+                toolbar.title = "${themeList.count { it.selected }}"
+            }, selectToggle = {
+                toolbar.title = "${themeList.count { theme -> theme.selected }}"
+                toggleToolbar(it)
+            })
+
+        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_arrow_back, null)
+        toolbar.setNavigationOnClickListener {
+            themeList.forEachIndexed { index, _ -> themeList[index].selected = false }
+            adapter.notifyDataSetChanged()
+            toggleToolbar(false)
+        }
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.theme_delete -> {
+                    MaterialDialog(context!!).show {
+                        cornerRadius(12F)
+                        message(res = R.string.delete_themes_confirm)
+                        positiveButton(res = R.string.yes) { dialog ->
+                            var error = false
+                            themeList.filter { theme -> theme.selected }.forEach { theme ->
+                                if (SuFile(theme.path).delete() && !error) error = true
+                            }
+                            if (error) Toast.makeText(
+                                context,
+                                R.string.themes_deleted,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            else Toast.makeText(context, R.string.errors, Toast.LENGTH_LONG).show()
+                            dialog.dismiss()
+                            toggleToolbar(false)
+                            homeViewModel.setRefetch(true)
+                        }
+                        negativeButton(res = R.string.no) { dialog ->
+                            dialog.dismiss()
+                        }
+                    }
+                }
+            }
+            true
+        }
 
         homeViewModel.gridLayoutObserve(this, Observer {
             recyclerView.stopScroll()
@@ -230,6 +289,49 @@ class HomeGridFragment : Fragment() {
         return v
     }
 
+    private fun toggleToolbar(visible: Boolean) {
+        val scale = if (visible) 1F else .0F
+        val margin = if (visible) 0 else 120.dpToPx(context!!).toInt()
+        val corners1 = if (visible) 20.dpToPx(activity!!) else 0F
+        val corners2 = if (visible) 0F else 20.dpToPx(activity!!)
+        val longDelay = if (visible) 100L else 800L
+        ObjectAnimator.ofFloat(toolbar, "scaleY", max(scale, .5F)).apply {
+            duration = longDelay
+            start()
+        }
+        ObjectAnimator.ofFloat(toolbar, "scaleX", scale).apply {
+            duration = 300
+            start()
+        }
+        ObjectAnimator.ofFloat(toolbar, "alpha", scale).apply {
+            duration = longDelay
+            start()
+        }
+        ChangeBounds().apply {
+            startDelay = 0
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 300
+            TransitionManager.beginDelayedTransition(toolbar, this)
+        }
+        toolbar.setMargins(0, margin, 0, 0)
+        ValueAnimator.ofFloat(corners1, corners2).apply {
+            duration = 50
+            addUpdateListener {
+                toolbar.background = getShape(it.animatedValue as Float)
+            }
+        }.start()
+    }
+
+    private fun getShape(radius: Float): Drawable {
+        val color = resources.getColor(R.color.colorPrimary, null)
+        val gradientDrawable = GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            intArrayOf(color, color)
+        )
+        gradientDrawable.cornerRadius = radius
+        return gradientDrawable
+    }
+
     @SuppressLint("InflateParams", "SdCardPath")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -252,12 +354,17 @@ class HomeGridFragment : Fragment() {
     class GridThemeAdapter(
         private val context: FragmentActivity,
         private val list: List<ThemeDataClass>,
-        private val homeViewModel: HomeViewModel
+        private val homeViewModel: HomeViewModel,
+        private val selectToggle: (selectOn: Boolean) -> Unit = {},
+        private val addItemSelect: (theme: ThemeDataClass, index: Int) -> Unit = { _, _ -> },
+        private val removeItemSelect: (theme: ThemeDataClass, index: Int) -> Unit = { _, _ -> }
     ) :
         RecyclerView.Adapter<GridThemeAdapter.ViewHolder>() {
 
         private var recyclerView: RecyclerView? = null
-        private var lastPosition = recyclerView?.layoutManager?.let { (it as GridLayoutManager).findLastVisibleItemPosition() } ?: 0
+        private var lastPosition =
+            recyclerView?.layoutManager?.let { (it as GridLayoutManager).findLastVisibleItemPosition() }
+                ?: 0
 
         private var activeTheme = ""
         private val default = context.resources.getDrawable(
@@ -350,17 +457,13 @@ class HomeGridFragment : Fragment() {
             holder.card.setOnClickListener {
                 if (selection) {
                     list[position].selected = !list[position].selected
-                    ObjectAnimator.ofFloat(
-                        holder.selectOverlay,
-                        "alpha",
-                        1F - holder.selectOverlay.alpha
-                    ).apply {
-                        duration = 100
-                        start()
-                    }.doOnEnd {
-                        recyclerView?.stopScroll()
-                        notifyDataSetChanged()
-                    }
+                    holder.selectOverlay.animate().alpha(1F - holder.selectOverlay.alpha)
+                        .setDuration(100).withEndAction {
+                            notifyDataSetChanged()
+                            if (list[position].selected) addItemSelect(dataClass, position)
+                            if (!list[position].selected) removeItemSelect(dataClass, position)
+                            if (!list.map { it.selected }.contains(true)) selectToggle(false)
+                        }.start()
                 } else {
                     SelectedThemeBottomSheet(dataClass, default, color, isColorLight(color)) {
                         homeViewModel.setRefetch(true)
@@ -375,16 +478,9 @@ class HomeGridFragment : Fragment() {
 
             holder.card.setOnLongClickListener {
                 list[position].selected = true
-                ObjectAnimator.ofFloat(
-                    holder.selectOverlay,
-                    "alpha",
-                    1F
-                ).apply {
-                    duration = 100
-                    start()
-                }.doOnEnd {
-                    recyclerView?.stopScroll()
+                holder.selectOverlay.animate().alpha(1F).setDuration(100).withEndAction {
                     notifyDataSetChanged()
+                    selectToggle(true)
                 }
                 true
             }
@@ -396,13 +492,16 @@ class HomeGridFragment : Fragment() {
         }
 
         fun dataSetChanged() {
-            lastPosition = recyclerView?.layoutManager?.let { (it as GridLayoutManager).findLastVisibleItemPosition() } ?: 0
+            lastPosition =
+                recyclerView?.layoutManager?.let { (it as GridLayoutManager).findLastVisibleItemPosition() }
+                    ?: 0
             notifyDataSetChanged()
         }
 
         private fun setAnimation(viewToAnimate: View, position: Int) {
             if (position > lastPosition) {
-                val animation = AnimationUtils.loadAnimation(context, R.anim.item_animation_fall_down)
+                val animation =
+                    AnimationUtils.loadAnimation(context, R.anim.item_animation_fall_down)
                 viewToAnimate.startAnimation(animation)
                 lastPosition = position
             }
