@@ -155,6 +155,11 @@ class HomeGridFragment : Fragment() {
                         }
                     }
                 }
+                R.id.select_all -> {
+                    themeList.forEachIndexed { index, _ -> themeList[index].selected = true }
+                    adapter.notifyDataSetChanged()
+                    toolbar.title = "${themeList.count { it.selected }}"
+                }
             }
             true
         }
@@ -458,7 +463,7 @@ class HomeGridFragment : Fragment() {
                 if (selection) {
                     list[position].selected = !list[position].selected
                     holder.selectOverlay.animate().alpha(1F - holder.selectOverlay.alpha)
-                        .setDuration(100).withEndAction {
+                        .setDuration(200).withEndAction {
                             notifyDataSetChanged()
                             if (list[position].selected) addItemSelect(dataClass, position)
                             if (!list[position].selected) removeItemSelect(dataClass, position)
@@ -478,7 +483,7 @@ class HomeGridFragment : Fragment() {
 
             holder.card.setOnLongClickListener {
                 list[position].selected = true
-                holder.selectOverlay.animate().alpha(1F).setDuration(100).withEndAction {
+                holder.selectOverlay.animate().alpha(1F).setDuration(200).withEndAction {
                     notifyDataSetChanged()
                     selectToggle(true)
                 }

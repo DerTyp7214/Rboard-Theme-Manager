@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/select_all"
+        android:icon="@drawable/ic_select_all"
+        android:title="@android:string/selectAll"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/theme_delete"
         android:icon="@drawable/ic_delete_theme"
         android:title="@string/delete"
