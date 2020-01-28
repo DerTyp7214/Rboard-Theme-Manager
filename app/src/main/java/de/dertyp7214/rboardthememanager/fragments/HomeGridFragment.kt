@@ -68,15 +68,13 @@ class HomeGridFragment : Fragment() {
 
     private val addTheme = 187
 
-    private var animatingToolbar = false
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.fragment_home_grid, container, false)
 
-        toolbar = activity!!.findViewById<Toolbar>(R.id.select_toolbar)
+        toolbar = activity!!.findViewById(R.id.select_toolbar)
 
         val fabAdd = v.findViewById<FloatingActionButton>(R.id.fabAdd)
         refreshLayout = v.findViewById(R.id.refreshLayout)
@@ -84,6 +82,9 @@ class HomeGridFragment : Fragment() {
         homeViewModel = activity!!.run {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
+
+        val keyboardImg = v.findViewById<ImageView>(R.id.imageView5)
+        keyboardImg.alpha = 1F
 
         refreshLayout.setProgressViewOffset(
             true,
@@ -244,6 +245,7 @@ class HomeGridFragment : Fragment() {
                     if (homeViewModel.getRefetch()) homeViewModel.setRefetch(false)
                     recyclerView.scheduleLayoutAnimation()
                 }
+                keyboardImg.alpha = if (themeList.size > 0) 0F else 1F
             }.start()
         })
 

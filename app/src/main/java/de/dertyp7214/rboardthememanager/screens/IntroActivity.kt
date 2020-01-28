@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.screens
 
+import android.Manifest
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.content.Context
 import android.content.Intent
@@ -10,6 +11,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.lifecycle.Observer
@@ -81,6 +83,16 @@ class IntroActivity : AppCompatActivity() {
             floatingActionButton.backgroundTintList =
                 ColorStateList.valueOf(if (it) getColor(R.color.colorAccent) else colorDisabled)
         })
+
+        skipIntro()
+    }
+
+    private fun skipIntro() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            1234
+        )
     }
 
     private fun openPage() {
@@ -117,32 +129,36 @@ class IntroActivity : AppCompatActivity() {
             indicator.animatePageSelected(index)
         } else {
             index = 3
-            if (introViewModel.selectRuntimeData.value?.magisk == true) {
-                if (!MagiskUtils.getModules().any { it.id == MODULE_ID }) {
-                    val meta = ModuleMeta(
-                        MODULE_ID,
-                        "Rboard Themes",
-                        "v20",
-                        "200",
-                        "RKBDI & DerTyp7214",
-                        "Module for Rboard Themes app"
-                    )
-                    val file = mapOf(
-                        Pair(
-                            "system.prop",
-                            "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=/$THEME_LOCATION"
-                        ),
-                        Pair(THEME_LOCATION, null)
-                    )
-                    MagiskUtils.installModule(meta, file)
-                }
-            }
-            startActivity(Intent(this, HomeActivity::class.java))
-            getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-                edit {
-                    putBoolean("first", false)
-                    finish()
-                }
+            startApp()
+        }
+    }
+
+    private fun startApp() {
+        //if (introViewModel.selectRuntimeData.value?.magisk == true) {
+        if (!MagiskUtils.getModules().any { it.id == MODULE_ID }) {
+            val meta = ModuleMeta(
+                MODULE_ID,
+                "Rboard Themes",
+                "v20",
+                "200",
+                "RKBDI & DerTyp7214",
+                "Module for Rboard Themes app"
+            )
+            val file = mapOf(
+                Pair(
+                    "system.prop",
+                    "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=/$THEME_LOCATION"
+                ),
+                Pair(THEME_LOCATION, null)
+            )
+            MagiskUtils.installModule(meta, file)
+        }
+        //}
+        startActivity(Intent(this, HomeActivity::class.java))
+        getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+            edit {
+                putBoolean("first", false)
+                finish()
             }
         }
     }
@@ -167,6 +183,18 @@ class IntroActivity : AppCompatActivity() {
             1 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     introViewModel.rboardStorage.postValue(true)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Permission denied to read your External storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return
+            }
+            1234 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startApp()
                 } else {
                     Toast.makeText(
                         this,
