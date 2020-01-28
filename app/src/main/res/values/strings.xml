@@ -99,4 +99,7 @@
     <string name="retry">Retry</string>
     <string name="background">Background</string>
     <string name="inputError">Can not be empty!</string>
+    <string name="removed">Theme deleted.</string>
+    <string name="undo">UNDO</string>
+    <string name="share_themes">Share themes</string>
 </resources>

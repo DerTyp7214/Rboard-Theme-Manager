@@ -27,6 +27,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.transition.ChangeBounds
@@ -37,12 +38,14 @@ import com.dertyp7214.preferencesplus.core.setMargins
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridBottomOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.grid.GridTopOffsetItemDecoration
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.topjohnwu.superuser.io.SuFile
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.SelectedThemeBottomSheet
 import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
+import de.dertyp7214.rboardthememanager.helper.SwipeToDeleteCallback
 import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 import de.dertyp7214.rboardthememanager.helper.TimeLogger
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
@@ -107,7 +110,7 @@ class HomeGridFragment : Fragment() {
         fabAdd.setMargin(bottomMargin = 68.dpToPx(context!!).toInt())
         fabAdd.setOnClickListener {
             val intent = Intent()
-                .setType("application/zip")
+                .setType("application/*")
                 .setAction(Intent.ACTION_GET_CONTENT)
 
             startActivityForResult(Intent.createChooser(intent, "Select a theme"), addTheme)
@@ -129,18 +132,19 @@ class HomeGridFragment : Fragment() {
             adapter.notifyDataSetChanged()
             toggleToolbar(false)
         }
-        toolbar.setOnMenuItemClickListener {
+        toolbar.setOnMenuItemClickListener { it ->
             when (it.itemId) {
                 R.id.theme_delete -> {
                     MaterialDialog(context!!).show {
                         cornerRadius(12F)
                         message(res = R.string.delete_themes_confirm)
                         positiveButton(res = R.string.yes) { dialog ->
-                            var error = false
-                            themeList.filter { theme -> theme.selected }.forEach { theme ->
-                                if (SuFile(theme.path).delete() && !error) error = true
-                            }
-                            if (error) Toast.makeText(
+                            var noError = false
+                            themeList.filter { theme -> theme.selected }
+                                .forEachIndexed { index, theme ->
+                                    if (theme.delete() && !noError) noError = true
+                                }
+                            if (noError) Toast.makeText(
                                 context,
                                 R.string.themes_deleted,
                                 Toast.LENGTH_LONG
@@ -159,6 +163,9 @@ class HomeGridFragment : Fragment() {
                     themeList.forEachIndexed { index, _ -> themeList[index].selected = true }
                     adapter.notifyDataSetChanged()
                     toolbar.title = "${themeList.count { it.selected }}"
+                }
+                R.id.theme_share -> {
+                    ThemeHelper.shareThemes(activity!!, themeList.filter { it.selected })
                 }
             }
             true
@@ -291,6 +298,33 @@ class HomeGridFragment : Fragment() {
             }
         }
 
+        ItemTouchHelper(object : SwipeToDeleteCallback(activity!!) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val item = adapter.getItem(position)
+
+                var restored = false
+
+                adapter.removeItem(position)
+
+                val snackBar = Snackbar.make(v, R.string.removed, Snackbar.LENGTH_LONG)
+                snackBar.setAction(R.string.undo) {
+                    restored = true
+                    adapter.restoreItem(position, item)
+                }
+
+                snackBar.setActionTextColor(Color.YELLOW)
+                snackBar.show()
+
+                snackBar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        super.onDismissed(transientBottomBar, event)
+                        if (!restored) item.delete()
+                    }
+                })
+            }
+        }).attachToRecyclerView(recyclerView)
+
         return v
     }
 
@@ -348,6 +382,7 @@ class HomeGridFragment : Fragment() {
                 R.string.theme_added,
                 Toast.LENGTH_SHORT
             ).show()
+            homeViewModel.setRefetch(true)
         }
     }
 
@@ -358,7 +393,7 @@ class HomeGridFragment : Fragment() {
 
     class GridThemeAdapter(
         private val context: FragmentActivity,
-        private val list: List<ThemeDataClass>,
+        private val list: ArrayList<ThemeDataClass>,
         private val homeViewModel: HomeViewModel,
         private val selectToggle: (selectOn: Boolean) -> Unit = {},
         private val addItemSelect: (theme: ThemeDataClass, index: Int) -> Unit = { _, _ -> },
@@ -381,6 +416,20 @@ class HomeGridFragment : Fragment() {
             super.onAttachedToRecyclerView(recyclerView)
             this.recyclerView = recyclerView
             activeTheme = ThemeHelper.getActiveTheme()
+        }
+
+        fun removeItem(position: Int) {
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
+
+        fun restoreItem(position: Int, item: ThemeDataClass) {
+            list.add(position, item)
+            notifyItemInserted(position)
+        }
+
+        fun getItem(position: Int): ThemeDataClass {
+            return list[position]
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

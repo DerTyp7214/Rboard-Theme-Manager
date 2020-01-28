@@ -19,6 +19,7 @@ import com.topjohnwu.superuser.Shell
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.helper.runAsCommand
 import java.util.*
 
 class SplashScreen : AppCompatActivity() {
@@ -34,24 +35,26 @@ class SplashScreen : AppCompatActivity() {
         FirebaseMessaging.getInstance()
             .subscribeToTopic("update-${BuildConfig.BUILD_TYPE.toLowerCase(Locale.ROOT)}")
 
+        "rm -rf ${cacheDir.absolutePath}/*".runAsCommand()
+
         getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
-            if (getBoolean("registered", false)) {
-                getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-                    if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
-                            this@SplashScreen,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) runAnimation()
-                    else {
-                        checkUpdate {
-                            startApp()
-                            finish()
-                        }
+            //if (getBoolean("registered", false)) {
+            getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+                if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                        this@SplashScreen,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) runAnimation()
+                else {
+                    checkUpdate {
+                        startApp()
+                        finish()
                     }
                 }
-            } else {
-                startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
             }
+            //} else {
+            //    startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
+            //}
         }
     }
 
