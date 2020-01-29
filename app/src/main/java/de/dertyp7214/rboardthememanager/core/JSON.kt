@@ -7,15 +7,15 @@ fun JSONObject.safeParse(string: String): JSONObject {
     return try {
         JSONObject(string)
     } catch (e: Exception) {
-        JSONObject()
+        this
     }
 }
 
-fun safeParse(string: String): JSONArray {
+fun JSONArray.safeParse(string: String): JSONArray {
     return try {
         JSONArray(string)
     } catch (e: Exception) {
-        JSONArray()
+        this
     }
 }
 

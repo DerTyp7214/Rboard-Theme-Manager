@@ -1,22 +1,17 @@
 package de.dertyp7214.rboardthememanager.keyboardheight
 
-import android.R.attr.orientation
-import android.R.attr.bottom
-import android.R.attr.y
-import android.view.Gravity
-import android.graphics.drawable.ColorDrawable
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.view.WindowManager.LayoutParams
-import android.widget.PopupWindow
-import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
 import android.app.Activity
 import android.content.res.Configuration
 import android.graphics.Point
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+import android.widget.PopupWindow
 import de.dertyp7214.rboardthememanager.R
 
 class KeyboardHeightProvider

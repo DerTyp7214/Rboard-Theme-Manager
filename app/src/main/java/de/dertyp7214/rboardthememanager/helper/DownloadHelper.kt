@@ -11,7 +11,7 @@ import de.dertyp7214.rboardthememanager.R
 import java.io.File
 
 
-class DownloadHelper(private val context: Context) {
+class DownloadHelper {
 
     private var from = ""
     private var to = ""

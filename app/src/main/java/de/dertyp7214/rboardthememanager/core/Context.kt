@@ -23,6 +23,6 @@ fun Context.getNavigationBarHeight(): Int {
     return result
 }
 
-fun Context.delayed(delay: Long, callback: () -> Unit) {
+fun delayed(delay: Long, callback: () -> Unit) {
     Handler().postDelayed(delay) { callback() }
 }

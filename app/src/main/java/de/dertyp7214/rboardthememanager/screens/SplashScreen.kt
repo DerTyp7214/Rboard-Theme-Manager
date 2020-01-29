@@ -19,7 +19,7 @@ import com.topjohnwu.superuser.Shell
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.helper.runAsCommand
+import de.dertyp7214.rboardthememanager.core.runAsCommand
 import java.util.*
 
 class SplashScreen : AppCompatActivity() {

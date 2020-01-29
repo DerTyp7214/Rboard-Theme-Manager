@@ -30,6 +30,7 @@ import de.dertyp7214.rboardthememanager.helper.DownloadListener
 import de.dertyp7214.rboardthememanager.helper.ZipHelper
 import de.dertyp7214.rboardthememanager.helper.downloadDialog
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.net.URL
@@ -69,7 +70,7 @@ class DownloadFragment : Fragment() {
         )
 
         Thread {
-            val json = safeParse(URL(PACKS_URL).readText(UTF_8))
+            val json = JSONArray().safeParse(URL(PACKS_URL).readText(UTF_8))
             json.forEach { o, _ ->
                 if (o is JSONObject && o.has("author") && o.has("url") && o.has("title"))
                     list.add(
@@ -123,7 +124,7 @@ class DownloadFragment : Fragment() {
                 val pair = downloadDialog(context).apply {
                     first.isIndeterminate = false
                 }
-                DownloadHelper(context)
+                DownloadHelper()
                     .from(pack.url)
                     .to(
                         File(

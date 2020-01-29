@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.utils
 
+import com.dertyp7214.logs.helpers.Logger
 import com.jaredrummler.android.shell.Shell
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileOutputStream
@@ -9,7 +10,6 @@ import de.dertyp7214.rboardthememanager.core.parseModuleMeta
 import de.dertyp7214.rboardthememanager.data.MagiskModule
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import kotlin.text.Charsets.UTF_8
-import com.topjohnwu.superuser.Shell as MagiskShell
 
 object MagiskUtils {
     fun isMagiskInstalled(): Boolean {
@@ -42,7 +42,7 @@ object MagiskUtils {
     }
 
     fun installModule(meta: ModuleMeta, files: Map<String, String?>) {
-        if (MagiskShell.rootAccess()) {
+        RootUtils.runWithRoot {
             val moduleDir = SuFile(MODULES_PATH, meta.id)
             moduleDir.mkdirs()
             writeSuFile(SuFile(moduleDir, "module.prop"), meta.getString())
@@ -52,10 +52,10 @@ object MagiskUtils {
                     else mkdirs()
                 }
             }
-        }
+        }.catch { Logger.log(Logger.Companion.Type.ERROR, "INSTALL_MODULE", it) }
     }
 
-    fun writeSuFile(file: SuFile, content: String) {
+    private fun writeSuFile(file: SuFile, content: String) {
         SuFileOutputStream(file).use {
             it.write(content.toByteArray(UTF_8))
         }

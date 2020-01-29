@@ -249,7 +249,7 @@ class HomeGridFragment : Fragment() {
             }.start()
         })
 
-        context?.delayed(200) {
+        delayed(200) {
             if (!homeViewModel.themesExist()) {
                 Thread {
                     loadThemes().apply {

@@ -7,7 +7,6 @@ import android.os.Environment
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.dertyp7214.logs.helpers.Logger
-import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import com.topjohnwu.superuser.io.SuFileOutputStream
@@ -16,6 +15,7 @@ import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.moveToCache
+import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import java.io.File
 
@@ -119,20 +119,5 @@ object ThemeHelper {
                     )
                 )
             }
-    }
-}
-
-fun String.runAsCommand(): Boolean {
-    return Shell.getShell().newJob().add(this).exec().apply {
-        if (err.size > 0) Logger.log(
-            Logger.Companion.Type.ERROR, "RUN COMMAND",
-            err.toTypedArray().contentToString()
-        )
-        if (out.size > 0) Logger.log(
-            Logger.Companion.Type.DEBUG, "RUN COMMAND",
-            out.toTypedArray().contentToString()
-        )
-    }.isSuccess.apply {
-        Logger.log(Logger.Companion.Type.INFO, "RUN COMMAND", "$this ${this@runAsCommand}")
     }
 }

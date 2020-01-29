@@ -1,6 +1,5 @@
 package de.dertyp7214.rboardthememanager.core
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
@@ -22,7 +21,7 @@ fun Drawable.getBitmap(): Bitmap {
     return bitmap
 }
 
-fun VectorDrawable.getBitmap(context: Context): Bitmap {
+fun VectorDrawable.getBitmap(): Bitmap {
     val bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     setBounds(0, 0, canvas.width, canvas.height)

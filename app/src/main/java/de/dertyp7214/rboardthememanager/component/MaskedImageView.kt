@@ -46,7 +46,7 @@ class MaskedImageView : androidx.appcompat.widget.AppCompatImageView {
             ).apply {
                 eraseColor((drawable as ColorDrawable).color)
             }
-            is VectorDrawable -> (drawable as VectorDrawable).getBitmap(context)
+            is VectorDrawable -> (drawable as VectorDrawable).getBitmap()
             null -> Bitmap.createBitmap(
                 width,
                 height,
@@ -62,7 +62,7 @@ class MaskedImageView : androidx.appcompat.widget.AppCompatImageView {
             ).apply {
                 eraseColor((mMask as ColorDrawable).color)
             }
-            is VectorDrawable -> (mMask as VectorDrawable).getBitmap(context)
+            is VectorDrawable -> (mMask as VectorDrawable).getBitmap()
             else -> (mMask as BitmapDrawable).bitmap
         }, original.width, original.height, false)
 
