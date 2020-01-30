@@ -3,7 +3,6 @@ package de.dertyp7214.rboardthememanager.helper
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.Environment
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.dertyp7214.logs.helpers.Logger
@@ -17,31 +16,29 @@ import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.moveToCache
 import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
+import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import java.io.File
 
 object ThemeHelper {
 
-    fun installTheme(zip: File): Boolean {
+    fun installTheme(zip: File, move: Boolean = true): Boolean {
         return if (zip.extension == "pack") {
             Application.context.let {
                 if (it != null) {
                     val installDir = File(it.cacheDir, "tmpInstall")
                     val newZip = File(
-                        File(
-                            it.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)[0].absolutePath.removeSuffix(
-                                "Notifications"
-                            ), "ThemePacks"
-                        ), zip.name
+                        getThemePacksPath(it).apply { if (!exists()) mkdirs() }, zip.name
                     )
-                    "mv ${zip.absolutePath} ${newZip.absoluteFile}".runAsCommand()
-                    ZipHelper().unpackZip(installDir.absolutePath, newZip.absolutePath)
-                    newZip.deleteOnExit()
-                    if (installDir.isDirectory) {
-                        var noError = false
-                        installDir.listFiles()?.forEach { theme ->
-                            if (installTheme(theme) && !noError) noError = true
-                        }
-                        noError
+                    if (!move || "cp ${zip.absolutePath} ${newZip.absoluteFile}".runAsCommand()) {
+                        ZipHelper().unpackZip(installDir.absolutePath, newZip.absolutePath)
+                        newZip.deleteOnExit()
+                        if (installDir.isDirectory) {
+                            var noError = false
+                            installDir.listFiles()?.forEach { theme ->
+                                if (installTheme(theme) && !noError) noError = true
+                            }
+                            noError
+                        } else false
                     } else false
                 } else false
             }

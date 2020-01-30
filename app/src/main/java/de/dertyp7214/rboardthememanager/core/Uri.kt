@@ -2,8 +2,10 @@ package de.dertyp7214.rboardthememanager.core
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import java.io.File
 
 
 @SuppressLint("Recycle")
@@ -27,4 +29,11 @@ fun Uri.getFileName(activity: Activity): String {
         }
     }
     return result
+}
+
+fun Uri.writeToFile(context: Context, file: File): Boolean {
+    return context.contentResolver.openInputStream(this)?.let {
+        file.copyInputStreamToFile(it)
+        true
+    } ?: false
 }

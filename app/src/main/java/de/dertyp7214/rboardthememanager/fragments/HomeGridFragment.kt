@@ -50,6 +50,7 @@ import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 import de.dertyp7214.rboardthememanager.helper.TimeLogger
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
+import de.dertyp7214.rboardthememanager.utils.FileUtils
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import java.io.File
@@ -378,8 +379,11 @@ class HomeGridFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
             val zip =
-                File("/storage/emulated/0/${getRealPathFromURI(data.data!!).split(":").last()}")
-            if (ThemeHelper.installTheme(zip)) Toast.makeText(
+                File(
+                    FileUtils.getThemePacksPath(context!!),
+                    data.data!!.getFileName(activity!!)
+                ).apply { data.data!!.writeToFile(context!!, this) }
+            if (ThemeHelper.installTheme(zip, false)) Toast.makeText(
                 context,
                 R.string.theme_added,
                 Toast.LENGTH_SHORT

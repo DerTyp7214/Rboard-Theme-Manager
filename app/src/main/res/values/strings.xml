@@ -102,4 +102,5 @@
     <string name="removed">Theme deleted.</string>
     <string name="undo">UNDO</string>
     <string name="share_themes">Share themes</string>
+    <string name="noFile">No file provided!</string>
 </resources>

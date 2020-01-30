@@ -3,6 +3,7 @@ package de.dertyp7214.rboardthememanager.core
 import com.topjohnwu.superuser.io.SuFileInputStream
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import java.io.File
+import java.io.InputStream
 import kotlin.text.Charsets.UTF_8
 
 fun File.parseModuleMeta(): ModuleMeta {
@@ -20,4 +21,10 @@ fun File.parseModuleMeta(): ModuleMeta {
         (map["author"] ?: "") as String,
         (map["description"] ?: "") as String
     )
+}
+
+fun File.copyInputStreamToFile(inputStream: InputStream) {
+    this.outputStream().use { fileOut ->
+        inputStream.copyTo(fileOut)
+    }
 }
