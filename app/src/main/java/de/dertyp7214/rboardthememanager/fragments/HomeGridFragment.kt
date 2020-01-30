@@ -8,10 +8,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.net.Uri
 import android.os.Bundle
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -579,32 +576,5 @@ class HomeGridFragment : Fragment() {
                 null
             }
         }
-    }
-
-    private fun getRealPathFromURI(uri: Uri): String {
-        var filePath = uri.path
-        if (filePath?.startsWith("/storage") == true)
-            return filePath
-
-        val wholeID = DocumentsContract.getDocumentId(uri)
-
-        val id = wholeID.split(":")[1]
-
-        val column = arrayOf(MediaStore.Files.FileColumns.DATA)
-
-        val sel = MediaStore.Files.FileColumns.DATA + " LIKE '%" + id + "%'"
-
-        val cursor = context?.contentResolver?.query(
-            MediaStore.Files.getContentUri("external"),
-            column, sel, null, null
-        )
-
-        val columnIndex = cursor?.getColumnIndex(column[0])
-
-        if (cursor?.moveToFirst() == true && columnIndex != null) {
-            filePath = cursor.getString(columnIndex)
-        }
-        cursor?.close()
-        return filePath!!
     }
 }

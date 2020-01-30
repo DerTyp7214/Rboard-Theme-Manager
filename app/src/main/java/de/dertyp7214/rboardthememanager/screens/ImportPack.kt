@@ -1,9 +1,6 @@
 package de.dertyp7214.rboardthememanager.screens
 
-import android.net.Uri
 import android.os.Bundle
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import de.dertyp7214.rboardthememanager.R
@@ -34,32 +31,5 @@ class ImportPack : AppCompatActivity() {
         } ?: Toast.makeText(this, R.string.noFile, Toast.LENGTH_LONG).show()
 
         finishAndRemoveTask()
-    }
-
-    private fun getRealPathFromURI(uri: Uri): String {
-        var filePath = uri.path
-        if (filePath?.startsWith("/storage") == true)
-            return filePath
-
-        val wholeID = DocumentsContract.getDocumentId(uri)
-
-        val id = wholeID.split(":")[1]
-
-        val column = arrayOf(MediaStore.Files.FileColumns.DATA)
-
-        val sel = MediaStore.Files.FileColumns.DATA + " LIKE '%" + id + "%'"
-
-        val cursor = contentResolver?.query(
-            MediaStore.Files.getContentUri("external"),
-            column, sel, null, null
-        )
-
-        val columnIndex = cursor?.getColumnIndex(column[0])
-
-        if (cursor?.moveToFirst() == true && columnIndex != null) {
-            filePath = cursor.getString(columnIndex)
-        }
-        cursor?.close()
-        return filePath!!
     }
 }
