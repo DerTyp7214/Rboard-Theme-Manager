@@ -26,7 +26,7 @@ object RootUtils {
         if (Shell.rootAccess()) {
             run()
         } else {
-            callback("No root access!")
+            callback?.invoke("No root access!")
         }
         return throwable
     }
