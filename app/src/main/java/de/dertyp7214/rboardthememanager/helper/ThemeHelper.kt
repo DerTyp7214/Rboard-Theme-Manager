@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.dertyp7214.logs.helpers.Logger
+import com.jaredrummler.android.shell.Shell
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import com.topjohnwu.superuser.io.SuFileOutputStream
@@ -23,6 +24,11 @@ import java.nio.charset.Charset
 object ThemeHelper {
 
     fun installTheme(zip: File, move: Boolean = true): Boolean {
+
+        if (!Shell.SU.available()) {
+            return false
+        }
+
         return if (zip.extension == "pack") {
             Application.context.let {
                 if (it != null) {
@@ -51,10 +57,12 @@ object ThemeHelper {
 
     @SuppressLint("SdCardPath")
     fun applyTheme(name: String, withBorders: Boolean = false): Boolean {
+        if (!Shell.SU.available()) {
+            return false
+        }
         val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName =
             "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
-        val fileName2 = "/data/data/$inputPackageName/shared_prefs/essa.xml"
         Logger.log(Logger.Companion.Type.INFO, "APPLY", "$name $inputPackageName $fileName")
         val content = SuFileInputStream(SuFile(fileName)).use {
             it.bufferedReader().readText()
@@ -92,16 +100,14 @@ object ThemeHelper {
                 outputStreamWriter.write(content)
             }
 
-        SuFileOutputStream(File(fileName2)).writer(Charset.defaultCharset())
-            .use { outputStreamWriter ->
-                outputStreamWriter.write(content)
-            }
-
         return "am force-stop $inputPackageName".runAsCommand()
     }
 
     @SuppressLint("SdCardPath")
     fun getActiveTheme(): String {
+        if (!Shell.SU.available()) {
+            return ""
+        }
         val inputPackageName = "com.google.android.inputmethod.latin"
         val fileLol =
             SuFile("/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml")
