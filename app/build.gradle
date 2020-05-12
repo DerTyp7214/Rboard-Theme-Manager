@@ -16,8 +16,8 @@ android {
         applicationId "de.dertyp7214.rboardthememanager"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 18
-        versionName "1.8"
+        versionCode 19
+        versionName "1.8.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -26,7 +26,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            applicationIdSuffix ".debug"
+            //applicationIdSuffix ".debug"
         }
     }
 }

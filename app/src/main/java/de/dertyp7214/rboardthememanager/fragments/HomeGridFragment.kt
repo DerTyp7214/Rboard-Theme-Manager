@@ -1,7 +1,6 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -12,13 +11,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -27,8 +26,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.transition.ChangeBounds
-import androidx.transition.TransitionManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
 import com.dertyp7214.preferencesplus.core.setMargins
@@ -53,7 +50,6 @@ import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.max
 
 class HomeGridFragment : Fragment() {
 
@@ -330,35 +326,23 @@ class HomeGridFragment : Fragment() {
 
     private fun toggleToolbar(visible: Boolean) {
         val scale = if (visible) 1F else .0F
-        val margin = if (visible) 0 else 120.dpToPx(context!!).toInt()
+        val margin = 0
         val corners1 = if (visible) 20.dpToPx(activity!!) else 0F
         val corners2 = if (visible) 0F else 20.dpToPx(activity!!)
         val longDelay = if (visible) 100L else 800L
-        ObjectAnimator.ofFloat(toolbar, "scaleY", max(scale, .5F)).apply {
-            duration = longDelay
-            start()
-        }
-        ObjectAnimator.ofFloat(toolbar, "scaleX", scale).apply {
-            duration = 300
-            start()
-        }
-        ObjectAnimator.ofFloat(toolbar, "alpha", scale).apply {
-            duration = longDelay
-            start()
-        }
-        ChangeBounds().apply {
-            startDelay = 0
-            interpolator = AccelerateDecelerateInterpolator()
-            duration = 300
-            TransitionManager.beginDelayedTransition(toolbar, this)
-        }
-        toolbar.setMargins(0, margin, 0, 0)
-        ValueAnimator.ofFloat(corners1, corners2).apply {
-            duration = 50
-            addUpdateListener {
-                toolbar.background = getShape(it.animatedValue as Float)
+
+        val anim = ObjectAnimator.ofFloat(toolbar, "alpha", scale).apply {
+            duration = 180
+            if (visible) {
+                toolbar.visibility = View.VISIBLE
             }
-        }.start()
+            start()
+        }
+        anim.doOnEnd {
+            if (!visible) { toolbar.visibility = View.GONE }
+        }
+
+        toolbar.setMargins(0, margin, 0, 0)
     }
 
     private fun getShape(radius: Float): Drawable {
