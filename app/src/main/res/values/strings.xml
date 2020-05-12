@@ -26,6 +26,7 @@
     <string name="grid_big">Big Gridlayout</string>
     <string name="search_hint">Search Themes</string>
     <string name="apply_theme">Apply Theme</string>
+    <string name="enable_border">Key borders</string>
     <string name="applied">Theme Applied</string>
     <string name="error">There was an Error!</string>
     <string name="errors">There where some Errors!</string>

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
@@ -40,6 +41,7 @@ class DownloadFragment : Fragment() {
 
     private lateinit var adapter: Adapter
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var refreshLayout: SwipeRefreshLayout
 
     private val list = ArrayList<PackItem>()
 
@@ -49,6 +51,7 @@ class DownloadFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_download, container, false)
 
+        refreshLayout = v.findViewById(R.id.refreshLayout)
         homeViewModel = activity!!.run {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
@@ -56,6 +59,18 @@ class DownloadFragment : Fragment() {
         adapter = Adapter(context!!, list) {
             homeViewModel.setRefetch(true)
             Toast.makeText(context, R.string.downloaded, Toast.LENGTH_SHORT).show()
+        }
+
+        refreshLayout.setProgressViewOffset(
+            true,
+            0,
+            context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt()
+        )
+
+        refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
+        refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
+        refreshLayout.setOnRefreshListener {
+            fetchDownloadList()
         }
 
         val recyclerView = v.findViewById<RecyclerView>(R.id.recyclerView)
@@ -69,6 +84,13 @@ class DownloadFragment : Fragment() {
             EndOffsetItemDecoration(56.dpToPx(context!!).toInt())
         )
 
+        fetchDownloadList()
+
+        return v
+    }
+
+    private fun fetchDownloadList() {
+        list.removeAll(list)
         Thread {
             val json = JSONArray().safeParse(URL(PACKS_URL).readText(UTF_8))
             json.forEach { o, _ ->
@@ -89,10 +111,9 @@ class DownloadFragment : Fragment() {
             }
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
+                refreshLayout.isRefreshing = false
             }
         }.start()
-
-        return v
     }
 
     class Adapter(
@@ -144,12 +165,20 @@ class DownloadFragment : Fragment() {
                         }
 
                         override fun error(error: String) {
-                            Logger.log(Logger.Companion.Type.ERROR, "DOWNLOAD", "${pack.name} $error")
+                            Logger.log(
+                                Logger.Companion.Type.ERROR,
+                                "DOWNLOAD",
+                                "${pack.name} $error"
+                            )
                         }
 
                         override fun end(path: String) {
                             pair.first.isIndeterminate = true
-                            Logger.log(Logger.Companion.Type.INFO, "DOWNLOAD_ZIP", "from: $MAGISK_THEME_LOC to $path")
+                            Logger.log(
+                                Logger.Companion.Type.INFO,
+                                "DOWNLOAD_ZIP",
+                                "from: $MAGISK_THEME_LOC to $path"
+                            )
                             ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
                             pair.second.dismiss()
                             callback()

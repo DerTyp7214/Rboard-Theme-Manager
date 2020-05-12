@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -98,6 +99,14 @@ class HomeGridFragment : Fragment() {
                     fabAdd.hide()
                 else if (dy < 0)
                     fabAdd.show()
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (newState == SCROLL_STATE_IDLE) {
+                    fabAdd.show();
+                }
             }
         })
 

@@ -18,6 +18,7 @@ import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import java.io.File
+import java.nio.charset.Charset
 
 object ThemeHelper {
 
@@ -49,29 +50,53 @@ object ThemeHelper {
     }
 
     @SuppressLint("SdCardPath")
-    fun applyTheme(name: String): Boolean {
+    fun applyTheme(name: String, withBorders: Boolean = false): Boolean {
         val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName =
             "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
+        val fileName2 = "/data/data/$inputPackageName/shared_prefs/essa.xml"
         Logger.log(Logger.Companion.Type.INFO, "APPLY", "$name $inputPackageName $fileName")
         val content = SuFileInputStream(SuFile(fileName)).use {
             it.bufferedReader().readText()
         }.let {
-            if (it.contains("<string name=\"additional_keyboard_theme\">"))
-                it.replace(
+
+            var changed = it
+
+            changed = if (changed.contains("<string name=\"additional_keyboard_theme\">"))
+                changed.replace(
                     "<string name=\"additional_keyboard_theme\">.*</string>".toRegex(),
                     "<string name=\"additional_keyboard_theme\">system:$name</string>"
                 )
-            else {
-                it.replace(
+            else
+                changed.replace(
                     "<map>",
                     "<map><string name=\"additional_keyboard_theme\">system:$name</string>"
                 )
+
+            changed = if (changed.contains("<boolean name=\"enable_key_border\"")) {
+                changed.replace(
+                    "<boolean name=\"enable_key_border\" value=\".*\" />".toRegex(),
+                    "<boolean name=\"enable_key_border\" value=\"$withBorders\" />"
+                )
+            } else {
+                changed.replace(
+                    "<map>",
+                    "<map><boolean name=\"enable_key_border\" value=\"$withBorders\" />"
+                )
             }
+
+            return@let changed
         }
-        SuFileOutputStream(File(fileName)).writer().use { outputStreamWriter ->
-            outputStreamWriter.write(content)
-        }
+        SuFileOutputStream(File(fileName)).writer(Charset.defaultCharset())
+            .use { outputStreamWriter ->
+                outputStreamWriter.write(content)
+            }
+
+        SuFileOutputStream(File(fileName2)).writer(Charset.defaultCharset())
+            .use { outputStreamWriter ->
+                outputStreamWriter.write(content)
+            }
+
         return "am force-stop $inputPackageName".runAsCommand()
     }
 

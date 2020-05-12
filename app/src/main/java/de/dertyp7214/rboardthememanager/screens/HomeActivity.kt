@@ -62,7 +62,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
         }
 
         homeNav.setOnNavigationItemSelectedListener {
-            if (currentFragment != it.itemId) {
+            if (currentFragment != it.itemId || currentFragment == R.id.navigation_themes) {
                 currentFragment = it.itemId
                 when (it.itemId) {
                     R.id.navigation_themes -> supportFragmentManager.beginTransaction().apply {
