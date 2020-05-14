@@ -21,6 +21,19 @@ import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import java.io.File
 import java.nio.charset.Charset
 
+enum class RKBDFlagType(val rawValue: String) {
+    boolean("boolean"),
+    long("long"),
+    string("string")
+}
+
+enum class RKBDFlag(val rawValue: String) {
+    EnableJoystickDelete("enable_joystick_delete"),
+    DeprecateSearch("deprecate_search"),
+    ThemedNavBarStyle("themed_nav_bar_style"),
+    EnableSharing("enable_sharing")
+}
+
 object ThemeHelper {
 
     fun installTheme(zip: File, move: Boolean = true): Boolean {
@@ -81,6 +94,7 @@ object ThemeHelper {
                     "<map><string name=\"additional_keyboard_theme\">system:$name</string>"
                 )
 
+            // Change enable_key_border value
             changed = if (changed.contains("<boolean name=\"enable_key_border\"")) {
                 changed.replace(
                     "<boolean name=\"enable_key_border\" value=\".*\" />".toRegex(),
@@ -147,5 +161,55 @@ object ThemeHelper {
                     )
                 )
             }
+    }
+
+    fun applyFlag(flag: RKBDFlag, value: Any, flagType: RKBDFlagType): Boolean {
+        if (!Shell.SU.available()) {
+            return false
+        }
+        val inputPackageName = GBOARD_PACKAGE_NAME
+        val fileName = "data/data/$inputPackageName/shared_prefs/flag_value.xml"
+        val content = SuFileInputStream(SuFile(fileName)).use {
+            it.bufferedReader().readText()
+        }.let {
+            var fileText = it
+
+            if (flagType != RKBDFlagType.string) {
+                fileText =
+                    if (fileText.contains("<${flagType.rawValue} name=\"${flag.rawValue}\"")) {
+                        fileText.replace(
+                            """<${flagType.rawValue} name="${flag.rawValue}" value=".*" />""".toRegex(),
+                            """<${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
+                        )
+                    } else {
+                        fileText.replace(
+                            "<map>",
+                            """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
+                        )
+                    }
+            } else {
+                fileText =
+                    if (fileText.contains("<${flagType.rawValue} name=\"${flag.rawValue}\">")) {
+                        fileText.replace(
+                            """<${flagType.rawValue} name="${flag.rawValue}">.*</string>""".toRegex(),
+                            """<${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
+                        )
+                    } else {
+                        fileText.replace(
+                            "<map>",
+                            """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string"""
+                        )
+                    }
+            }
+
+            return@let fileText
+        }
+
+        SuFileOutputStream(File(fileName)).writer(Charset.defaultCharset())
+            .use { outputStreamWriter ->
+                outputStreamWriter.write(content)
+            }
+
+        return "am force-stop $inputPackageName".runAsCommand()
     }
 }

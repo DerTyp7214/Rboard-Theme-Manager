@@ -80,6 +80,7 @@
     <string name="typ_paypal">https://paypal.me/JosuaLengwenath</string>
     <string name="rk_paypal">https://paypal.me/rkbdi</string>
     <string name="settings">Settings</string>
+    <string name="flags">Flags</string>
     <string name="theme_pref">Theme</string>
     <string name="ui">Ui</string>
     <string name="key">Activation Key</string>

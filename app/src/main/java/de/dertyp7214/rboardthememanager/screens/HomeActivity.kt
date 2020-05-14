@@ -155,6 +155,11 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                 ) {
                     startActivity(Intent(this, Settings::class.java))
                     bottomSheet?.dismiss()
+                },
+                MenuItem(R.drawable.settings,
+                    R.string.flags, false) {
+                    startActivity(Intent(this, FlagsActivity::class.java))
+                    bottomSheet?.dismiss()
                 }
             ).apply {
                 if (BuildConfig.DEBUG) {

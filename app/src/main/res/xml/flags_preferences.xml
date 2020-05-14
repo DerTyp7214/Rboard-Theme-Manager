@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="flags_general"
+        android:title="Gboard Flags">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="flags_enable_sharing"
+            android:title="Enable share button" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="flags_nav_bar_theming"
+            android:title="Navbar theming" />
+
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>

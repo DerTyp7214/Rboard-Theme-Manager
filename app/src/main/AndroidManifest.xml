@@ -29,6 +29,7 @@
         <activity android:name=".screens.LogsScreen" />
         <activity android:name=".screens.AboutActivity" />
         <activity android:name=".screens.InfoScreen" />
+        <activity android:name=".screens.FlagsActivity" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
