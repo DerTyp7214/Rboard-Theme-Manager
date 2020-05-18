@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:asp="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         android:key="flags_general"
@@ -8,13 +9,93 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="flags_enable_sharing"
-            android:title="Enable share button" />
+            android:key="flags_emoji_fix"
+            android:title="Emoji compat fix"
+            android:icon="@drawable/ic_emoji_compat"
+            />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="flags_joystick_delete"
+            android:title="Joystick delete"
+            android:icon="@drawable/ic_backspace_24px"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="flags_deprecate_search"
+            android:title="Google icon"
+            android:icon="@drawable/ic_logo"
+            />
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="flags_nav_bar_theming"
-            android:title="Navbar theming" />
+            android:title="Navbar color"
+            android:icon="@drawable/ic_navbar"
+            />
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="flags_enable_sharing"
+            android:icon="@drawable/ic_share_24px"
+            android:title="Share icon" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="flags_email_provider"
+            android:title="Email provider"
+            android:icon="@drawable/ic_mdi_alternate_email"/>
+
+        <EditTextPreference
+            android:key="flags_emoji_picker_columns"
+            android:defaultValue="9"
+            android:title="Emoji columns"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:summary="Number of emoji in a row"
+            android:icon="@drawable/ic_rows"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="flags_popup_v2"
+            android:icon="@drawable/ic_popup_v2"
+            android:title="Popup v2" />
+
+        <SwitchPreference
+            android:key="flags_logging"
+            android:title="Logging and debug"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_debug"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Gboard Preferences">
+
+        <SwitchPreference
+            android:key="flags_enable_key_border"
+            android:title="Enable key border"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_crop_din_24px_outlined"/>
+
+        <SwitchPreference
+            android:key="flags_enable_secondary_symbols"
+            android:title="Enable secondary symbols"
+            android:defaultValue="false"
+            asp:icon="@drawable/ic_numeric"
+            android:icon="@drawable/ic_debug"/>
+
+        <SwitchPreference
+            android:key="flags_show_suggestions"
+            android:title="Show suggestions"
+            android:defaultValue="false"
+            asp:icon="@drawable/ic_alphabetical"
+            android:icon="@drawable/ic_debug"/>
+
+        <SeekBarPreference
+            android:key="flags_keyboard_height_ratio"
+            android:title="Keyboard height ratio"
+            android:defaultValue="10"
+            android:max="30"
+            asp:min="5"
+            />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

@@ -27,6 +27,8 @@
         <item name="colorBackgroundFloating">@color/colorPrimaryLight</item>
         <item name="android:colorBackgroundFloating">@color/colorPrimaryLight</item>
         <item name="android:colorControlHighlight">@color/ripple</item>
+        <item name="android:colorControlActivated">@color/colorAccentTransparent</item>
+        <item name="android:trackTint">@color/switch_color</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowContentTransitions">false</item>

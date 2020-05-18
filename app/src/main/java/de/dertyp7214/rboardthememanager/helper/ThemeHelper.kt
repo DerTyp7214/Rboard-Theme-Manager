@@ -28,10 +28,41 @@ enum class RKBDFlagType(val rawValue: String) {
 }
 
 enum class RKBDFlag(val rawValue: String) {
+    EmojiCompatFix("emoji_compat_app_whitelist"),
     EnableJoystickDelete("enable_joystick_delete"),
     DeprecateSearch("deprecate_search"),
     ThemedNavBarStyle("themed_nav_bar_style"),
-    EnableSharing("enable_sharing")
+    EnableSharing("enable_sharing"),
+    EnableEmailProviderCompletion("enable_email_provider_completion"),
+    EmojiPickerV2Columns("emojipickerv2_columns"),
+    EnablePopupViewV2("enable_popup_view_v2"),
+
+    //Loggging flags
+    Logging1("log_all_sticker_shares_to_training_cache"),
+    Logging2("log_all_gif_shares_to_training_cache"),
+    Logging3("log_all_emoji_shares_to_training_cache"),
+    Logging4("log_all_emoji_shares_to_training_cache"),
+    Logging5("log_all_emoji_shares_to_training_cache"),
+    Logging6("log_all_emoji_shares_to_training_cache"),
+    Logging7("log_all_emoji_shares_to_training_cache"),
+    Logging8("log_all_emoji_shares_to_training_cache"),
+    Logging9("log_all_emoji_shares_to_training_cache"),
+    Logging10("log_all_emoji_shares_to_training_cache"),
+    Logging11("log_all_emoji_shares_to_training_cache"),
+    Logging12("log_all_emoji_shares_to_training_cache"),
+    Logging13("log_all_emoji_shares_to_training_cache"),
+
+    // Preference flags
+    KeyboardHeightRatio("keyboard_height_ratio"),
+    EnableKeyBorder("enable_key_border"),
+    EnableSecondarySymbols("enable_secondary_symbols"),
+    ShowSuggestions("show_suggestions")
+
+}
+
+enum class RKBDFile(val rawValue: String) {
+    Flags("flag_value.xml"),
+    Preferences("com.google.android.inputmethod.latin_preferences.xml")
 }
 
 object ThemeHelper {
@@ -163,12 +194,13 @@ object ThemeHelper {
             }
     }
 
-    fun applyFlag(flag: RKBDFlag, value: Any, flagType: RKBDFlagType): Boolean {
+    fun applyFlag(flag: RKBDFlag, value: Any, flagType: RKBDFlagType, file: RKBDFile = RKBDFile.Flags): Boolean {
         if (!Shell.SU.available()) {
             return false
         }
         val inputPackageName = GBOARD_PACKAGE_NAME
-        val fileName = "data/data/$inputPackageName/shared_prefs/flag_value.xml"
+        val fileName = "data/data/$inputPackageName/shared_prefs/${file.rawValue}"
+        val fileName2 = "data/data/$inputPackageName/shared_prefs/${file.rawValue}_2"
         val content = SuFileInputStream(SuFile(fileName)).use {
             it.bufferedReader().readText()
         }.let {
@@ -197,7 +229,7 @@ object ThemeHelper {
                     } else {
                         fileText.replace(
                             "<map>",
-                            """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string"""
+                            """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
                         )
                     }
             }
@@ -210,6 +242,25 @@ object ThemeHelper {
                 outputStreamWriter.write(content)
             }
 
+        SuFileOutputStream(File(fileName2)).writer(Charset.defaultCharset())
+            .use { outputStreamWriter ->
+                outputStreamWriter.write(content)
+            }
+
         return "am force-stop $inputPackageName".runAsCommand()
     }
+
+    var loggingFlags = arrayListOf(
+        RKBDFlag.Logging1, RKBDFlag.Logging2, RKBDFlag.Logging3,
+        RKBDFlag.Logging4,
+        RKBDFlag.Logging5,
+        RKBDFlag.Logging6,
+        RKBDFlag.Logging7,
+        RKBDFlag.Logging8,
+        RKBDFlag.Logging9,
+        RKBDFlag.Logging10,
+        RKBDFlag.Logging11,
+        RKBDFlag.Logging12,
+        RKBDFlag.Logging13
+    )
 }
