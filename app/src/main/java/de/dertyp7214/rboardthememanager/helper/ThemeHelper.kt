@@ -11,13 +11,16 @@ import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import com.topjohnwu.superuser.io.SuFileOutputStream
 import de.dertyp7214.rboardthememanager.Application
+import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.moveToCache
 import de.dertyp7214.rboardthememanager.core.runAsCommand
+import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
+import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import java.io.File
 import java.nio.charset.Charset
 
@@ -63,6 +66,16 @@ enum class RKBDFlag(val rawValue: String) {
 enum class RKBDFile(val rawValue: String) {
     Flags("flag_value.xml"),
     Preferences("com.google.android.inputmethod.latin_preferences.xml")
+}
+
+enum class RKBDProp(val rawValue: String) {
+    BottomPadding("ro.com.google.ime.kb_pad_port_b"),
+    RightPadding("ro.com.google.ime.kb_pad_port_r"),
+    LeftPadding("ro.com.google.ime.kb_pad_port_l"),
+    BottomLandPadding("ro.com.google.ime.kb_pad_land_b"),
+    RightLandPadding("ro.com.google.ime.kb_pad_land_r"),
+    LeftLandPadding("ro.com.google.ime.kb_pad_land_l"),
+    BottomCorners("ro.com.google.ime.corner_key_l")
 }
 
 object ThemeHelper {
@@ -250,6 +263,24 @@ object ThemeHelper {
         return "am force-stop $inputPackageName".runAsCommand()
     }
 
+    fun applyProp(prop: RKBDProp, value: Any) {
+        val meta = ModuleMeta(
+            Config.MODULE_ID + "_addon",
+            "Rboard Themes Addon",
+            "v20",
+            "200",
+            "RKBDI & DerTyp7214 & Nylon",
+            "Addon for Rboard Themes app"
+        )
+        val file = mapOf(
+            Pair(
+                "system.prop",
+                "${prop.rawValue}=$value"
+            )
+        )
+        MagiskUtils.updateModule(meta, file)
+    }
+
     var loggingFlags = arrayListOf(
         RKBDFlag.Logging1, RKBDFlag.Logging2, RKBDFlag.Logging3,
         RKBDFlag.Logging4,
@@ -263,4 +294,16 @@ object ThemeHelper {
         RKBDFlag.Logging12,
         RKBDFlag.Logging13
     )
+
+    fun getSoundsDirectory(): SuFile? {
+        val productMedia = SuFile("/system/product/media/audio/ui/KeypressStandard.ogg")
+        val systemMedia = SuFile("/system/media/audio/ui/KeypressStandard.ogg")
+        return if (productMedia.exists() && productMedia.isFile) {
+            SuFile("/system/product/media")
+        } else if (systemMedia.exists() && systemMedia.isFile) {
+            SuFile("/system/media")
+        } else {
+            null
+        }
+    }
 }

@@ -4,10 +4,7 @@ import android.os.Bundle
 import androidx.core.content.edit
 import androidx.preference.*
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.helper.RKBDFile
-import de.dertyp7214.rboardthememanager.helper.RKBDFlag
-import de.dertyp7214.rboardthememanager.helper.RKBDFlagType
-import de.dertyp7214.rboardthememanager.helper.ThemeHelper
+import de.dertyp7214.rboardthememanager.helper.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -151,6 +148,55 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 )
             }
         }
+
+        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_port_b") {
+            newValue ->
+            if (newValue is Int) {
+                ThemeHelper.applyProp(RKBDProp.BottomPadding, newValue / 10)
+            }
+        }
+
+        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_port_r") {
+                newValue ->
+            if (newValue is Int) {
+                ThemeHelper.applyProp(RKBDProp.RightPadding, newValue / 10)
+            }
+        }
+
+        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_port_l") {
+                newValue ->
+            if (newValue is Int) {
+                ThemeHelper.applyProp(RKBDProp.LeftPadding, newValue / 10)
+            }
+        }
+
+        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_land_b") {
+                newValue ->
+            if (newValue is Int) {
+                ThemeHelper.applyProp(RKBDProp.BottomLandPadding, newValue.toDouble() / 10)
+            }
+        }
+
+        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_land_r") {
+                newValue ->
+            if (newValue is Int) {
+                ThemeHelper.applyProp(RKBDProp.RightLandPadding, newValue.toDouble() / 10)
+            }
+        }
+
+        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_land_l") {
+                newValue ->
+            if (newValue is Int) {
+                ThemeHelper.applyProp(RKBDProp.LeftLandPadding, newValue.toDouble() / 10)
+            }
+        }
+
+        bindPreference<SeekBarPreference>("props_ro.com.google.ime.corner_key_l") {
+                newValue ->
+            if (newValue is Int) {
+                ThemeHelper.applyProp(RKBDProp.BottomCorners, newValue.toDouble() / 10)
+            }
+        }
     }
 
     private inline fun <reified T : Preference?> bindPreference(
@@ -179,7 +225,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                     is EditTextPreference -> {
                         val default = sharedPreferences.getString("${key}_pref", "")
                         setDefaultValue(default)
-                        setSummary(default)
+                        setSummary("$default")
                     }
                 }
 

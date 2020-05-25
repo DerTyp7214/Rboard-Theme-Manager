@@ -11,5 +11,8 @@ object Config {
     const val PACKS_URL =
         "https://raw.githubusercontent.com/GboardThemes/Packs/master/download_list.json"
 
+    const val SOUNDS_PACKS_URL =
+        "https://raw.githubusercontent.com/GboardThemes/Soundpack/master/download_sounds.json"
+
     var themeCount: Int? = null
 }
