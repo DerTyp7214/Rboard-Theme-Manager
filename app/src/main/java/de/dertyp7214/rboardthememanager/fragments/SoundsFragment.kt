@@ -30,7 +30,6 @@ import de.dertyp7214.rboardthememanager.helper.*
 import de.dertyp7214.rboardthememanager.viewmodels.SoundsViewModel
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.File
 import java.net.URL
 
 class SoundsFragment : Fragment() {
