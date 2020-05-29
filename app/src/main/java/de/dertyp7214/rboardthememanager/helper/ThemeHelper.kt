@@ -213,7 +213,6 @@ object ThemeHelper {
         }
         val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName = "data/data/$inputPackageName/shared_prefs/${file.rawValue}"
-        val fileName2 = "data/data/$inputPackageName/shared_prefs/${file.rawValue}_2"
         val content = SuFileInputStream(SuFile(fileName)).use {
             it.bufferedReader().readText()
         }.let {
@@ -251,11 +250,6 @@ object ThemeHelper {
         }
 
         SuFileOutputStream(File(fileName)).writer(Charset.defaultCharset())
-            .use { outputStreamWriter ->
-                outputStreamWriter.write(content)
-            }
-
-        SuFileOutputStream(File(fileName2)).writer(Charset.defaultCharset())
             .use { outputStreamWriter ->
                 outputStreamWriter.write(content)
             }
