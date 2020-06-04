@@ -47,6 +47,7 @@
             android:icon="@drawable/ic_mdi_alternate_email"/>
 
         <EditTextPreference
+            asp:isPreferenceVisible="false"
             android:key="flags_emoji_picker_columns"
             android:defaultValue="9"
             android:title="Emoji columns"
@@ -96,6 +97,7 @@
             android:defaultValue="10"
             android:max="30"
             asp:min="5"
+            asp:icon="@drawable/ic_keyboard_hide_24px_outlined"
             />
     </PreferenceCategory>
 

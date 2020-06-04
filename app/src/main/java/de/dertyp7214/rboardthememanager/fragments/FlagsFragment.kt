@@ -1,7 +1,6 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.*
 import com.topjohnwu.superuser.io.SuFile
@@ -18,7 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 class FlagsFragment : PreferenceFragmentCompat() {
 
     private val defaultValues =
-        getDefaultValues(RKBDFile.Flags) + getDefaultValues(RKBDFile.Preferences)
+        getCurrentXmlValues(RKBDFile.Flags) + getCurrentXmlValues(RKBDFile.Preferences)
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.flags_preferences, rootKey)
@@ -237,15 +236,18 @@ class FlagsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun getDefaultValues(file: RKBDFile): Map<String, Any> {
+    private fun getCurrentXmlValues(file: RKBDFile): Map<String, Any> {
 
         val output = HashMap<String, Any>()
 
         val fileName = "data/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${file.rawValue}"
-        val xmFile = SuFile(fileName)
+        val xmlFile = SuFile(fileName)
+        if (!xmlFile.exists()) {
+            return output
+        }
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
-        val content = SuFileInputStream(xmFile).bufferedReader().readText()
+        val content = SuFileInputStream(xmlFile).bufferedReader().readText()
         val xmlInput = InputSource(StringReader(content))
         val doc = dBuilder.parse(xmlInput)
 
