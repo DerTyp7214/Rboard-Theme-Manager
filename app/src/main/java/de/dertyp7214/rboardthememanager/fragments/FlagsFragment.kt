@@ -17,7 +17,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class FlagsFragment : PreferenceFragmentCompat() {
 
-    val defaultValues = getDefaultValues(RKBDFile.Flags) + getDefaultValues(RKBDFile.Preferences)
+    private val defaultValues =
+        getDefaultValues(RKBDFile.Flags) + getDefaultValues(RKBDFile.Preferences)
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.flags_preferences, rootKey)
@@ -49,7 +50,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
 
         bindPreference<SwitchPreference>(
             "flags_deprecate_search",
-            RKBDFlag.DeprecateSearch, { value -> (value as Boolean).not() }
+            RKBDFlag.DeprecateSearch, { value -> (value as? Boolean ?: false).not() }
         ) { newValue ->
             if (newValue is Boolean) {
                 ThemeHelper.applyFlag(
@@ -100,18 +101,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        bindPreference<EditTextPreference>(
-            "flags_emoji_picker_columns",
-            RKBDFlag.EmojiPickerV2Columns
-        ) { newValue ->
-            if (newValue is String && newValue.toLongOrNull() != null) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EmojiPickerV2Columns,
-                    newValue.toLong(),
-                    RKBDFlagType.long
-                )
-            }
-        }
+
 
         bindPreference<SwitchPreference>("flags_popup_v2", RKBDFlag.EnablePopupViewV2) { newValue ->
             if (newValue is Boolean) {
@@ -191,45 +181,58 @@ class FlagsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_port_b") { newValue ->
-            if (newValue is Int) {
-                ThemeHelper.applyProp(RKBDProp.BottomPadding, newValue / 10)
+        bindPreference<EditTextPreference>(
+            "flags_emoji_picker_columns",
+            RKBDFlag.EmojiPickerV2Columns
+        ) { newValue ->
+            if (newValue is String && newValue.toLongOrNull() != null) {
+                ThemeHelper.applyFlag(
+                    RKBDFlag.EmojiPickerV2Columns,
+                    newValue.toLong(),
+                    RKBDFlagType.long
+                )
             }
         }
 
-        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_port_r") { newValue ->
-            if (newValue is Int) {
-                ThemeHelper.applyProp(RKBDProp.RightPadding, newValue / 10)
+        bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_port_b") { newValue ->
+            if (newValue is String && newValue.toDoubleOrNull() != null) {
+                ThemeHelper.applyProp(RKBDProp.BottomPadding, newValue.toDouble())
             }
         }
 
-        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_port_l") { newValue ->
-            if (newValue is Int) {
-                ThemeHelper.applyProp(RKBDProp.LeftPadding, newValue / 10)
+        bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_port_r") { newValue ->
+            if (newValue is String && newValue.toDoubleOrNull() != null) {
+                ThemeHelper.applyProp(RKBDProp.RightPadding, newValue.toDouble())
             }
         }
 
-        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_land_b") { newValue ->
-            if (newValue is Int) {
-                ThemeHelper.applyProp(RKBDProp.BottomLandPadding, newValue.toDouble() / 10)
+        bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_port_l") { newValue ->
+            if (newValue is String && newValue.toDoubleOrNull() != null) {
+                ThemeHelper.applyProp(RKBDProp.LeftPadding, newValue.toDouble())
             }
         }
 
-        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_land_r") { newValue ->
-            if (newValue is Int) {
-                ThemeHelper.applyProp(RKBDProp.RightLandPadding, newValue.toDouble() / 10)
+        bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_land_b") { newValue ->
+            if (newValue is String && newValue.toDoubleOrNull() != null) {
+                ThemeHelper.applyProp(RKBDProp.BottomLandPadding, newValue.toDouble())
             }
         }
 
-        bindPreference<SeekBarPreference>("props_ro.com.google.ime.kb_pad_land_l") { newValue ->
-            if (newValue is Int) {
-                ThemeHelper.applyProp(RKBDProp.LeftLandPadding, newValue.toDouble() / 10)
+        bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_land_r") { newValue ->
+            if (newValue is String && newValue.toDoubleOrNull() != null) {
+                ThemeHelper.applyProp(RKBDProp.RightLandPadding, newValue.toDouble())
             }
         }
 
-        bindPreference<SeekBarPreference>("props_ro.com.google.ime.corner_key_l") { newValue ->
-            if (newValue is Int) {
-                ThemeHelper.applyProp(RKBDProp.BottomCorners, newValue.toDouble() / 10)
+        bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_land_l") { newValue ->
+            if (newValue is String && newValue.toDoubleOrNull() != null) {
+                ThemeHelper.applyProp(RKBDProp.LeftLandPadding, newValue.toDouble())
+            }
+        }
+
+        bindPreference<EditTextPreference>("props_ro.com.google.ime.corner_key_l") { newValue ->
+            if (newValue is String && newValue.toDoubleOrNull() != null) {
+                ThemeHelper.applyProp(RKBDProp.BottomCorners, newValue.toDouble())
             }
         }
     }
@@ -271,7 +274,6 @@ class FlagsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        Log.d("KYS", output.toString())
         return output
     }
 
@@ -288,9 +290,9 @@ class FlagsFragment : PreferenceFragmentCompat() {
                     when (this) {
                         is SwitchPreference -> {
                             val default =
-                                (defaultValues[flag.rawValue]?.let { calculateDefault(it) }) as Boolean
-                            isChecked = default
-                            setSummary(if (default) "Enabled" else "Disabled")
+                                (defaultValues[flag.rawValue]?.let { calculateDefault(it) }) as? Boolean
+                            isChecked = default ?: false
+                            setSummary(if (default == true) "Enabled" else "Disabled")
                         }
                         is DropDownPreference -> {
                             val default = defaultValues[flag.rawValue] as String

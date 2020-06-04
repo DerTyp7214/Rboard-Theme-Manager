@@ -103,60 +103,59 @@
         android:title="Gboard Props"
         android:summary="Reboot after changing these values">
 
-        <SeekBarPreference
+        <EditTextPreference
             android:key="props_ro.com.google.ime.kb_pad_port_b"
             android:title="Bottom padding"
-            android:defaultValue="400"
-            android:max="1000"
-            asp:min="10"
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+
             />
 
-        <SeekBarPreference
+        <EditTextPreference
             android:key="props_ro.com.google.ime.kb_pad_port_r"
             android:title="Right padding"
-            android:defaultValue="350"
-            android:max="1000"
-            asp:min="10"
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+
             />
 
-        <SeekBarPreference
+        <EditTextPreference
             android:key="props_ro.com.google.ime.kb_pad_port_l"
             android:title="Left padding"
-            android:defaultValue="350"
-            android:max="1000"
-            asp:min="10"
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+
             />
 
-        <SeekBarPreference
+        <EditTextPreference
             android:key="props_ro.com.google.ime.kb_pad_land_b"
             android:title="Bottom padding (landscape)"
-            android:defaultValue="400"
-            android:max="1000"
-            asp:min="1"
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+
             />
 
-        <SeekBarPreference
+        <EditTextPreference
             android:key="props_ro.com.google.ime.kb_pad_land_r"
             android:title="Right padding (landscape)"
-            android:defaultValue="350"
-            android:max="1000"
-            asp:min="1"
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+
             />
 
-        <SeekBarPreference
+        <EditTextPreference
             android:key="props_ro.com.google.ime.kb_pad_land_l"
             android:title="Left padding (landscape)"
-            android:defaultValue="350"
-            android:max="1000"
-            asp:min="1"
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
             />
 
-        <SeekBarPreference
+        <EditTextPreference
             android:key="props_ro.com.google.ime.corner_key_l"
             android:title="Bottom corners"
-            android:defaultValue="350"
-            android:max="500"
-            asp:min="1"
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+
             />
 
     </PreferenceCategory>

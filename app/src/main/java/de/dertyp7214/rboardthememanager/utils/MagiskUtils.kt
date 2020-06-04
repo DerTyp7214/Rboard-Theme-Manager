@@ -1,6 +1,5 @@
 package de.dertyp7214.rboardthememanager.utils
 
-import android.util.Log
 import com.dertyp7214.logs.helpers.Logger
 import com.jaredrummler.android.shell.Shell
 import com.topjohnwu.superuser.io.SuFile
@@ -68,19 +67,18 @@ object MagiskUtils {
                     SuFile(moduleDir, file.key).apply {
                         var text = SuFileInputStream(this).readBytes().toString(UTF_8)
 
-                        Log.d("kys", text)
-
-                            if (text.contains(file.value?.split("=")?.get(0).toString())) {
-                                text = text.replace(
-                                    text.lines()
-                                        .first {
-                                            it.contains(
-                                                file.value?.split("=")?.get(0).toString()
-                                            )
-                                        }, file.value ?: "")
-                            } else {
-                                text += "\n${file.value ?: ""}"
-                            }
+                        if (text.contains(file.value?.split("=")?.get(0).toString())) {
+                            text = text.replace(
+                                text.lines()
+                                    .first {
+                                        it.contains(
+                                            file.value?.split("=")?.get(0).toString()
+                                        )
+                                    }, file.value ?: ""
+                            )
+                        } else {
+                            text += "\n${file.value ?: ""}"
+                        }
 
 
                         if (text.lines().isEmpty()) {
@@ -89,7 +87,6 @@ object MagiskUtils {
 
                         SuFile(moduleDir, file.key).apply {
                             writeSuFile(this, text)
-                            Log.d("kys", text)
                         }
                     }
                 } else {
