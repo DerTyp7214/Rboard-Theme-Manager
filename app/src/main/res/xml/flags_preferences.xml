@@ -113,16 +113,14 @@
             android:dialogLayout="@layout/preference_edit_text"
             android:key="props_ro.com.google.ime.kb_pad_port_r"
             android:title="Right padding"
-
-            />
+            asp:icon="@drawable/ic_right_outlined" />
 
         <EditTextPreference
             android:defaultValue="1"
             android:dialogLayout="@layout/preference_edit_text"
             android:key="props_ro.com.google.ime.kb_pad_port_l"
             android:title="Left padding"
-
-            />
+            asp:icon="@drawable/ic_left_outlined" />
 
         <EditTextPreference
             android:defaultValue="1"

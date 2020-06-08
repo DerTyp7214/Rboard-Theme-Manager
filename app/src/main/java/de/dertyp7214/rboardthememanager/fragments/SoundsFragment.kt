@@ -31,6 +31,8 @@ import de.dertyp7214.rboardthememanager.viewmodels.SoundsViewModel
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URL
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SoundsFragment : Fragment() {
 
@@ -47,11 +49,16 @@ class SoundsFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_sounds, container, false)
 
         refreshLayout = v.findViewById(R.id.refreshLayout)
-        soundsViewModel = activity!!.run { ViewModelProviders.of(this)[SoundsViewModel::class.java] }
+        soundsViewModel =
+            activity!!.run { ViewModelProviders.of(this)[SoundsViewModel::class.java] }
 
         adapter = Adapter(context!!, list) {
             soundsViewModel.setRefetch(true)
-            Toast.makeText(context, "Sounds installed, reboot for changes to take effect.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Sounds installed, reboot for changes to take effect.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         refreshLayout.setProgressViewOffset(
@@ -102,6 +109,8 @@ class SoundsFragment : Fragment() {
                         }
                     )
             }
+
+            list.sortBy { it.name.toLowerCase(Locale.getDefault()) }
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
                 refreshLayout.isRefreshing = false
@@ -137,7 +146,9 @@ class SoundsFragment : Fragment() {
 
             holder.layout.setOnClickListener {
 
-                if (!Shell.SU.available()) { return@setOnClickListener }
+                if (!Shell.SU.available()) {
+                    return@setOnClickListener
+                }
 
                 val pair = downloadDialog(context).apply {
                     first.isIndeterminate = false
@@ -180,7 +191,10 @@ class SoundsFragment : Fragment() {
                                     "from: ${Config.MODULE_PATH}$soundsPath/audio/ui to $path"
                                 )
 
-                                ZipHelper().unpackZip("${Config.MODULE_PATH}$soundsPath/audio/ui", path)
+                                ZipHelper().unpackZip(
+                                    "${Config.MODULE_PATH}$soundsPath/audio/ui",
+                                    path
+                                )
                             }
 
                             pair.second.dismiss()

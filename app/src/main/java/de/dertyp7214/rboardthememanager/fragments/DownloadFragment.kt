@@ -36,6 +36,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.net.URL
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.text.Charsets.UTF_8
 
 class DownloadFragment : Fragment() {
@@ -110,6 +112,9 @@ class DownloadFragment : Fragment() {
                         }
                     )
             }
+
+            list.sortBy { it.name.toLowerCase(Locale.getDefault()) }
+
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
                 refreshLayout.isRefreshing = false
