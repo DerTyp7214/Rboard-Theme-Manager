@@ -23,6 +23,7 @@
             android:defaultValue="false"
             android:icon="@drawable/ic_logo"
             android:key="flags_deprecate_search"
+            asp:isPreferenceVisible="false"
             android:title="Google icon" />
 
         <SwitchPreference

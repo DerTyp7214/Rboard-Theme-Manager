@@ -60,7 +60,6 @@ enum class RKBDFlag(val rawValue: String) {
     EnableKeyBorder("enable_key_border"),
     EnableSecondarySymbols("enable_secondary_symbols"),
     ShowSuggestions("show_suggestions")
-
 }
 
 enum class RKBDFile(val rawValue: String) {

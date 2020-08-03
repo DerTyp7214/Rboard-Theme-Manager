@@ -2,6 +2,8 @@ package de.dertyp7214.rboardthememanager.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -19,18 +21,16 @@ import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
 import com.jaredrummler.android.shell.Shell
+import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.Config.PACKS_URL
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.core.dpToPx
-import de.dertyp7214.rboardthememanager.core.forEach
-import de.dertyp7214.rboardthememanager.core.getStatusBarHeight
-import de.dertyp7214.rboardthememanager.core.safeParse
+import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.PackItem
-import de.dertyp7214.rboardthememanager.helper.DownloadHelper
-import de.dertyp7214.rboardthememanager.helper.DownloadListener
-import de.dertyp7214.rboardthememanager.helper.ZipHelper
-import de.dertyp7214.rboardthememanager.helper.downloadDialog
+import de.dertyp7214.rboardthememanager.data.ThemeDataClass
+import de.dertyp7214.rboardthememanager.helper.*
+import de.dertyp7214.rboardthememanager.utils.ColorUtils
+import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import org.json.JSONArray
 import org.json.JSONObject
@@ -55,11 +55,11 @@ class DownloadFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_download, container, false)
 
         refreshLayout = v.findViewById(R.id.refreshLayout)
-        homeViewModel = activity!!.run {
+        homeViewModel = requireActivity().run {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
 
-        adapter = Adapter(context!!, list) {
+        adapter = Adapter(requireContext(), list) {
             homeViewModel.setRefetch(true)
             Toast.makeText(context, R.string.downloaded, Toast.LENGTH_SHORT).show()
         }
@@ -67,7 +67,7 @@ class DownloadFragment : Fragment() {
         refreshLayout.setProgressViewOffset(
             true,
             0,
-            context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt()
+            requireContext().getStatusBarHeight() + 5.dpToPx(requireContext()).toInt()
         )
 
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
@@ -81,10 +81,10 @@ class DownloadFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
-            StartOffsetItemDecoration(context!!.getStatusBarHeight())
+            StartOffsetItemDecoration(requireContext().getStatusBarHeight())
         )
         recyclerView.addItemDecoration(
-            EndOffsetItemDecoration(56.dpToPx(context!!).toInt())
+            EndOffsetItemDecoration(56.dpToPx(requireContext()).toInt())
         )
 
         fetchDownloadList()
@@ -128,6 +128,14 @@ class DownloadFragment : Fragment() {
         private val callback: () -> Unit
     ) :
         RecyclerView.Adapter<Adapter.ViewHolder>() {
+
+        var previewsPath = File(
+            context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)
+                ?.get(0)?.absolutePath?.removeSuffix(
+                    "Notifications"
+                ), "ThemePacks"
+        ).absolutePath + "/previews"
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
                 LayoutInflater.from(context).inflate(
@@ -147,9 +155,76 @@ class DownloadFragment : Fragment() {
             holder.title.text = pack.name
             holder.author.text = "by ${pack.author}"
 
+            holder.layout.setOnLongClickListener {
+
+                if (!Shell.SU.available()) {
+                    return@setOnLongClickListener false
+                }
+
+                val pair = previewDialog(context, previewsPath, pack.name)
+
+                DownloadHelper().from(pack.url).to(
+                    File(
+                        context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)[0].absolutePath.removeSuffix(
+                            "Notifications"
+                        ), "ThemePacks"
+                    ).absolutePath
+                )
+                    .fileName(
+                        "preview_temp.zip"
+                    ).setListener(
+                        object : DownloadListener {
+                            override fun start() {
+                                File(previewsPath).deleteRecursively()
+                            }
+
+                            override fun progress(progress: Int, current: Long, total: Long) {
+                            }
+
+                            override fun error(error: String) {
+                                Log.d("ERROR", error)
+                            }
+
+                            override fun end(path: String) {
+                                pair.first.isIndeterminate = true
+                                SuFile("$path/previews").mkdirs()
+                                val folderPath = File(
+                                    context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)[0].absolutePath.removeSuffix(
+                                        "Notifications"
+                                    ), "ThemePacks"
+                                ).absolutePath
+
+                                ZipHelper().unpackZip("$folderPath/previews", path)
+
+                                val adapter =
+                                    PreviewAdapter(context, ThemeUtils.loadPreviewThemes(context))
+
+                                val recyclerView =
+                                    pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
+                                recyclerView.layoutManager = LinearLayoutManager(context)
+                                recyclerView.setHasFixedSize(true)
+                                recyclerView.adapter = adapter
+                                recyclerView.addItemDecoration(
+                                    StartOffsetItemDecoration(
+                                        (context.getStatusBarHeight())
+                                    )
+                                )
+
+                                recyclerView.visibility = View.VISIBLE
+                                pair.first.visibility = View.GONE
+
+                            }
+                        }
+                    ).start()
+
+                return@setOnLongClickListener true
+            }
+
             holder.layout.setOnClickListener {
 
-                if (!Shell.SU.available()) { return@setOnClickListener }
+                if (!Shell.SU.available()) {
+                    return@setOnClickListener
+                }
 
                 val pair = downloadDialog(context).apply {
                     first.isIndeterminate = false
@@ -203,4 +278,63 @@ class DownloadFragment : Fragment() {
             val author: TextView = v.findViewById(R.id.author)
         }
     }
+}
+
+class PreviewAdapter(
+    private val context: Context,
+    private val list: List<ThemeDataClass>
+) : RecyclerView.Adapter<HomeGridFragment.GridThemeAdapter.ViewHolder>() {
+
+    private val default = context.resources.getDrawable(
+        R.drawable.ic_keyboard,
+        null
+    ).getBitmap()
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): HomeGridFragment.GridThemeAdapter.ViewHolder {
+        return HomeGridFragment.GridThemeAdapter.ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.theme_grid_item_single,
+                parent,
+                false
+            )
+        )
+    }
+
+    override fun getItemCount(): Int = list.size
+
+    override fun onBindViewHolder(
+        holder: HomeGridFragment.GridThemeAdapter.ViewHolder,
+        position: Int
+    ) {
+        val dataClass = list[position]
+        val color = ColorUtils.dominantColor(dataClass.image ?: default)
+        if (holder.gradient != null) {
+            val gradient = GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                intArrayOf(color, Color.TRANSPARENT)
+            )
+            holder.gradient.background = gradient
+        }
+
+        holder.themeImage.setImageBitmap(dataClass.image ?: default)
+        holder.themeImage.alpha = if (dataClass.image != null) 1F else .3F
+
+        holder.themeName.text =
+            dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+        holder.themeNameSelect.text =
+            dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+
+        holder.themeName.setTextColor(if (ColorUtils.isColorLight(color)) Color.BLACK else Color.WHITE)
+
+        if (dataClass.selected)
+            holder.selectOverlay.alpha = 1F
+        else
+            holder.selectOverlay.alpha = 0F
+
+        holder.card.setCardBackgroundColor(color)
+    }
+
 }

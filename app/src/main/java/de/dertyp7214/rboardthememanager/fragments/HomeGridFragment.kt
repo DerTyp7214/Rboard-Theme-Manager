@@ -69,12 +69,12 @@ class HomeGridFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_home_grid, container, false)
 
-        toolbar = activity!!.findViewById(R.id.select_toolbar)
+        toolbar = requireActivity().findViewById(R.id.select_toolbar)
 
         val fabAdd = v.findViewById<FloatingActionButton>(R.id.fabAdd)
         refreshLayout = v.findViewById(R.id.refreshLayout)
         recyclerView = v.findViewById(R.id.theme_list)
-        homeViewModel = activity!!.run {
+        homeViewModel = requireActivity().run {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
 
@@ -84,7 +84,7 @@ class HomeGridFragment : Fragment() {
         refreshLayout.setProgressViewOffset(
             true,
             0,
-            context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt()
+            requireContext().getStatusBarHeight() + 5.dpToPx(requireContext()).toInt()
         )
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
         refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
@@ -111,7 +111,7 @@ class HomeGridFragment : Fragment() {
         })
 
         refreshLayout.isRefreshing = true
-        fabAdd.setMargin(bottomMargin = 68.dpToPx(context!!).toInt())
+        fabAdd.setMargin(bottomMargin = 68.dpToPx(requireContext()).toInt())
         fabAdd.setOnClickListener {
             val intent = Intent()
                 .setType("application/*")
@@ -121,7 +121,7 @@ class HomeGridFragment : Fragment() {
         }
 
         val adapter =
-            GridThemeAdapter(activity!!, themeList, homeViewModel, addItemSelect = { _, _ ->
+            GridThemeAdapter(requireActivity(), themeList, homeViewModel, addItemSelect = { _, _ ->
                 toolbar.title = "${themeList.count { it.selected }}"
             }, removeItemSelect = { _, _ ->
                 toolbar.title = "${themeList.count { it.selected }}"
@@ -139,7 +139,7 @@ class HomeGridFragment : Fragment() {
         toolbar.setOnMenuItemClickListener { it ->
             when (it.itemId) {
                 R.id.theme_delete -> {
-                    MaterialDialog(context!!).show {
+                    MaterialDialog(requireContext()).show {
                         cornerRadius(12F)
                         message(res = R.string.delete_themes_confirm)
                         positiveButton(res = R.string.yes) { dialog ->
@@ -169,7 +169,7 @@ class HomeGridFragment : Fragment() {
                     toolbar.title = "${themeList.count { it.selected }}"
                 }
                 R.id.theme_share -> {
-                    ThemeHelper.shareThemes(activity!!, themeList.filter { it.selected })
+                    ThemeHelper.shareThemes(requireActivity(), themeList.filter { it.selected })
                 }
             }
             true
@@ -186,13 +186,13 @@ class HomeGridFragment : Fragment() {
                 }
                 recyclerView.addItemDecoration(
                     GridTopOffsetItemDecoration(
-                        context!!.getStatusBarHeight(),
+                        requireContext().getStatusBarHeight(),
                         columns
                     )
                 )
                 recyclerView.addItemDecoration(
                     GridBottomOffsetItemDecoration(
-                        56.dpToPx(context!!).toInt(),
+                        56.dpToPx(requireContext()).toInt(),
                         columns
                     )
                 )
@@ -286,13 +286,13 @@ class HomeGridFragment : Fragment() {
         recyclerView.setItemViewCacheSize(200)
         recyclerView.addItemDecoration(
             GridTopOffsetItemDecoration(
-                context!!.getStatusBarHeight(),
+                requireContext().getStatusBarHeight(),
                 columns
             )
         )
         recyclerView.addItemDecoration(
             GridBottomOffsetItemDecoration(
-                56.dpToPx(context!!).toInt(),
+                56.dpToPx(requireContext()).toInt(),
                 columns
             )
         )
@@ -303,7 +303,7 @@ class HomeGridFragment : Fragment() {
             }
         }
 
-        ItemTouchHelper(object : SwipeToDeleteCallback(activity!!) {
+        ItemTouchHelper(object : SwipeToDeleteCallback(requireActivity()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val item = adapter.getItem(position)

@@ -1,12 +1,15 @@
 package de.dertyp7214.rboardthememanager.helper
 
 import android.content.Context
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import com.google.android.material.button.MaterialButton
 import de.dertyp7214.rboardthememanager.R
 import java.io.File
 
@@ -61,6 +64,29 @@ class DownloadHelper {
                 }
             })
     }
+}
+
+fun previewDialog(context: Context, previewPath: String, dialogTitle: String): Pair<ProgressBar, MaterialDialog> {
+    lateinit var progressBar: ProgressBar
+
+    val dialog = MaterialDialog(context).show {
+        setContentView(R.layout.preview)
+
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cancelable(false)
+        cancelOnTouchOutside(false)
+        progressBar = findViewById(R.id.progressBar)
+        val title = findViewById<TextView>(R.id.dialog_title)
+        title.text = dialogTitle
+
+        val button: MaterialButton = findViewById(R.id.close_button)
+        button.setOnClickListener {
+            File(previewPath).deleteRecursively()
+            dismiss()
+        }
+    }
+
+    return Pair(progressBar, dialog)
 }
 
 fun downloadDialog(context: Context): Pair<ProgressBar, MaterialDialog> {
