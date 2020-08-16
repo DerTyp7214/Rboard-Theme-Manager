@@ -8,11 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.R
@@ -36,6 +35,11 @@ class SelectedThemeBottomSheet(
 
         val applyButton = v.findViewById<LinearLayout>(R.id.apply)
         val deleteButton = v.findViewById<LinearLayout>(R.id.delete)
+        val enableBorderButton = v.findViewById<LinearLayout>(R.id.enable_border)
+        val enableBorderSwitch = v.findViewById<Switch>(R.id.enable_border_switch)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        var enableBorderSwitchSelected = sharedPreferences.getBoolean("enable_border", false)
         val themeName = v.findViewById<TextView>(R.id.theme_name)
         val themeIcon = v.findViewById<ImageView>(R.id.theme_image)
         val card: CardView = v.findViewById(R.id.card)
@@ -80,7 +84,7 @@ class SelectedThemeBottomSheet(
         }
 
         applyButton.setOnClickListener {
-            val response = ThemeHelper.applyTheme("${theme.name}.zip")
+            val response = ThemeHelper.applyTheme("${theme.name}.zip", enableBorderSwitchSelected)
             dismiss()
             if (response) Toast.makeText(
                 context,
@@ -88,6 +92,20 @@ class SelectedThemeBottomSheet(
                 Toast.LENGTH_SHORT
             ).show()
             else Toast.makeText(context, getString(R.string.error), Toast.LENGTH_SHORT).show()
+        }
+
+        enableBorderSwitch.isChecked = enableBorderSwitchSelected
+
+        enableBorderButton.setOnClickListener {
+
+            enableBorderSwitchSelected = !enableBorderSwitchSelected
+            sharedPreferences.edit { putBoolean("enable_border", enableBorderSwitchSelected) }
+            enableBorderSwitch.isChecked = enableBorderSwitchSelected
+        }
+
+        enableBorderSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            sharedPreferences.edit { putBoolean("enable_border", isChecked) }
+            enableBorderSwitchSelected = isChecked
         }
 
         return v

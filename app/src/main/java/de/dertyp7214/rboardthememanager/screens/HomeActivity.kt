@@ -62,7 +62,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
         }
 
         homeNav.setOnNavigationItemSelectedListener {
-            if (currentFragment != it.itemId) {
+            if (currentFragment != it.itemId || currentFragment == R.id.navigation_themes) {
                 currentFragment = it.itemId
                 when (it.itemId) {
                     R.id.navigation_themes -> supportFragmentManager.beginTransaction().apply {
@@ -154,6 +154,11 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                     false
                 ) {
                     startActivity(Intent(this, Settings::class.java))
+                    bottomSheet?.dismiss()
+                },
+                MenuItem(R.drawable.ic_flag_24px,
+                    R.string.flags, false) {
+                    startActivity(Intent(this, FlagsActivity::class.java))
                     bottomSheet?.dismiss()
                 }
             ).apply {

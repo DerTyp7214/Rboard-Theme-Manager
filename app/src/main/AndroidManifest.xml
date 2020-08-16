@@ -17,11 +17,14 @@
         android:windowSoftInputMode="stateAlwaysVisible|adjustPan"
         tools:ignore="AllowBackup">
         <activity android:name=".screens.ImportPack">
-            <intent-filter tools:ignore="AppLinkUrlError">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/*" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:mimeType="application/zip" />
             </intent-filter>
         </activity>
         <activity android:name=".screens.AuthenticationActivity" />
@@ -29,6 +32,7 @@
         <activity android:name=".screens.LogsScreen" />
         <activity android:name=".screens.AboutActivity" />
         <activity android:name=".screens.InfoScreen" />
+        <activity android:name=".screens.FlagsActivity" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

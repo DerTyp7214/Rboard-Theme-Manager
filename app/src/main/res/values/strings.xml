@@ -26,6 +26,7 @@
     <string name="grid_big">Big Gridlayout</string>
     <string name="search_hint">Search Themes</string>
     <string name="apply_theme">Apply Theme</string>
+    <string name="enable_border">Key borders</string>
     <string name="applied">Theme Applied</string>
     <string name="error">There was an Error!</string>
     <string name="errors">There where some Errors!</string>
@@ -79,6 +80,7 @@
     <string name="typ_paypal">https://paypal.me/JosuaLengwenath</string>
     <string name="rk_paypal">https://paypal.me/rkbdi</string>
     <string name="settings">Settings</string>
+    <string name="flags">Flags</string>
     <string name="theme_pref">Theme</string>
     <string name="ui">Ui</string>
     <string name="key">Activation Key</string>

@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.component
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.view.KeyEvent
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputLayout
@@ -14,6 +16,7 @@ import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.dpToPx
 import de.dertyp7214.rboardthememanager.core.setMargin
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
+
 
 class InputBottomSheet(
     private val text: String = "",
@@ -55,7 +58,34 @@ class InputBottomSheet(
             } else false
         }
 
+        input.requestFocus()
+        showKeyboard()
+
         return v
+    }
+
+    private fun showKeyboard() {
+        val inputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(
+            InputMethodManager.SHOW_FORCED,
+            0
+        )
+    }
+
+    private fun closeKeyboard() {
+        val inputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(
+            InputMethodManager.HIDE_IMPLICIT_ONLY,
+            0
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        closeKeyboard()
     }
 
     fun setKeyBoardHeightObserver(

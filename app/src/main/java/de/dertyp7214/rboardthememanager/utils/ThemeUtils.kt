@@ -1,6 +1,8 @@
 package de.dertyp7214.rboardthememanager.utils
 
+import android.content.Context
 import android.graphics.BitmapFactory
+import android.os.Environment
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.Config.themeCount
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
@@ -16,6 +18,26 @@ object ThemeUtils {
             it.name.toLowerCase(Locale.ROOT).endsWith(".zip")
         }?.map {
             val imageFile = File(THEME_LOCATION, it.name.removeSuffix(".zip"))
+            if (imageFile.exists()) ThemeDataClass(
+                BitmapFactory.decodeFile(imageFile.path),
+                it.name.removeSuffix(".zip"),
+                it.absolutePath
+            )
+            else ThemeDataClass(null, it.name.removeSuffix(".zip"), it.absolutePath)
+        }.apply { if (this != null) themeCount = size } ?: ArrayList()
+    }
+
+    fun loadPreviewThemes(context: Context): List<ThemeDataClass> {
+        val themeDir = File(
+            context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)?.get(0)?.absolutePath?.removeSuffix(
+                "Notifications"
+            ), "ThemePacks"
+         + "/previews")
+
+        return themeDir.listFiles()?.filter {
+            it.name.toLowerCase(Locale.ROOT).endsWith("zip")
+        }?.map {
+            val imageFile = File(themeDir.absolutePath, it.name.removeSuffix(".zip"))
             if (imageFile.exists()) ThemeDataClass(
                 BitmapFactory.decodeFile(imageFile.path),
                 it.name.removeSuffix(".zip"),

@@ -40,6 +40,54 @@
             app:cardElevation="0dp">
 
             <LinearLayout
+                android:id="@+id/enable_border"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:id="@+id/enable_border_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_crop_din_24px_outlined"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/enable_border_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="@string/enable_border"
+                    android:textColor="@color/primaryText"
+                    android:textSize="14sp" />
+
+                <Switch
+                    android:id="@+id/enable_border_switch"
+                    android:layout_width="wrap_content"
+                    android:buttonTint="@color/colorAccent"
+                    android:thumbTint="@color/colorAccent"
+                    android:trackTint="@color/colorAccent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="@color/colorPrimary"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
                 android:id="@+id/apply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
