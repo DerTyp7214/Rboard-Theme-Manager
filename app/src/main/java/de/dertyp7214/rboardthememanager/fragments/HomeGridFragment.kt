@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.animation.doOnEnd
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -105,7 +106,7 @@ class HomeGridFragment : Fragment() {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if (newState == SCROLL_STATE_IDLE) {
-                    fabAdd.show();
+                    fabAdd.show()
                 }
             }
         })
@@ -130,7 +131,8 @@ class HomeGridFragment : Fragment() {
                 toggleToolbar(it)
             })
 
-        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_arrow_back, null)
+        toolbar.navigationIcon =
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back)
         toolbar.setNavigationOnClickListener {
             themeList.forEachIndexed { index, _ -> themeList[index].selected = false }
             adapter.notifyDataSetChanged()
@@ -334,10 +336,11 @@ class HomeGridFragment : Fragment() {
     }
 
     private fun toggleToolbar(visible: Boolean) {
+        val activity = requireActivity()
         val scale = if (visible) 1F else .0F
         val margin = 0
-        val corners1 = if (visible) 20.dpToPx(activity!!) else 0F
-        val corners2 = if (visible) 0F else 20.dpToPx(activity!!)
+        val corners1 = if (visible) 20.dpToPx(activity) else 0F
+        val corners2 = if (visible) 0F else 20.dpToPx(activity)
         val longDelay = if (visible) 100L else 800L
 
         val anim = ObjectAnimator.ofFloat(toolbar, "alpha", scale).apply {
@@ -368,11 +371,12 @@ class HomeGridFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
+            val activity = requireActivity()
             val zip =
                 File(
-                    FileUtils.getThemePacksPath(context!!),
-                    data.data!!.getFileName(activity!!)
-                ).apply { data.data!!.writeToFile(context!!, this) }
+                    FileUtils.getThemePacksPath(activity),
+                    data.data!!.getFileName(activity)
+                ).apply { data.data!!.writeToFile(activity, this) }
             if (ThemeHelper.installTheme(zip, false)) Toast.makeText(
                 context,
                 R.string.theme_added,
@@ -403,10 +407,10 @@ class HomeGridFragment : Fragment() {
                 ?: 0
 
         private var activeTheme = ""
-        private val default = context.resources.getDrawable(
-            R.drawable.ic_keyboard,
-            null
-        ).getBitmap()
+        private val default = ContextCompat.getDrawable(
+            context,
+            R.drawable.ic_keyboard
+        )!!.getBitmap()
 
         override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
             super.onAttachedToRecyclerView(recyclerView)

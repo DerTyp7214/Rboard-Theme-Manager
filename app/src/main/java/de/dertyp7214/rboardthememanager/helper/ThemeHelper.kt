@@ -168,10 +168,15 @@ object ThemeHelper {
         val inputPackageName = "com.google.android.inputmethod.latin"
         val fileLol =
             SuFile("/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml")
-        return SuFileInputStream(fileLol).use { it.bufferedReader().readText() }
-            .split("<string name=\"additional_keyboard_theme\">")
-            .let { if (it.size > 1) it[1].split("</string>")[0] else "" }.replace("system:", "")
-            .replace(".zip", "")
+        return try {
+            SuFileInputStream(fileLol).bufferedReader().readText()
+                .split("<string name=\"additional_keyboard_theme\">")
+                .let { if (it.size > 1) it[1].split("</string>")[0] else "" }.replace("system:", "")
+                .replace(".zip", "")
+        } catch (error: Exception) {
+            Logger.log(Logger.Companion.Type.ERROR, "ActiveTheme", error.message)
+            ""
+        }
     }
 
     fun shareThemes(context: Activity, themes: List<ThemeDataClass>) {
@@ -206,7 +211,12 @@ object ThemeHelper {
             }
     }
 
-    fun applyFlag(flag: RKBDFlag, value: Any, flagType: RKBDFlagType, file: RKBDFile = RKBDFile.Flags): Boolean {
+    fun applyFlag(
+        flag: RKBDFlag,
+        value: Any,
+        flagType: RKBDFlagType,
+        file: RKBDFile = RKBDFile.Flags
+    ): Boolean {
         if (!Shell.SU.available()) {
             return false
         }

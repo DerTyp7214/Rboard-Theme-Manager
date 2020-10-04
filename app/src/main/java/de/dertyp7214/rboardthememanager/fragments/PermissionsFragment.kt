@@ -2,8 +2,6 @@ package de.dertyp7214.rboardthememanager.fragments
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -15,7 +13,6 @@ import android.widget.LinearLayout
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.viewmodels.IntroViewModel
@@ -28,7 +25,7 @@ class PermissionsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ac = activity!!
+        ac = requireActivity()
 
         introViewModel = ac.run {
             ViewModelProviders.of(this)[IntroViewModel::class.java]
@@ -59,11 +56,11 @@ class PermissionsFragment : Fragment() {
             requestGboardStorage()
         }
 
-        introViewModel.rboardStorage.observe(this, Observer {
+        introViewModel.rboardStorage.observe(viewLifecycleOwner, {
             checkBoxRboard.isChecked = it
         })
 
-        introViewModel.gboardStorage.observe(this, Observer {
+        introViewModel.gboardStorage.observe(viewLifecycleOwner, {
             checkBoxGboard.isChecked = it
         })
 

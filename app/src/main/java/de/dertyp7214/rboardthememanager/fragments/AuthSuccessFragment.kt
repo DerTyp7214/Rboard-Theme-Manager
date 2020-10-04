@@ -20,14 +20,16 @@ class AuthSuccessFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_auth_success, container, false)
 
-        activity?.getSharedPreferences("auth", Context.MODE_PRIVATE)?.edit {
+        val activity = requireActivity()
+
+        activity.getSharedPreferences("auth", Context.MODE_PRIVATE)?.edit {
             putBoolean("registered", true)
         }
 
         val buttonNext = v.findViewById<Button>(R.id.btn_next)
 
         buttonNext.setOnClickListener {
-            activity?.apply { startActivity(Intent(this, SplashScreen::class.java)) }
+            activity.apply { startActivity(Intent(this, SplashScreen::class.java)) }
         }
 
         return v

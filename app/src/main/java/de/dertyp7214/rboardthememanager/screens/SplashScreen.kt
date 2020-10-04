@@ -28,7 +28,7 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        Shell.Config.setFlags(Shell.FLAG_USE_MAGISK_BUSYBOX and Shell.FLAG_REDIRECT_STDERR)
+        Shell.Config.setFlags(Shell.FLAG_MOUNT_MASTER)
         Shell.Config.verboseLogging(BuildConfig.DEBUG)
 
         createNotificationChannel()

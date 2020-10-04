@@ -3,6 +3,7 @@ package de.dertyp7214.rboardthememanager.screens
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.ViewModelProviders
@@ -46,12 +47,19 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
             keyboardHeightProvider?.start()
         }
 
-        val dark = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        val light = dark or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-
         val isDark = resources.getBoolean(R.bool.darkmode)
 
-        window.decorView.systemUiVisibility = if (isDark) dark else light
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            window.decorView.windowInsetsController?.setSystemBarsAppearance(
+                if (isDark) 0 else WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            val dark = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            val light = dark or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+            window.decorView.systemUiVisibility = if (isDark) dark else light
+        }
 
         homeViewModel = ViewModelProviders.of(this)[HomeViewModel::class.java]
         homeViewModel.loadFromStorage(this)
@@ -87,7 +95,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
 
         searchButton.setOnClickListener { _ ->
             val bottomSheet =
-                InputBottomSheet(homeViewModel.getFilter(), View.OnKeyListener { _, _, _ ->
+                InputBottomSheet(homeViewModel.getFilter(), { _, _, _ ->
                     true
                 }, { text, it ->
                     homeViewModel.setFilter(text.toString())
@@ -156,8 +164,10 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                     startActivity(Intent(this, Settings::class.java))
                     bottomSheet?.dismiss()
                 },
-                MenuItem(R.drawable.ic_flag_24px,
-                    R.string.flags, false) {
+                MenuItem(
+                    R.drawable.ic_flag_24px,
+                    R.string.flags, false
+                ) {
                     startActivity(Intent(this, FlagsActivity::class.java))
                     bottomSheet?.dismiss()
                 }

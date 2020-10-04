@@ -1,6 +1,5 @@
 package de.dertyp7214.rboardthememanager.screens
 
-import android.Manifest
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.content.Context
 import android.content.Intent
@@ -14,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
@@ -56,7 +54,7 @@ class IntroActivity : AppCompatActivity() {
             openPage()
         }
 
-        introViewModel.rboardStorage.observe(this, Observer {
+        introViewModel.rboardStorage.observe(this, {
             val controller = fragment.findNavController()
             val name = resources.getResourceEntryName(controller.currentDestination?.id ?: 0)
             if (name == "permissionsFragment") {
@@ -67,7 +65,7 @@ class IntroActivity : AppCompatActivity() {
             }
         })
 
-        introViewModel.gboardStorage.observe(this, Observer {
+        introViewModel.gboardStorage.observe(this, {
             val controller = fragment.findNavController()
             val name = resources.getResourceEntryName(controller.currentDestination?.id ?: 0)
             if (name == "permissionsFragment") {
@@ -78,7 +76,7 @@ class IntroActivity : AppCompatActivity() {
             }
         })
 
-        introViewModel.magiskInstalled.observe(this, Observer {
+        introViewModel.magiskInstalled.observe(this, {
             floatingActionButton.isEnabled = it
             floatingActionButton.backgroundTintList =
                 ColorStateList.valueOf(if (it) getColor(R.color.colorAccent) else colorDisabled)
@@ -90,7 +88,7 @@ class IntroActivity : AppCompatActivity() {
     private fun skipIntro() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            arrayOf(READ_EXTERNAL_STORAGE),
             1234
         )
     }

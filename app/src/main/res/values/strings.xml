@@ -49,6 +49,8 @@
     <string name="typ_title">DerTyp7214</string>
     <string name="rk_title">RKBDI</string>
     <string name="rk_summary">Creator of many themes and the Magisk Module</string>
+    <string name="nylon_title">nylonW</string>
+    <string name="nylon_summary">Co-Developer</string>
     <string name="device">Device</string>
     <string name="themes">Themes</string>
     <string name="themesMode">Themes installed using %s</string>
@@ -74,11 +76,14 @@
     <string name="typ_github">https://github.com/DerTyp7214</string>
     <string name="rk_twitter">https://twitter.com/RKBDI</string>
     <string name="rk_github">https://github.com/RadekBledowski</string>
+    <string name="nylon_twitter">https://twitter.com/marcinslusarek</string>
+    <string name="nylon_github">https://github.com/nylonW</string>
     <string name="twitter">Twitter</string>
     <string name="github">GitHub</string>
     <string name="paypal">PayPal</string>
     <string name="typ_paypal">https://paypal.me/JosuaLengwenath</string>
     <string name="rk_paypal">https://paypal.me/rkbdi</string>
+    <string name="nylon_paypal">https://paypal.me/</string> <!-- TODO: nylon paypal -->
     <string name="settings">Settings</string>
     <string name="flags">Flags</string>
     <string name="theme_pref">Theme</string>

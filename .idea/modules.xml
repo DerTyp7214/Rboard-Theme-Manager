@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GitHub-Rboard-Theme-Manager.iml" filepath="$PROJECT_DIR$/.idea/modules/GitHub-Rboard-Theme-Manager.iml" group="Rboard-Theme-Manager" />
       <module fileurl="file://$PROJECT_DIR$/Rboard-Theme-Manager.iml" filepath="$PROJECT_DIR$/Rboard-Theme-Manager.iml" group="Rboard-Theme-Manager" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Rboard-Theme-Manager-2.iml" filepath="$PROJECT_DIR$/.idea/modules/Rboard-Theme-Manager-2.iml" group="Rboard-Theme-Manager-2" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Rboard-Theme-Manager-2-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Rboard-Theme-Manager-2-app.iml" group="Rboard-Theme-Manager-2/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Rboard-Theme-Manager-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Rboard-Theme-Manager-app.iml" group="Rboard-Theme-Manager/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Rboard-Theme-Manager/app" />
     </modules>
   </component>

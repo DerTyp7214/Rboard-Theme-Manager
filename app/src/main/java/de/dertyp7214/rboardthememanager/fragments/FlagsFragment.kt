@@ -7,6 +7,7 @@ import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.booleanOrNull
 import de.dertyp7214.rboardthememanager.helper.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -242,9 +243,8 @@ class FlagsFragment : PreferenceFragmentCompat() {
 
         val fileName = "data/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${file.rawValue}"
         val xmlFile = SuFile(fileName)
-        if (!xmlFile.exists()) {
-            return output
-        }
+        if (!xmlFile.exists()) return output
+
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
         val content = SuFileInputStream(xmlFile).bufferedReader().readText()
@@ -260,14 +260,10 @@ class FlagsFragment : PreferenceFragmentCompat() {
             ) {
 
                 val name = map.item(0).childNodes.item(i).attributes.getNamedItem("name").nodeValue
-                var value: Any =
+                val value =
                     map.item(0).childNodes.item(i).attributes.getNamedItem("value").nodeValue
 
-                if (value == "true" || value == "false") {
-                    value = (value as String).toBoolean()
-                }
-
-                output[name] = value
+                output[name] = value.booleanOrNull() ?: value
             } else if (map.item(0).childNodes.item(i).attributes?.getNamedItem("name") != null) {
                 val name = map.item(0).childNodes.item(i).attributes.getNamedItem("name").nodeValue
                 val value = map.item(0).childNodes.item(i).textContent ?: ""

@@ -4,7 +4,7 @@ import com.dertyp7214.logs.helpers.Logger
 import com.topjohnwu.superuser.Shell
 
 fun String.runAsCommand(): Boolean {
-    return Shell.getShell().newJob().add(this).exec().apply {
+    return Shell.su(this).exec().apply {
         if (err.size > 0) Logger.log(
             Logger.Companion.Type.ERROR, "RUN COMMAND",
             err.toTypedArray().contentToString()
@@ -16,4 +16,8 @@ fun String.runAsCommand(): Boolean {
     }.isSuccess.apply {
         Logger.log(Logger.Companion.Type.INFO, "RUN COMMAND", "${this@runAsCommand} -> $this")
     }
+}
+
+fun String.booleanOrNull(): Boolean? {
+    return if (this == "true" || this == "false") toBoolean() else null
 }

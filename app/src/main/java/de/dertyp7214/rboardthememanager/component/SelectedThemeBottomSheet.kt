@@ -8,7 +8,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.cardview.widget.CardView
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
@@ -36,7 +40,7 @@ class SelectedThemeBottomSheet(
         val applyButton = v.findViewById<LinearLayout>(R.id.apply)
         val deleteButton = v.findViewById<LinearLayout>(R.id.delete)
         val enableBorderButton = v.findViewById<LinearLayout>(R.id.enable_border)
-        val enableBorderSwitch = v.findViewById<Switch>(R.id.enable_border_switch)
+        val enableBorderSwitch = v.findViewById<SwitchCompat>(R.id.enable_border_switch)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
         var enableBorderSwitchSelected = sharedPreferences.getBoolean("enable_border", false)
@@ -64,7 +68,7 @@ class SelectedThemeBottomSheet(
         themeIcon.setImageBitmap(theme.image ?: defaultImage)
 
         deleteButton.setOnClickListener {
-            MaterialDialog(context!!).show {
+            MaterialDialog(requireContext()).show {
                 cornerRadius(12F)
                 message(res = R.string.delete_theme_confirm)
                 positiveButton(res = R.string.yes) {
@@ -103,7 +107,7 @@ class SelectedThemeBottomSheet(
             enableBorderSwitch.isChecked = enableBorderSwitchSelected
         }
 
-        enableBorderSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        enableBorderSwitch.setOnCheckedChangeListener { _, isChecked ->
             sharedPreferences.edit { putBoolean("enable_border", isChecked) }
             enableBorderSwitchSelected = isChecked
         }

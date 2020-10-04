@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputLayout
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.dpToPx
@@ -92,7 +91,7 @@ class InputBottomSheet(
         lifecycleOwner: FragmentActivity,
         homeViewModel: HomeViewModel
     ): InputBottomSheet {
-        homeViewModel.keyboardHeightObserver(lifecycleOwner, Observer {
+        homeViewModel.keyboardHeightObserver(lifecycleOwner, {
             inputLayout?.setMargin(bottomMargin = (it + 5.dpToPx(lifecycleOwner).toInt()))
         })
         return this

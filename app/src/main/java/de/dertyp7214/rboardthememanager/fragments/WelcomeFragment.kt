@@ -25,7 +25,7 @@ class WelcomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ac = activity!!
+        ac = requireActivity()
 
         introViewModel = ac.run {
             ViewModelProviders.of(this)[IntroViewModel::class.java]

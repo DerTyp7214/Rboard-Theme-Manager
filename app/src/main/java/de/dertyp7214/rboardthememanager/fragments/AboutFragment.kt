@@ -3,7 +3,6 @@ package de.dertyp7214.rboardthememanager.fragments
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +24,7 @@ class AboutFragment : Fragment() {
 
     private val typImage = "https://avatars0.githubusercontent.com/u/37804065"
     private val rkImage = "https://avatars1.githubusercontent.com/u/22264125"
+    private val nylonImage = "https://avatars1.githubusercontent.com/u/18296061"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,10 +53,22 @@ class AboutFragment : Fragment() {
             )
         }
 
+        binding.clickNylon = ClickListener {
+            userPopUp(
+                nylonImage,
+                getString(R.string.nylon_title),
+                getString(R.string.nylon_twitter),
+                getString(R.string.nylon_github),
+                Paypal(getString(R.string.nylon_paypal))
+            )
+        }
+
         Picasso.get().load(typImage).placeholder(R.drawable.ic_person)
             .into(v.findViewById<ImageView>(R.id.typ_image))
         Picasso.get().load(rkImage).placeholder(R.drawable.ic_person)
             .into(v.findViewById<ImageView>(R.id.rk_image))
+        Picasso.get().load(nylonImage).placeholder(R.drawable.ic_person)
+            .into(v.findViewById<ImageView>(R.id.nylon_image))
 
         return v
     }
@@ -68,10 +80,8 @@ class AboutFragment : Fragment() {
         github: String,
         paypal: Paypal
     ) {
-        MaterialDialog(context!!).show {
+        MaterialDialog(requireContext()).show {
             setContentView(R.layout.user_popup)
-            val displayMetrics = DisplayMetrics()
-            activity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
             Picasso.get().load(imageUrl).fit().placeholder(R.drawable.ic_person)
                 .into(findViewById<MaskedImageView>(R.id.userProfileImage))
             findViewById<TextView>(R.id.userName).text = name

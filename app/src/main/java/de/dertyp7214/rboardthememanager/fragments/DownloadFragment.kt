@@ -285,6 +285,7 @@ class PreviewAdapter(
     private val list: List<ThemeDataClass>
 ) : RecyclerView.Adapter<HomeGridFragment.GridThemeAdapter.ViewHolder>() {
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private val default = context.resources.getDrawable(
         R.drawable.ic_keyboard,
         null

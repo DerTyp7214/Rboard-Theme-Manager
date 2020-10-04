@@ -42,7 +42,7 @@ class InfoFragment : Fragment() {
         )
 
         binding.versions = Versions(
-            getGboardVersion(context!!).split("-")[0],
+            getGboardVersion(requireContext()).split("-")[0],
             Build.VERSION.RELEASE,
             BuildConfig.VERSION_NAME
         )

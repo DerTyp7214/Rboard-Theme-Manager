@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="de.dertyp7214.rboardthememanager">
 
+    <queries>
+        <package android:name="com.google.android.inputmethod.latin" />
+    </queries>
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 

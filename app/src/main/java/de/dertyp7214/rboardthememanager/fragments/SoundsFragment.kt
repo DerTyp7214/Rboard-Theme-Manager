@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
@@ -48,11 +49,14 @@ class SoundsFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_sounds, container, false)
 
+        val activity = requireActivity()
+        val context = requireContext()
+
         refreshLayout = v.findViewById(R.id.refreshLayout)
         soundsViewModel =
-            activity!!.run { ViewModelProviders.of(this)[SoundsViewModel::class.java] }
+            activity.run { ViewModelProviders.of(this)[SoundsViewModel::class.java] }
 
-        adapter = Adapter(context!!, list) {
+        adapter = Adapter(context, list) {
             soundsViewModel.setRefetch(true)
             Toast.makeText(
                 context,
@@ -64,7 +68,7 @@ class SoundsFragment : Fragment() {
         refreshLayout.setProgressViewOffset(
             true,
             0,
-            context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt()
+            context.getStatusBarHeight() + 5.dpToPx(context).toInt()
         )
 
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
@@ -78,10 +82,10 @@ class SoundsFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
-            StartOffsetItemDecoration(context!!.getStatusBarHeight())
+            StartOffsetItemDecoration(context.getStatusBarHeight())
         )
         recyclerView.addItemDecoration(
-            EndOffsetItemDecoration(56.dpToPx(context!!).toInt())
+            EndOffsetItemDecoration(56.dpToPx(context).toInt())
         )
 
         fetchDownloadList()
@@ -138,6 +142,7 @@ class SoundsFragment : Fragment() {
             return list.size
         }
 
+        @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val pack = list[position]
 
