@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.core.content.edit
 import androidx.preference.*
@@ -237,11 +238,12 @@ class FlagsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    @SuppressLint("SdCardPath")
     private fun getCurrentXmlValues(file: RKBDFile): Map<String, Any> {
 
         val output = HashMap<String, Any>()
 
-        val fileName = "data/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${file.rawValue}"
+        val fileName = "/dataa/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${file.rawValue}"
         val xmlFile = SuFile(fileName)
         if (!xmlFile.exists()) return output
 
@@ -283,7 +285,6 @@ class FlagsFragment : PreferenceFragmentCompat() {
     ) {
         preferenceManager.findPreference<T>(key).apply {
             if (this != null) {
-
                 if (flag != null) {
                     when (this) {
                         is SwitchPreference -> {
@@ -293,7 +294,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                             setSummary(if (default == true) "Enabled" else "Disabled")
                         }
                         is DropDownPreference -> {
-                            val default = defaultValues[flag.rawValue] as String
+                            val default = (defaultValues[flag.rawValue] ?: "") as String
                             setDefaultValue(default.toLong())
                             setSummary(default)
                         }
@@ -303,7 +304,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                             setSummary("${default.toDouble()}")
                         }
                         is EditTextPreference -> {
-                            val default = defaultValues[flag.rawValue] as String
+                            val default = (defaultValues[flag.rawValue] ?: "") as String
                             setDefaultValue(default)
                             setSummary(default)
                         }
