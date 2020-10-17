@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AndroidStudioProjects-Rboard-Theme-Manager.iml" filepath="$PROJECT_DIR$/.idea/modules/AndroidStudioProjects-Rboard-Theme-Manager.iml" group="Rboard-Theme-Manager" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/GitHub-Rboard-Theme-Manager.iml" filepath="$PROJECT_DIR$/.idea/modules/GitHub-Rboard-Theme-Manager.iml" group="Rboard-Theme-Manager" />
       <module fileurl="file://$PROJECT_DIR$/Rboard-Theme-Manager.iml" filepath="$PROJECT_DIR$/Rboard-Theme-Manager.iml" group="Rboard-Theme-Manager" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Rboard-Theme-Manager-2.iml" filepath="$PROJECT_DIR$/.idea/modules/Rboard-Theme-Manager-2.iml" group="Rboard-Theme-Manager-2" />
