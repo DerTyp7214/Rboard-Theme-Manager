@@ -2,6 +2,7 @@ package de.dertyp7214.rboardthememanager.screens
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
 
     private lateinit var homeViewModel: HomeViewModel
     private var bottomSheet: MenuBottomSheet? = null
+    private var inputBottomSheet: InputBottomSheet? = null
     private var keyboardHeightProvider: KeyboardHeightProvider? = null
     private var currentFragment = 0
 
@@ -94,8 +96,9 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
         }
 
         searchButton.setOnClickListener { _ ->
-            val bottomSheet =
-                InputBottomSheet(homeViewModel.getFilter(), { _, _, _ ->
+            inputBottomSheet =
+                InputBottomSheet(homeViewModel.getFilter(), { _, keyCode, _ ->
+                    if (keyCode == KeyEvent.KEYCODE_BACK) inputBottomSheet?.dismiss()
                     true
                 }, { text, it ->
                     homeViewModel.setFilter(text.toString())
@@ -112,7 +115,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                                         GridLayout.SINGLE,
                                         this@HomeActivity
                                     )
-                                    bottomSheet?.dismiss()
+                                    inputBottomSheet?.dismiss()
                                 }
                             }
                             item {
@@ -120,7 +123,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                                 icon = R.drawable.grid
                                 callback = {
                                     homeViewModel.setGridLayout(GridLayout.SMALL, this@HomeActivity)
-                                    bottomSheet?.dismiss()
+                                    inputBottomSheet?.dismiss()
                                 }
                             }
                             item {
@@ -128,14 +131,14 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                                 icon = R.drawable.grid
                                 callback = {
                                     homeViewModel.setGridLayout(GridLayout.BIG, this@HomeActivity)
-                                    bottomSheet?.dismiss()
+                                    inputBottomSheet?.dismiss()
                                 }
                             }
                         }
                     }
                     popupMenu.show(this, input)
                 }.setKeyBoardHeightObserver(this, homeViewModel)
-            bottomSheet.show(supportFragmentManager, "")
+            inputBottomSheet?.show(supportFragmentManager, "")
         }
 
         menuButton.setOnClickListener {

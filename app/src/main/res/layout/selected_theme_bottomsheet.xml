@@ -68,14 +68,13 @@
                     android:textColor="@color/primaryText"
                     android:textSize="14sp" />
 
-                <androidx.appcompat.widget.SwitchCompat
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/enable_border_switch"
                     android:layout_width="wrap_content"
                     android:buttonTint="@color/colorAccent"
                     android:thumbTint="@color/colorAccent"
                     android:trackTint="@color/colorAccent"
-                    android:layout_height="wrap_content"
-                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

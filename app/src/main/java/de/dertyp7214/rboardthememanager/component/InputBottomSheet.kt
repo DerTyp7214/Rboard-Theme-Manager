@@ -41,8 +41,13 @@ class InputBottomSheet(
         val input = v.findViewById<CustomTextInputEditText>(R.id.editText)
         inputLayout = v.findViewById(R.id.inputLayout)
 
-        inputLayout!!.setStartIconOnClickListener { onSubmit(input.text, this) }
-        inputLayout!!.setEndIconOnClickListener { onMenu(it, this) }
+        inputLayout!!.setStartIconOnClickListener {
+            onSubmit(input.text, this)
+        }
+        inputLayout!!.setEndIconOnClickListener {
+            closeKeyboard()
+            onMenu(it, this)
+        }
 
         if (!text.isBlank()) input.setText(text)
         input.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH)

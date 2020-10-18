@@ -12,13 +12,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.SwitchCompat
 import androidx.cardview.widget.CardView
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.setSwitchColor
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 
@@ -40,7 +41,7 @@ class SelectedThemeBottomSheet(
         val applyButton = v.findViewById<LinearLayout>(R.id.apply)
         val deleteButton = v.findViewById<LinearLayout>(R.id.delete)
         val enableBorderButton = v.findViewById<LinearLayout>(R.id.enable_border)
-        val enableBorderSwitch = v.findViewById<SwitchCompat>(R.id.enable_border_switch)
+        val enableBorderSwitch = v.findViewById<SwitchMaterial>(R.id.enable_border_switch)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
         var enableBorderSwitchSelected = sharedPreferences.getBoolean("enable_border", false)
@@ -62,6 +63,7 @@ class SelectedThemeBottomSheet(
         }
 
         card.setCardBackgroundColor(color)
+        enableBorderSwitch.setSwitchColor(resources.getColor(R.color.colorAccent, null))
 
         themeName.text = theme.name.split("_").joinToString(" ") { it.capitalize() }
         themeName.setTextColor(if (!isDark) Color.WHITE else Color.BLACK)

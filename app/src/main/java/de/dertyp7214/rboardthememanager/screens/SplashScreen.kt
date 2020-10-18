@@ -62,9 +62,13 @@ class SplashScreen : AppCompatActivity() {
         checkUpdate(
             clazz = null,
             timeout = 1000,
-            updateUrl = "https://api.dertyp7214.de/${BuildConfig.BUILD_TYPE.toLowerCase(
-                Locale.ROOT
-            )}", versionCode = BuildConfig.VERSION_CODE, forceUpdate = false
+            updateUrl = "https://api.dertyp7214.de/${
+                BuildConfig.BUILD_TYPE.toLowerCase(
+                    Locale.ROOT
+                )
+            }",
+            versionCode = BuildConfig.VERSION_CODE,
+            forceUpdate = false
         ) {
             runOnUiThread {
                 callback()
