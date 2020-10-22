@@ -18,7 +18,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
-import com.jaredrummler.android.shell.Shell
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
@@ -150,11 +149,6 @@ class SoundsFragment : Fragment() {
             holder.author.text = "by ${pack.author}"
 
             holder.layout.setOnClickListener {
-
-                if (!Shell.SU.available()) {
-                    return@setOnClickListener
-                }
-
                 val pair = downloadDialog(context).apply {
                     first.isIndeterminate = false
                 }

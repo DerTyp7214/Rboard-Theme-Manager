@@ -30,6 +30,7 @@
     <string name="applied">Theme Applied</string>
     <string name="error">There was an Error!</string>
     <string name="errors">There where some Errors!</string>
+    <string name="no_root">This app does not work without root!</string>
     <string name="delete_theme">Delete Theme</string>
     <string name="theme_deleted">Theme Deleted</string>
     <string name="themes_deleted">Themes Deleted</string>
@@ -110,4 +111,9 @@
     <string name="undo">UNDO</string>
     <string name="share_themes">Share themes</string>
     <string name="noFile">No file provided!</string>
+    <string name="close">Close</string>
+    <string name="restart">Restart</string>
+    <string name="later">Later</string>
+    <string name="need_reboot_title">Reboot device?</string>
+    <string name="need_reboot">To make this app work properly, you have to reboot your phone.</string>
 </resources>

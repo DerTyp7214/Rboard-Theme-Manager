@@ -20,7 +20,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
-import com.jaredrummler.android.shell.Shell
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.Config.PACKS_URL
@@ -156,11 +155,6 @@ class DownloadFragment : Fragment() {
             holder.author.text = "by ${pack.author}"
 
             holder.layout.setOnLongClickListener {
-
-                if (!Shell.SU.available()) {
-                    return@setOnLongClickListener false
-                }
-
                 val pair = previewDialog(context, previewsPath, pack.name)
 
                 DownloadHelper().from(pack.url).to(
@@ -221,11 +215,6 @@ class DownloadFragment : Fragment() {
             }
 
             holder.layout.setOnClickListener {
-
-                if (!Shell.SU.available()) {
-                    return@setOnClickListener
-                }
-
                 val pair = downloadDialog(context).apply {
                     first.isIndeterminate = false
                 }

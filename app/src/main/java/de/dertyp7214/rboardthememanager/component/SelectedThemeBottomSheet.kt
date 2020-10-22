@@ -63,7 +63,7 @@ class SelectedThemeBottomSheet(
         }
 
         card.setCardBackgroundColor(color)
-        enableBorderSwitch.setSwitchColor(resources.getColor(R.color.colorAccent, null))
+        if (resources.getBoolean(R.bool.darkmode)) enableBorderSwitch.setSwitchColor(resources.getColor(R.color.colorAccent, null))
 
         themeName.text = theme.name.split("_").joinToString(" ") { it.capitalize() }
         themeName.setTextColor(if (!isDark) Color.WHITE else Color.BLACK)

@@ -15,15 +15,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.button.MaterialButton
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.fragments.SelectRuntimeData
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import de.dertyp7214.rboardthememanager.viewmodels.IntroViewModel
 import kotlinx.android.synthetic.main.activity_intro.*
 import kotlinx.android.synthetic.main.intro_navigator.*
+import kotlin.system.exitProcess
 
 class IntroActivity : AppCompatActivity() {
 
@@ -150,13 +154,21 @@ class IntroActivity : AppCompatActivity() {
                 Pair(THEME_LOCATION, null)
             )
             MagiskUtils.installModule(meta, file)
+            MaterialDialog(this).show {
+                setContentView(R.layout.reboot_dialog)
+                findViewById<MaterialButton>(R.id.button_later).setOnClickListener { exitProcess(0)}
+                findViewById<MaterialButton>(R.id.button_restart).setOnClickListener {
+                    "reboot".runAsCommand()
+                }
+            }
+        } else {
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
         }
         //}
-        startActivity(Intent(this, HomeActivity::class.java))
         getSharedPreferences("start", Context.MODE_PRIVATE).apply {
             edit {
                 putBoolean("first", false)
-                finish()
             }
         }
     }

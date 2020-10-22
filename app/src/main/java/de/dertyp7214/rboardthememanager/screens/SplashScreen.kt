@@ -19,6 +19,7 @@ import com.topjohnwu.superuser.Shell
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.component.NoRootBottomSheet
 import de.dertyp7214.rboardthememanager.core.runAsCommand
 import java.util.*
 
@@ -48,7 +49,6 @@ class SplashScreen : AppCompatActivity() {
                 else {
                     checkUpdate {
                         startApp()
-                        finish()
                     }
                 }
             }
@@ -97,7 +97,10 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun startApp() {
-        startActivity(Intent(this, HomeActivity::class.java))
+        if (Shell.rootAccess()) {
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
+        } else NoRootBottomSheet().show(supportFragmentManager, "YEET")
     }
 
     private fun createNotificationChannel() {
