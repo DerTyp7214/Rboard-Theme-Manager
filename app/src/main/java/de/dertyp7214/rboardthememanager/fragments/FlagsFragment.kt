@@ -243,7 +243,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
 
         val output = HashMap<String, Any>()
 
-        val fileName = "/dataa/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${file.rawValue}"
+        val fileName = "/data/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${file.rawValue}"
         val xmlFile = SuFile(fileName)
         if (!xmlFile.exists()) return output
 

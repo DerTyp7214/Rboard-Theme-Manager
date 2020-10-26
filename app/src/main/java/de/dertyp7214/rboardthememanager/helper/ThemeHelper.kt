@@ -26,7 +26,11 @@ import java.nio.charset.Charset
 enum class RKBDFlagType(val rawValue: String) {
     boolean("boolean"),
     long("long"),
-    string("string")
+    string("string");
+
+    override fun toString(): String {
+        return "[${javaClass.simpleName}] $name: $rawValue"
+    }
 }
 
 enum class RKBDFlag(val rawValue: String) {
@@ -58,12 +62,20 @@ enum class RKBDFlag(val rawValue: String) {
     KeyboardHeightRatio("keyboard_height_ratio"),
     EnableKeyBorder("enable_key_border"),
     EnableSecondarySymbols("enable_secondary_symbols"),
-    ShowSuggestions("show_suggestions")
+    ShowSuggestions("show_suggestions");
+
+    override fun toString(): String {
+        return "[${javaClass.simpleName}] $name: $rawValue"
+    }
 }
 
 enum class RKBDFile(val rawValue: String) {
     Flags("flag_value.xml"),
-    Preferences("com.google.android.inputmethod.latin_preferences.xml")
+    Preferences("com.google.android.inputmethod.latin_preferences.xml");
+
+    override fun toString(): String {
+        return "[${javaClass.simpleName}] $name: $rawValue"
+    }
 }
 
 enum class RKBDProp(val rawValue: String) {
@@ -73,7 +85,11 @@ enum class RKBDProp(val rawValue: String) {
     BottomLandPadding("ro.com.google.ime.kb_pad_land_b"),
     RightLandPadding("ro.com.google.ime.kb_pad_land_r"),
     LeftLandPadding("ro.com.google.ime.kb_pad_land_l"),
-    BottomCorners("ro.com.google.ime.corner_key_l")
+    BottomCorners("ro.com.google.ime.corner_key_l");
+
+    override fun toString(): String {
+        return "[${javaClass.simpleName}] $name: $rawValue"
+    }
 }
 
 object ThemeHelper {
@@ -199,6 +215,7 @@ object ThemeHelper {
             }
     }
 
+    @SuppressLint("SdCardPath")
     fun applyFlag(
         flag: RKBDFlag,
         value: Any,
@@ -206,7 +223,7 @@ object ThemeHelper {
         file: RKBDFile = RKBDFile.Flags
     ): Boolean {
         val inputPackageName = GBOARD_PACKAGE_NAME
-        val fileName = "data/data/$inputPackageName/shared_prefs/${file.rawValue}"
+        val fileName = "/data/data/$inputPackageName/shared_prefs/${file.rawValue}"
         val content = SuFileInputStream(SuFile(fileName)).use {
             it.bufferedReader().readText()
         }.let {
@@ -243,10 +260,10 @@ object ThemeHelper {
             return@let fileText
         }
 
-        SuFileOutputStream(File(fileName)).writer(Charset.defaultCharset())
-            .use { outputStreamWriter ->
-                outputStreamWriter.write(content)
-            }
+        Logger.log(Logger.Companion.Type.DEBUG, "Change Flag", "$flag | $value")
+        Logger.log(Logger.Companion.Type.DEBUG, "Change Flag", "$flagType | $value")
+
+        writeSuFile(SuFile(fileName), content)
 
         return "am force-stop $inputPackageName".runAsCommand()
     }
@@ -292,6 +309,12 @@ object ThemeHelper {
             SuFile("/system/media")
         } else {
             null
+        }
+    }
+
+    private fun writeSuFile(file: SuFile, content: String) {
+        SuFileOutputStream(file).use {
+            it.write(content.toByteArray(Charsets.UTF_8))
         }
     }
 }

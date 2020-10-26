@@ -8,7 +8,8 @@
     </queries>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:name=".Application"
@@ -25,10 +26,18 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.OPENABLE" />
 
-                <data android:scheme="content" />
                 <data android:host="*" />
-                <data android:mimeType="application/zip" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.pack" />
+                <data android:pathPattern=".*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.pack" />
+                <data android:scheme="content" />
             </intent-filter>
         </activity>
         <activity android:name=".screens.AuthenticationActivity" />
