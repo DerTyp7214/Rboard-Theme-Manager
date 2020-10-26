@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -129,12 +128,7 @@ class DownloadFragment : Fragment() {
     ) :
         RecyclerView.Adapter<Adapter.ViewHolder>() {
 
-        var previewsPath = File(
-            context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)
-                ?.get(0)?.absolutePath?.removeSuffix(
-                    "Notifications"
-                ), "ThemePacks"
-        ).absolutePath + "/previews"
+        val previewsPath: String = File(getThemePacksPath(context), "previews").absolutePath
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
@@ -178,10 +172,9 @@ class DownloadFragment : Fragment() {
 
                             override fun end(path: String) {
                                 pair.first.isIndeterminate = true
-                                SuFile("$path/previews").mkdirs()
-                                val folderPath = getThemePacksPath(context).absolutePath
+                                SuFile(previewsPath).mkdirs()
 
-                                ZipHelper().unpackZip("$folderPath/previews", path)
+                                ZipHelper().unpackZip(previewsPath, path)
 
                                 val adapter =
                                     PreviewAdapter(context, ThemeUtils.loadPreviewThemes(context))
