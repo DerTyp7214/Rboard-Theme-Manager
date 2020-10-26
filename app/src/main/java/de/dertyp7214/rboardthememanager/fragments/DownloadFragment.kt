@@ -29,6 +29,7 @@ import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.*
 import de.dertyp7214.rboardthememanager.utils.ColorUtils
+import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import org.json.JSONArray
@@ -158,11 +159,7 @@ class DownloadFragment : Fragment() {
                 val pair = previewDialog(context, previewsPath, pack.name)
 
                 DownloadHelper().from(pack.url).to(
-                    File(
-                        context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)[0].absolutePath.removeSuffix(
-                            "Notifications"
-                        ), "ThemePacks"
-                    ).absolutePath
+                    getThemePacksPath(context).absolutePath
                 )
                     .fileName(
                         "preview_temp.zip"
@@ -182,11 +179,7 @@ class DownloadFragment : Fragment() {
                             override fun end(path: String) {
                                 pair.first.isIndeterminate = true
                                 SuFile("$path/previews").mkdirs()
-                                val folderPath = File(
-                                    context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)[0].absolutePath.removeSuffix(
-                                        "Notifications"
-                                    ), "ThemePacks"
-                                ).absolutePath
+                                val folderPath = getThemePacksPath(context).absolutePath
 
                                 ZipHelper().unpackZip("$folderPath/previews", path)
 
@@ -221,11 +214,7 @@ class DownloadFragment : Fragment() {
                 DownloadHelper()
                     .from(pack.url)
                     .to(
-                        File(
-                            context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)[0].absolutePath.removeSuffix(
-                                "Notifications"
-                            ), "ThemePacks"
-                        ).absolutePath
+                        getThemePacksPath(context).absolutePath
                     )
                     .fileName("tmp.zip")
                     .setListener(object : DownloadListener {

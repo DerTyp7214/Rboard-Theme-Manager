@@ -287,7 +287,9 @@ object ThemeHelper {
     }
 
     var loggingFlags = arrayListOf(
-        RKBDFlag.Logging1, RKBDFlag.Logging2, RKBDFlag.Logging3,
+        RKBDFlag.Logging1,
+        RKBDFlag.Logging2,
+        RKBDFlag.Logging3,
         RKBDFlag.Logging4,
         RKBDFlag.Logging5,
         RKBDFlag.Logging6,

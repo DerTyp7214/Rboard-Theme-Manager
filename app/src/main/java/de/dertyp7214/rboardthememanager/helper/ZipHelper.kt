@@ -3,7 +3,10 @@ package de.dertyp7214.rboardthememanager.helper
 import com.dertyp7214.logs.helpers.Logger
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileOutputStream
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -12,7 +15,7 @@ class ZipHelper {
     private val buffer = 80000
     fun zip(_files: List<String>, zipFileName: String) {
         try {
-            var origin: BufferedInputStream? = null
+            var origin: BufferedInputStream?
             val dest = FileOutputStream(zipFileName)
             val out = ZipOutputStream(
                 BufferedOutputStream(

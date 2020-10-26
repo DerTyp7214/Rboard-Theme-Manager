@@ -3,7 +3,6 @@ package de.dertyp7214.rboardthememanager.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
-import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.dpToPx
@@ -27,6 +25,7 @@ import de.dertyp7214.rboardthememanager.core.getStatusBarHeight
 import de.dertyp7214.rboardthememanager.core.safeParse
 import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.helper.*
+import de.dertyp7214.rboardthememanager.utils.FileUtils.getSoundPacksPath
 import de.dertyp7214.rboardthememanager.viewmodels.SoundsViewModel
 import org.json.JSONArray
 import org.json.JSONObject
@@ -155,11 +154,7 @@ class SoundsFragment : Fragment() {
                 DownloadHelper()
                     .from(pack.url)
                     .to(
-                        SuFile(
-                            context.getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)[0].absolutePath.removeSuffix(
-                                "Notifications"
-                            ), "SoundPacks"
-                        ).absolutePath
+                        getSoundPacksPath(context).absolutePath
                     )
                     .fileName("tmp.zip")
                     .setListener(object : DownloadListener {

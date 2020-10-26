@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.core.graphics.ColorUtils
 import de.dertyp7214.rboardthememanager.core.getDominantColor
 
-
 object ColorUtils {
     fun dominantColor(image: Bitmap): Int {
         return image.getDominantColor()

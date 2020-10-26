@@ -19,7 +19,8 @@ fun File.parseModuleMeta(): ModuleMeta {
         (map["version"] ?: "") as String,
         (map["versionCode"] ?: "") as String,
         (map["author"] ?: "") as String,
-        (map["description"] ?: "") as String
+        (map["description"] ?: "") as String,
+        map
     )
 }
 

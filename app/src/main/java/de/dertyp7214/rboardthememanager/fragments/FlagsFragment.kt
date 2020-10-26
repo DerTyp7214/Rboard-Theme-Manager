@@ -102,8 +102,6 @@ class FlagsFragment : PreferenceFragmentCompat() {
             }
         }
 
-
-
         bindPreference<SwitchPreference>("flags_popup_v2", RKBDFlag.EnablePopupViewV2) { newValue ->
             if (newValue is Boolean) {
                 ThemeHelper.applyFlag(

@@ -2,6 +2,7 @@ package de.dertyp7214.rboardthememanager.fragments
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +48,7 @@ class WelcomeFragment : Fragment() {
             requestLayout()
         }
 
-        Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             ChangeBounds().apply {
                 duration = 300
                 interpolator = AccelerateDecelerateInterpolator()
