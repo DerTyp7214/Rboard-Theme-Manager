@@ -90,7 +90,10 @@ class Settings : PreferenceFragmentCompat() {
                         "themePath" -> {
                             if (preference is DropDownPreference) {
                                 if (ThemeUtils.getThemesPathFromProps() != newValue)
-                                    ThemeUtils.changeThemesPath(newValue as String)
+                                    ThemeUtils.changeThemesPath(
+                                        requireContext(),
+                                        newValue as String
+                                    )
                             }
                         }
                     }

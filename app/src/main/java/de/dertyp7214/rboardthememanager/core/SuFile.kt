@@ -13,6 +13,10 @@ fun SuFile.copy(newFile: File): Boolean {
     return "cp $absolutePath ${newFile.absolutePath}".runAsCommand()
 }
 
+fun SuFile.copyRecursively(newFile: File): Boolean {
+    return "cp -a $absolutePath/. ${newFile.absolutePath}".runAsCommand()
+}
+
 fun SuFile.decodeBitmap(opts: BitmapFactory.Options? = null): Bitmap? {
     val pathName = absolutePath
     var bm: Bitmap? = null

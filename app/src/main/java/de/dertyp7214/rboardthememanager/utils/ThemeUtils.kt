@@ -2,12 +2,16 @@ package de.dertyp7214.rboardthememanager.utils
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
+import com.google.android.material.button.MaterialButton
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.Config.themeCount
+import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.copyRecursively
 import de.dertyp7214.rboardthememanager.core.decodeBitmap
 import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
@@ -16,6 +20,7 @@ import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.system.exitProcess
 
 object ThemeUtils {
     fun loadThemes(): List<ThemeDataClass> {
@@ -63,12 +68,12 @@ object ThemeUtils {
         return getThemesPathFromProps() != null
     }
 
-    fun changeThemesPath(path: String) {
-        val oldLoc = MAGISK_THEME_LOC
+    fun changeThemesPath(context: Context, path: String) {
+        val oldLoc = SuFile(MAGISK_THEME_LOC)
         THEME_LOCATION = path
-        val newLoc = MAGISK_THEME_LOC
-        "mkdir -p $newLoc".runAsCommand()
-        "cp -a $oldLoc/. $newLoc/".runAsCommand()
+        val newLoc = SuFile(MAGISK_THEME_LOC)
+        newLoc.mkdirs()
+        oldLoc.copyRecursively(newLoc)
 
         val meta = ModuleMeta(
             MODULE_ID,
@@ -85,5 +90,13 @@ object ThemeUtils {
             )
         )
         MagiskUtils.updateModule(meta, file)
+
+        MaterialDialog(context).show {
+            setContentView(R.layout.reboot_dialog)
+            findViewById<MaterialButton>(R.id.button_later).setOnClickListener { exitProcess(0) }
+            findViewById<MaterialButton>(R.id.button_restart).setOnClickListener {
+                "reboot".runAsCommand()
+            }
+        }
     }
 }
