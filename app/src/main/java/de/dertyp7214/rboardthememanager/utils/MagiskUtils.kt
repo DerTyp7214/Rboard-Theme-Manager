@@ -62,7 +62,6 @@ object MagiskUtils {
             moduleDir.mkdirs()
             writeSuFile(SuFile(moduleDir, "module.prop"), meta.getString())
             files.forEach { file ->
-
                 if (SuFile(moduleDir, file.key).exists()) {
                     SuFile(moduleDir, file.key).apply {
                         var text = SuFileInputStream(this).readBytes().toString(UTF_8)
@@ -96,7 +95,7 @@ object MagiskUtils {
                     }
                 }
             }
-        }.catch { Logger.log(Logger.Companion.Type.ERROR, "INSTALL_MODULE", it) }
+        }.catch { Logger.log(Logger.Companion.Type.ERROR, "UPDATE_MODULE", it) }
     }
 
     private fun writeSuFile(file: SuFile, content: String) {

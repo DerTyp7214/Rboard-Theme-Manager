@@ -56,6 +56,7 @@
     <string name="themes">Themes</string>
     <string name="themesMode">Themes installed using %s</string>
     <string name="themesCount">%s themes installed</string>
+    <string name="themesPath">Themes Path %s</string>
     <string name="loading">Loading</string>
     <string name="magisk">Magisk</string>
     <string name="root">Root</string>
@@ -116,4 +117,5 @@
     <string name="later">Later</string>
     <string name="need_reboot_title">Reboot device?</string>
     <string name="need_reboot">To make this app work properly, you have to reboot your phone.</string>
+    <string name="themePath_pref">Theme Path</string>
 </resources>

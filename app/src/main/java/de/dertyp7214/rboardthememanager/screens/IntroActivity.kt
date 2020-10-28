@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.button.MaterialButton
+import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.R
@@ -149,7 +150,7 @@ class IntroActivity : AppCompatActivity() {
             val file = mapOf(
                 Pair(
                     "system.prop",
-                    "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=/$THEME_LOCATION"
+                    "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=$THEME_LOCATION"
                 ),
                 Pair(THEME_LOCATION, null)
             )
@@ -217,10 +218,11 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkGboardPermission(): Boolean { // TODO: does not work
-        return packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS).find {
-            it.packageName == "com.google.android.inputmethod.latin"
-        }?.let {
+    private fun checkGboardPermission(): Boolean {
+        return packageManager.getPackageInfo(
+            Config.GBOARD_PACKAGE_NAME,
+            PackageManager.GET_PERMISSIONS
+        )?.let {
             val perm = it.requestedPermissions?.filterIndexed { index, p ->
                 p == "android.permission.READ_EXTERNAL_STORAGE" && ((it.requestedPermissionsFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0)
             }

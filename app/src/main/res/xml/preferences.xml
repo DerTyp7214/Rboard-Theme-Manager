@@ -14,6 +14,13 @@
             android:entries="@array/theme_prefs"
             android:entryValues="@array/theme_prefs"
             android:defaultValue="Select" />
+
+        <DropDownPreference
+            android:title="@string/themePath_pref"
+            android:key="themePath"
+            android:entries="@array/themePath_prefs"
+            android:entryValues="@array/themePath_prefs"
+            android:defaultValue="Select" />
         <com.dertyp7214.logs.preferences.LogModeLegacy />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

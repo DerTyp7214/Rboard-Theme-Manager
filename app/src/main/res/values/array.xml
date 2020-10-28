@@ -7,6 +7,12 @@
         <item>Follow Battery Saver</item>
     </string-array>
 
+    <string-array name="themePath_prefs">
+        <item>/system/etc/gboard_theme</item>
+        <item>/data/GboardTheme</item>
+        <item>/sdcard/GboardTheme</item>
+    </string-array>
+
     <string-array name="flag_emoji_columns_prefs">
         <item>5</item>
         <item>7</item>

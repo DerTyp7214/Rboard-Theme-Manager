@@ -93,7 +93,6 @@ enum class RKBDProp(val rawValue: String) {
 }
 
 object ThemeHelper {
-
     fun installTheme(zip: File, move: Boolean = true): Boolean {
         return if (zip.extension == "pack") {
             Application.context.let {

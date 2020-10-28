@@ -232,7 +232,7 @@ class DownloadFragment : Fragment() {
                             Logger.log(
                                 Logger.Companion.Type.INFO,
                                 "DOWNLOAD_ZIP",
-                                "from: $MAGISK_THEME_LOC to $path"
+                                "from: $path to $MAGISK_THEME_LOC"
                             )
                             ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
                             pair.second.dismiss()

@@ -22,7 +22,6 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -147,7 +146,7 @@ class HomeGridFragment : Fragment() {
                         positiveButton(res = R.string.yes) { dialog ->
                             var noError = false
                             themeList.filter { theme -> theme.selected }
-                                .forEachIndexed { index, theme ->
+                                .forEachIndexed { _, theme ->
                                     if (theme.delete() && !noError) noError = true
                                 }
                             if (noError) Toast.makeText(
@@ -177,7 +176,7 @@ class HomeGridFragment : Fragment() {
             true
         }
 
-        homeViewModel.gridLayoutObserve(this, Observer {
+        homeViewModel.gridLayoutObserve(this, {
             recyclerView.stopScroll()
             adapter.dataSetChanged()
             if (recyclerView.layoutManager is GridLayoutManager) {
@@ -201,19 +200,19 @@ class HomeGridFragment : Fragment() {
             }
         })
 
-        homeViewModel.observeRefetch(this, Observer {
+        homeViewModel.observeRefetch(this, {
             if (it) {
                 homeViewModel.setFilter(homeViewModel.getFilter())
             }
         })
 
-        homeViewModel.gridLayoutObserve(this, Observer {
+        homeViewModel.gridLayoutObserve(this, {
             recyclerView.stopScroll()
             adapter.dataSetChanged()
             recyclerView.scheduleLayoutAnimation()
         })
 
-        homeViewModel.themesObserve(this, Observer { list ->
+        homeViewModel.themesObserve(this, { list ->
             if (tmpList.isEmpty() || list.size > tmpList.size) tmpList.apply {
                 clear(adapter)
                 addAll(list)
@@ -227,7 +226,7 @@ class HomeGridFragment : Fragment() {
             }
         })
 
-        homeViewModel.observeFilter(this, Observer { filter ->
+        homeViewModel.observeFilter(this, { filter ->
             refreshLayout.isRefreshing = true
             themeList.clear(adapter)
             Thread {

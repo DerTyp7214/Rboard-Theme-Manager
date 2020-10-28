@@ -37,15 +37,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
-                    android:drawableStart="@drawable/android_head"
                     android:drawablePadding="8dp"
-                    android:drawableTint="@color/colorAccent"
                     android:gravity="center_vertical"
                     android:letterSpacing=".2"
                     android:text="@string/device"
                     android:textAllCaps="true"
                     android:textColor="@color/colorAccent"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/android_head"
+                    app:drawableTint="@color/colorAccent" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -92,15 +92,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
-                    android:drawableStart="@drawable/theme"
                     android:drawablePadding="8dp"
-                    android:drawableTint="@color/colorAccent"
                     android:gravity="center_vertical"
                     android:letterSpacing=".2"
                     android:text="@string/themes"
                     android:textAllCaps="true"
                     android:textColor="@color/colorAccent"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/theme"
+                    app:drawableTint="@color/colorAccent" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -121,6 +121,16 @@
                     android:layout_marginBottom="2dp"
                     android:textColor="@color/primaryTextSec"
                     android:text="@{@string/themesCount(themes.count)}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="@color/primaryTextSec"
+                    android:text="@{@string/themesPath(themes.path)}" />
 
             </LinearLayout>
         </ScrollView>

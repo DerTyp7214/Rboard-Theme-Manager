@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -18,9 +19,11 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.topjohnwu.superuser.Shell
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
+import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.NoRootBottomSheet
 import de.dertyp7214.rboardthememanager.core.runAsCommand
+import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import java.util.*
 
 class SplashScreen : AppCompatActivity() {
@@ -38,24 +41,32 @@ class SplashScreen : AppCompatActivity() {
 
         "rm -rf ${cacheDir.absolutePath}/*".runAsCommand()
 
-        getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
-            //if (getBoolean("registered", false)) {
-            getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-                if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
-                        this@SplashScreen,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) runAnimation()
-                else {
-                    checkUpdate {
-                        startApp()
+        if (Shell.rootAccess()) {
+            if (!checkGboardPermission()) requestGboardStorage()
+            if (ThemeUtils.checkForExistingThemes()) ThemeUtils.getThemesPathFromProps()
+                ?.apply { Config.THEME_LOCATION = this }
+
+            //ThemeUtils.changeThemesPath("/data/GboardThemes")
+
+            getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
+                //if (getBoolean("registered", false)) {
+                getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+                    if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                            this@SplashScreen,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) runAnimation()
+                    else {
+                        checkUpdate {
+                            startApp()
+                        }
                     }
                 }
+                //} else {
+                //    startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
+                //}
             }
-            //} else {
-            //    startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
-            //}
-        }
+        } else NoRootBottomSheet().show(supportFragmentManager, "YEET")
     }
 
     private fun checkUpdate(callback: () -> Unit) {
@@ -97,10 +108,8 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun startApp() {
-        if (Shell.rootAccess()) {
-            startActivity(Intent(this, HomeActivity::class.java))
-            finish()
-        } else NoRootBottomSheet().show(supportFragmentManager, "YEET")
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 
     private fun createNotificationChannel() {
@@ -116,5 +125,21 @@ class SplashScreen : AppCompatActivity() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun checkGboardPermission(): Boolean {
+        return packageManager.getPackageInfo(
+            Config.GBOARD_PACKAGE_NAME,
+            PackageManager.GET_PERMISSIONS
+        )?.let {
+            val perm = it.requestedPermissions?.filterIndexed { index, p ->
+                p == "android.permission.READ_EXTERNAL_STORAGE" && ((it.requestedPermissionsFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0)
+            }
+            perm != null && perm.contains("android.permission.READ_EXTERNAL_STORAGE")
+        } ?: false
+    }
+
+    private fun requestGboardStorage() {
+        "pm grant ${Config.GBOARD_PACKAGE_NAME} android.permission.READ_EXTERNAL_STORAGE".runAsCommand()
     }
 }

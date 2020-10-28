@@ -6,7 +6,9 @@ import androidx.core.content.edit
 import androidx.preference.DropDownPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 
 class Settings : PreferenceFragmentCompat() {
 
@@ -69,6 +71,26 @@ class Settings : PreferenceFragmentCompat() {
                                         AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
                                     )
                                 }
+                            }
+                        }
+                    }
+                    true
+                }
+            }
+        }
+
+        preferenceManager.findPreference<DropDownPreference>("themePath").apply {
+            if (this != null) {
+                pref = this
+                val default =
+                    sharedPreferences.getString("themePath_pref", Config.THEME_LOCATION)
+                summary = default
+                setOnPreferenceChangeListener { preference, newValue ->
+                    when (preference.key) {
+                        "themePath" -> {
+                            if (preference is DropDownPreference) {
+                                if (ThemeUtils.getThemesPathFromProps() != newValue)
+                                    ThemeUtils.changeThemesPath(newValue as String)
                             }
                         }
                     }
