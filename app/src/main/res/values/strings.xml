@@ -118,4 +118,5 @@
     <string name="need_reboot_title">Reboot device?</string>
     <string name="need_reboot">To make this app work properly, you have to reboot your phone.</string>
     <string name="themePath_pref">Theme Path</string>
+    <string name="download">Download</string>
 </resources>

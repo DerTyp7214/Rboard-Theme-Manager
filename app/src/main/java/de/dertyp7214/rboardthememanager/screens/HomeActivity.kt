@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.screens
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -13,6 +14,7 @@ import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
+import de.dertyp7214.rboardthememanager.core.delayed
 import de.dertyp7214.rboardthememanager.data.MenuItem
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.fragments.DownloadFragment
@@ -37,8 +39,9 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
     private var bottomSheet: MenuBottomSheet? = null
     private var inputBottomSheet: InputBottomSheet? = null
     private var keyboardHeightProvider: KeyboardHeightProvider? = null
-    private var currentFragment = 0
+    private var currentFragment = R.id.navigation_themes
 
+    @SuppressLint("deprecation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -72,41 +75,28 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
         }
 
         homeNav.setOnNavigationItemSelectedListener {
-            if (currentFragment != it.itemId || currentFragment == R.id.navigation_themes) {
-                currentFragment = it.itemId
-                when (it.itemId) {
-                    R.id.navigation_themes -> supportFragmentManager.beginTransaction().apply {
-                        replace(fragment.id, HomeGridFragment())
-                        setTransition(TRANSIT_FRAGMENT_OPEN)
-                        commit()
-                    }
-                    R.id.navigation_downloads -> supportFragmentManager.beginTransaction().apply {
-                        replace(fragment.id, DownloadFragment())
-                        setTransition(TRANSIT_FRAGMENT_OPEN)
-                        commit()
-                    }
-                    R.id.navigation_sounds -> supportFragmentManager.beginTransaction().apply {
-                        replace(fragment.id, SoundsFragment())
-                        setTransition(TRANSIT_FRAGMENT_OPEN)
-                        commit()
-                    }
-                }
-            }
+            navigate(it.itemId, true)
             true
         }
 
         searchButton.setOnClickListener { _ ->
             inputBottomSheet =
-                InputBottomSheet(homeViewModel.getFilter(), { _, keyCode, _ ->
-                    if (keyCode == KeyEvent.KEYCODE_BACK) inputBottomSheet?.dismiss()
-                    true
-                }, { text, it ->
-                    homeViewModel.setFilter(text.toString())
-                    it.dismiss()
-                }) { input, _ ->
+                InputBottomSheet(
+                    if (currentFragment == R.id.navigation_themes) homeViewModel.getFilter() else homeViewModel.getFilterDownloads(),
+                    { _, keyCode, _ ->
+                        if (keyCode == KeyEvent.KEYCODE_BACK) inputBottomSheet?.dismiss()
+                        true
+                    },
+                    { text, it ->
+                        when (currentFragment) {
+                            R.id.navigation_themes -> homeViewModel.setFilter(text.toString())
+                            R.id.navigation_downloads -> homeViewModel.setFilterDownloads(text.toString())
+                        }
+                        it.dismiss()
+                    }) { input, _ ->
                     val popupMenu = popupMenu {
                         style = R.style.PopupMenu
-                        section {
+                        if (currentFragment == R.id.navigation_themes) section {
                             item {
                                 labelRes = R.string.list_grid
                                 icon = R.drawable.ic_list
@@ -133,6 +123,11 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                                     homeViewModel.setGridLayout(GridLayout.BIG, this@HomeActivity)
                                     inputBottomSheet?.dismiss()
                                 }
+                            }
+                        }
+                        else section {
+                            item {
+                                label = "Comming Soon"
                             }
                         }
                     }
@@ -206,5 +201,30 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
     override fun onDestroy() {
         super.onDestroy()
         keyboardHeightProvider?.close()
+    }
+
+    fun navigate(id: Int, self: Boolean = false) {
+        if (currentFragment != id || currentFragment == R.id.navigation_themes) {
+            currentFragment = id
+            if (!self) homeNav.selectedItemId = id
+            when (id) {
+                R.id.navigation_themes -> supportFragmentManager.beginTransaction().apply {
+                    replace(fragment.id, HomeGridFragment())
+                    setTransition(TRANSIT_FRAGMENT_OPEN)
+                    commit()
+                    if (self) delayed(100) { homeViewModel.setRefetch(true) }
+                }
+                R.id.navigation_downloads -> supportFragmentManager.beginTransaction().apply {
+                    replace(fragment.id, DownloadFragment())
+                    setTransition(TRANSIT_FRAGMENT_OPEN)
+                    commit()
+                }
+                R.id.navigation_sounds -> supportFragmentManager.beginTransaction().apply {
+                    replace(fragment.id, SoundsFragment())
+                    setTransition(TRANSIT_FRAGMENT_OPEN)
+                    commit()
+                }
+            }
+        }
     }
 }

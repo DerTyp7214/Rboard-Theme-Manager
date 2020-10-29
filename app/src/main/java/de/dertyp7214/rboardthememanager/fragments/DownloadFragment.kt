@@ -1,6 +1,7 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -10,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +27,7 @@ import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.*
+import de.dertyp7214.rboardthememanager.screens.HomeActivity
 import de.dertyp7214.rboardthememanager.utils.ColorUtils
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils
@@ -46,6 +47,7 @@ class DownloadFragment : Fragment() {
     private lateinit var refreshLayout: SwipeRefreshLayout
 
     private val list = ArrayList<PackItem>()
+    private val tmpList = ArrayList<PackItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,21 +60,18 @@ class DownloadFragment : Fragment() {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
 
-        adapter = Adapter(requireContext(), list) {
-            homeViewModel.setRefetch(true)
-            Toast.makeText(context, R.string.downloaded, Toast.LENGTH_SHORT).show()
-        }
+        adapter = Adapter(requireActivity(), list)
 
         refreshLayout.setProgressViewOffset(
             true,
             0,
-            requireContext().getStatusBarHeight() + 5.dpToPx(requireContext()).toInt()
+            5.dpToPx(requireContext()).toInt()
         )
 
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
         refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
         refreshLayout.setOnRefreshListener {
-            fetchDownloadList()
+            homeViewModel.setRefetchDownloads(true)
         }
 
         val recyclerView = v.findViewById<RecyclerView>(R.id.recyclerView)
@@ -80,19 +79,48 @@ class DownloadFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
-            StartOffsetItemDecoration(requireContext().getStatusBarHeight())
+            StartOffsetItemDecoration(0)
         )
         recyclerView.addItemDecoration(
             EndOffsetItemDecoration(56.dpToPx(requireContext()).toInt())
         )
+
+        homeViewModel.observeFilterDownloads(this) { filter ->
+            refreshLayout.isRefreshing = true
+            fun filter() {
+                list.clear(adapter)
+                list.addAll(tmpList.filter {
+                    filter.isBlank() || it.name.contains(
+                        filter,
+                        true
+                    ) || it.author.contains(
+                        filter,
+                        true
+                    )
+                }.sortedBy {
+                    it.name.toLowerCase(
+                        Locale.getDefault()
+                    )
+                })
+                refreshLayout.isRefreshing = false
+            }
+            if (homeViewModel.getRefetchDownloads()) fetchDownloadList { filter() } else filter()
+        }
+
+        homeViewModel.observeRefetchDownloads(this) {
+            if (it) {
+                homeViewModel.setFilterDownloads(homeViewModel.getFilterDownloads())
+            }
+        }
 
         fetchDownloadList()
 
         return v
     }
 
-    private fun fetchDownloadList() {
+    private fun fetchDownloadList(callback: () -> Unit = {}) {
         list.removeAll(list)
+        tmpList.clear()
         Thread {
             val json = JSONArray().safeParse(URL(PACKS_URL).readText(UTF_8))
             json.forEach { o, _ ->
@@ -113,26 +141,27 @@ class DownloadFragment : Fragment() {
             }
 
             list.sortBy { it.name.toLowerCase(Locale.getDefault()) }
+            tmpList.addAll(list)
 
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
                 refreshLayout.isRefreshing = false
+                callback()
             }
         }.start()
     }
 
     class Adapter(
-        private val context: Context,
-        private val list: ArrayList<PackItem>,
-        private val callback: () -> Unit
+        private val activity: Activity,
+        private val list: ArrayList<PackItem>
     ) :
         RecyclerView.Adapter<Adapter.ViewHolder>() {
 
-        val previewsPath: String = File(getThemePacksPath(context), "previews").absolutePath
+        val previewsPath: String = File(getThemePacksPath(activity), "previews").absolutePath
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
-                LayoutInflater.from(context).inflate(
+                LayoutInflater.from(activity).inflate(
                     R.layout.pack_item,
                     parent,
                     false
@@ -149,18 +178,23 @@ class DownloadFragment : Fragment() {
             holder.title.text = pack.name
             holder.author.text = "by ${pack.author}"
 
-            holder.layout.setOnLongClickListener {
-                val pair = previewDialog(context, previewsPath, pack.name)
+            holder.layout.setOnClickListener {
+                val pair = previewDialog(activity, previewsPath, pack.name) {
+                    downloadThemePack(pack) {
+                        it()
+                        if (activity is HomeActivity) activity.navigate(R.id.navigation_themes)
+                    }
+                }
 
                 DownloadHelper().from(pack.url).to(
-                    getThemePacksPath(context).absolutePath
+                    getThemePacksPath(activity).absolutePath
                 )
                     .fileName(
                         "preview_temp.zip"
                     ).setListener(
                         object : DownloadListener {
                             override fun start() {
-                                File(previewsPath).deleteRecursively()
+                                SuFile(previewsPath).deleteRecursively()
                             }
 
                             override fun progress(progress: Int, current: Long, total: Long) {
@@ -177,16 +211,16 @@ class DownloadFragment : Fragment() {
                                 ZipHelper().unpackZip(previewsPath, path)
 
                                 val adapter =
-                                    PreviewAdapter(context, ThemeUtils.loadPreviewThemes(context))
+                                    PreviewAdapter(activity, ThemeUtils.loadPreviewThemes(activity))
 
                                 val recyclerView =
                                     pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
-                                recyclerView.layoutManager = LinearLayoutManager(context)
+                                recyclerView.layoutManager = LinearLayoutManager(activity)
                                 recyclerView.setHasFixedSize(true)
                                 recyclerView.adapter = adapter
                                 recyclerView.addItemDecoration(
                                     StartOffsetItemDecoration(
-                                        (context.getStatusBarHeight())
+                                        0
                                     )
                                 )
 
@@ -196,51 +230,49 @@ class DownloadFragment : Fragment() {
                             }
                         }
                     ).start()
-
-                return@setOnLongClickListener true
             }
+        }
 
-            holder.layout.setOnClickListener {
-                val pair = downloadDialog(context).apply {
-                    first.isIndeterminate = false
-                }
-                DownloadHelper()
-                    .from(pack.url)
-                    .to(
-                        getThemePacksPath(context).absolutePath
-                    )
-                    .fileName("tmp.zip")
-                    .setListener(object : DownloadListener {
-                        override fun start() {
-                            Log.d("START", "START")
-                        }
-
-                        override fun progress(progress: Int, current: Long, total: Long) {
-                            pair.first.progress = progress
-                        }
-
-                        override fun error(error: String) {
-                            Logger.log(
-                                Logger.Companion.Type.ERROR,
-                                "DOWNLOAD",
-                                "${pack.name} $error"
-                            )
-                        }
-
-                        override fun end(path: String) {
-                            pair.first.isIndeterminate = true
-                            Logger.log(
-                                Logger.Companion.Type.INFO,
-                                "DOWNLOAD_ZIP",
-                                "from: $path to $MAGISK_THEME_LOC"
-                            )
-                            ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
-                            pair.second.dismiss()
-                            callback()
-                        }
-                    })
-                    .start()
+        private fun downloadThemePack(pack: PackItem, callback: () -> Unit) {
+            val pair = downloadDialog(activity).apply {
+                first.isIndeterminate = false
             }
+            DownloadHelper()
+                .from(pack.url)
+                .to(
+                    getThemePacksPath(activity).absolutePath
+                )
+                .fileName("tmp.zip")
+                .setListener(object : DownloadListener {
+                    override fun start() {
+                        Log.d("START", "START")
+                    }
+
+                    override fun progress(progress: Int, current: Long, total: Long) {
+                        pair.first.progress = progress
+                    }
+
+                    override fun error(error: String) {
+                        Logger.log(
+                            Logger.Companion.Type.ERROR,
+                            "DOWNLOAD",
+                            "${pack.name} $error"
+                        )
+                    }
+
+                    override fun end(path: String) {
+                        pair.first.isIndeterminate = true
+                        Logger.log(
+                            Logger.Companion.Type.INFO,
+                            "DOWNLOAD_ZIP",
+                            "from: $path to $MAGISK_THEME_LOC"
+                        )
+                        ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
+                        pair.second.dismiss()
+                        callback()
+                    }
+                })
+                .start()
         }
 
         class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -252,7 +284,7 @@ class DownloadFragment : Fragment() {
 }
 
 class PreviewAdapter(
-    private val context: Context,
+    context: Context,
     private val list: List<ThemeDataClass>
 ) : RecyclerView.Adapter<HomeGridFragment.GridThemeAdapter.ViewHolder>() {
 
@@ -295,9 +327,9 @@ class PreviewAdapter(
         holder.themeImage.alpha = if (dataClass.image != null) 1F else .3F
 
         holder.themeName.text =
-            dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+            dataClass.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
         holder.themeNameSelect.text =
-            dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+            dataClass.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
 
         holder.themeName.setTextColor(if (ColorUtils.isColorLight(color)) Color.BLACK else Color.WHITE)
 

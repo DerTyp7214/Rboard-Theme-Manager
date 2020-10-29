@@ -66,21 +66,31 @@ class DownloadHelper {
     }
 }
 
-fun previewDialog(context: Context, previewPath: String, dialogTitle: String): Pair<ProgressBar, MaterialDialog> {
+fun previewDialog(
+    context: Context,
+    previewPath: String,
+    dialogTitle: String,
+    clickDownload: (closeDialog: () -> Unit) -> Unit = { it() }
+): Pair<ProgressBar, MaterialDialog> {
     lateinit var progressBar: ProgressBar
 
     val dialog = MaterialDialog(context).show {
         setContentView(R.layout.preview)
 
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         cancelable(false)
         cancelOnTouchOutside(false)
         progressBar = findViewById(R.id.progressBar)
         val title = findViewById<TextView>(R.id.dialog_title)
         title.text = dialogTitle
 
-        val button: MaterialButton = findViewById(R.id.close_button)
-        button.setOnClickListener {
+        val downloadButton: MaterialButton = findViewById(R.id.download_button)
+        val closeButton: MaterialButton = findViewById(R.id.close_button)
+
+        downloadButton.setOnClickListener {
+            clickDownload { dismiss() }
+        }
+        closeButton.setOnClickListener {
             File(previewPath).deleteRecursively()
             dismiss()
         }

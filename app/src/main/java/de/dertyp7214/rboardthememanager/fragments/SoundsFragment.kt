@@ -21,7 +21,6 @@ import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.dpToPx
 import de.dertyp7214.rboardthememanager.core.forEach
-import de.dertyp7214.rboardthememanager.core.getStatusBarHeight
 import de.dertyp7214.rboardthememanager.core.safeParse
 import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.helper.*
@@ -66,7 +65,7 @@ class SoundsFragment : Fragment() {
         refreshLayout.setProgressViewOffset(
             true,
             0,
-            context.getStatusBarHeight() + 5.dpToPx(context).toInt()
+            5.dpToPx(context).toInt()
         )
 
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
@@ -80,7 +79,7 @@ class SoundsFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
-            StartOffsetItemDecoration(context.getStatusBarHeight())
+            StartOffsetItemDecoration(0)
         )
         recyclerView.addItemDecoration(
             EndOffsetItemDecoration(56.dpToPx(context).toInt())

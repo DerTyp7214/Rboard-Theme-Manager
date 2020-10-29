@@ -84,7 +84,7 @@ class HomeGridFragment : Fragment() {
         refreshLayout.setProgressViewOffset(
             true,
             0,
-            requireContext().getStatusBarHeight() + 5.dpToPx(requireContext()).toInt()
+            5.dpToPx(requireContext()).toInt()
         )
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
         refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
@@ -176,7 +176,7 @@ class HomeGridFragment : Fragment() {
             true
         }
 
-        homeViewModel.gridLayoutObserve(this, {
+        homeViewModel.gridLayoutObserve(this) {
             recyclerView.stopScroll()
             adapter.dataSetChanged()
             if (recyclerView.layoutManager is GridLayoutManager) {
@@ -187,7 +187,7 @@ class HomeGridFragment : Fragment() {
                 }
                 recyclerView.addItemDecoration(
                     GridTopOffsetItemDecoration(
-                        requireContext().getStatusBarHeight(),
+                        0,
                         columns
                     )
                 )
@@ -198,21 +198,21 @@ class HomeGridFragment : Fragment() {
                     )
                 )
             }
-        })
+        }
 
-        homeViewModel.observeRefetch(this, {
+        homeViewModel.observeRefetch(this) {
             if (it) {
                 homeViewModel.setFilter(homeViewModel.getFilter())
             }
-        })
+        }
 
-        homeViewModel.gridLayoutObserve(this, {
+        homeViewModel.gridLayoutObserve(this) {
             recyclerView.stopScroll()
             adapter.dataSetChanged()
             recyclerView.scheduleLayoutAnimation()
-        })
+        }
 
-        homeViewModel.themesObserve(this, { list ->
+        homeViewModel.themesObserve(this) { list ->
             if (tmpList.isEmpty() || list.size > tmpList.size) tmpList.apply {
                 clear(adapter)
                 addAll(list)
@@ -224,9 +224,9 @@ class HomeGridFragment : Fragment() {
                     )
                 }
             }
-        })
+        }
 
-        homeViewModel.observeFilter(this, { filter ->
+        homeViewModel.observeFilter(this) { filter ->
             refreshLayout.isRefreshing = true
             themeList.clear(adapter)
             Thread {
@@ -251,31 +251,32 @@ class HomeGridFragment : Fragment() {
                 }
                 keyboardImg.alpha = if (themeList.size > 0) 0F else 1F
             }.start()
-        })
+        }
 
-        delayed(200) {
-            if (!homeViewModel.themesExist()) {
-                Thread {
-                    loadThemes().apply {
-                        themeList.clear(adapter)
-                        themeList.addAll(sortedBy { it.name.toLowerCase(Locale.ROOT) })
-                    }
-                    activity?.runOnUiThread {
-                        homeViewModel.setThemes(themeList)
-                        recyclerView.stopScroll()
-                        adapter.dataSetChanged()
-                        refreshLayout.isRefreshing = false
-                        recyclerView.scheduleLayoutAnimation()
-                    }
-                }.start()
-            } else {
-                themeList.clear(adapter)
-                themeList.addAll(homeViewModel.getThemes())
-                recyclerView.stopScroll()
-                adapter.dataSetChanged()
-                refreshLayout.isRefreshing = false
-                recyclerView.scheduleLayoutAnimation()
-            }
+        if (!homeViewModel.themesExist()) {
+            Thread {
+                loadThemes().apply {
+                    themeList.clear(adapter)
+                    themeList.addAll(sortedBy { it.name.toLowerCase(Locale.ROOT) })
+                }
+                activity?.runOnUiThread {
+                    homeViewModel.setThemes(themeList)
+                    recyclerView.stopScroll()
+                    adapter.dataSetChanged()
+                    refreshLayout.isRefreshing = false
+                    homeViewModel.setFilter(homeViewModel.getFilter())
+                    recyclerView.scheduleLayoutAnimation()
+                    keyboardImg.alpha = if (themeList.size > 0) 0F else 1F
+                }
+            }.start()
+        } else {
+            themeList.clear(adapter)
+            themeList.addAll(homeViewModel.getThemes())
+            recyclerView.stopScroll()
+            adapter.dataSetChanged()
+            refreshLayout.isRefreshing = false
+            homeViewModel.setFilter(homeViewModel.getFilter())
+            recyclerView.scheduleLayoutAnimation()
         }
 
         val columns = if (homeViewModel.getGridLayout() == GridLayout.SINGLE) 1 else 2
@@ -335,12 +336,8 @@ class HomeGridFragment : Fragment() {
     }
 
     private fun toggleToolbar(visible: Boolean) {
-        val activity = requireActivity()
         val scale = if (visible) 1F else .0F
         val margin = 0
-        val corners1 = if (visible) 20.dpToPx(activity) else 0F
-        val corners2 = if (visible) 0F else 20.dpToPx(activity)
-        val longDelay = if (visible) 100L else 800L
 
         val anim = ObjectAnimator.ofFloat(toolbar, "alpha", scale).apply {
             duration = 180
@@ -350,7 +347,7 @@ class HomeGridFragment : Fragment() {
             start()
         }
         anim.doOnEnd {
-            if (!visible) { toolbar.visibility = View.GONE }
+            if (!visible) toolbar.visibility = View.GONE
         }
 
         toolbar.setMargins(0, margin, 0, 0)
@@ -486,9 +483,13 @@ class HomeGridFragment : Fragment() {
             timingLogger.addSplit("Apply Image")
 
             holder.themeName.text =
-                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == activeTheme) "(applied)" else ""}"
+                "${
+                    dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+                } ${if (dataClass.name == activeTheme) "(applied)" else ""}"
             holder.themeNameSelect.text =
-                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == activeTheme) "(applied)" else ""}"
+                "${
+                    dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+                } ${if (dataClass.name == activeTheme) "(applied)" else ""}"
 
             timingLogger.addSplit("Titles")
 
