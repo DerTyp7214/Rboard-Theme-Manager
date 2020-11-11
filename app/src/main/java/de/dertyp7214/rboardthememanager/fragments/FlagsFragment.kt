@@ -9,6 +9,7 @@ import com.topjohnwu.superuser.io.SuFileInputStream
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.booleanOrNull
+import de.dertyp7214.rboardthememanager.core.iterator
 import de.dertyp7214.rboardthememanager.helper.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,6 +21,19 @@ class FlagsFragment : PreferenceFragmentCompat() {
 
     private val defaultValues =
         getCurrentXmlValues(RKBDFile.Flags) + getCurrentXmlValues(RKBDFile.Preferences)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (defaultValues.isEmpty()) requireActivity().apply {
+            preferenceManager.findPreference<PreferenceCategory>("flags_general")?.apply {
+                summary = getString(R.string.no_flags)
+                forEach {
+                    it.isVisible = false
+                }
+            }
+        }
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.flags_preferences, rootKey)
@@ -245,31 +259,23 @@ class FlagsFragment : PreferenceFragmentCompat() {
         val xmlFile = SuFile(fileName)
         if (!xmlFile.exists()) return output
 
-        val dbFactory = DocumentBuilderFactory.newInstance()
-        val dBuilder = dbFactory.newDocumentBuilder()
-        val content = SuFileInputStream(xmlFile).bufferedReader().readText()
-        val xmlInput = InputSource(StringReader(content))
-        val doc = dBuilder.parse(xmlInput)
+        val map = try {
+            DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
+                InputSource(
+                    StringReader(
+                        SuFileInputStream(xmlFile).bufferedReader().readText()
+                    )
+                )
+            ).getElementsByTagName("map")
+        } catch (e: Exception) {
+            return output
+        }
 
-        val map = doc.getElementsByTagName("map")
-
-        for (i in 0 until map.item(0).childNodes.length) {
-
-            if (map.item(0).childNodes.item(i).attributes?.getNamedItem("name") != null &&
-                map.item(0).childNodes.item(i).attributes?.getNamedItem("value") != null
-            ) {
-
-                val name = map.item(0).childNodes.item(i).attributes.getNamedItem("name").nodeValue
-                val value =
-                    map.item(0).childNodes.item(i).attributes.getNamedItem("value").nodeValue
-
-                output[name] = value.booleanOrNull() ?: value
-            } else if (map.item(0).childNodes.item(i).attributes?.getNamedItem("name") != null) {
-                val name = map.item(0).childNodes.item(i).attributes.getNamedItem("name").nodeValue
-                val value = map.item(0).childNodes.item(i).textContent ?: ""
-
-                output[name] = value
-            }
+        for (item in map.item(0).childNodes) {
+            val name = item.attributes?.getNamedItem("name")?.nodeValue
+            val value = item.attributes?.getNamedItem("value")?.nodeValue
+            if (name != null) output[name] =
+                (value?.booleanOrNull() ?: value) ?: item.textContent ?: ""
         }
 
         return output

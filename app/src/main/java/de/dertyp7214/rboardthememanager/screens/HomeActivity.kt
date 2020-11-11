@@ -2,29 +2,46 @@ package de.dertyp7214.rboardthememanager.screens
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsetsController
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.LinearLayout.VERTICAL
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.ViewModelProviders
+import com.dertyp7214.preferencesplus.core.dp
+import com.dertyp7214.preferencesplus.core.setHeight
+import com.dertyp7214.preferencesplus.core.setMargins
+import com.dertyp7214.preferencesplus.core.setWidth
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
 import de.dertyp7214.rboardthememanager.core.delayed
+import de.dertyp7214.rboardthememanager.core.getBitmap
 import de.dertyp7214.rboardthememanager.data.MenuItem
+import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 import de.dertyp7214.rboardthememanager.fragments.DownloadFragment
 import de.dertyp7214.rboardthememanager.fragments.HomeGridFragment
 import de.dertyp7214.rboardthememanager.fragments.SoundsFragment
 import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightObserver
 import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightProvider
+import de.dertyp7214.rboardthememanager.utils.ColorUtils
+import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.bottom_navigation.*
+import java.util.*
 
 class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
 
@@ -180,9 +197,59 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                         bottomSheet?.dismiss()
                     })
                 }
-            }, ""
+            }, "",
+                getThemeView(ThemeUtils.getActiveTheme())
             )
             bottomSheet?.show(supportFragmentManager, "")
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun getThemeView(theme: ThemeDataClass): View {
+        return LinearLayout(this).apply {
+            orientation = VERTICAL
+            setMargins(8.dp(this@HomeActivity), 0, 8.dp(this@HomeActivity), 0)
+            addView(layoutInflater.inflate(R.layout.single_theme_item, null).apply {
+                val themeName = findViewById<TextView>(R.id.theme_name)
+                val themeIcon = findViewById<ImageView>(R.id.theme_image)
+                val card: CardView = findViewById(R.id.card)
+                val gradient: View? = try {
+                    findViewById(R.id.gradient)
+                } catch (e: Exception) {
+                    null
+                }
+
+                val defaultImage = ContextCompat.getDrawable(
+                    this@HomeActivity,
+                    R.drawable.ic_keyboard
+                )!!.getBitmap()
+
+                val color = ColorUtils.dominantColor(theme.image ?: defaultImage)
+                val isDark = ColorUtils.isColorLight(color)
+
+                if (gradient != null) {
+                    val g = GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT,
+                        intArrayOf(color, Color.TRANSPARENT)
+                    )
+                    gradient.background = g
+                }
+
+                card.setCardBackgroundColor(color)
+
+                themeName.text =
+                    theme.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
+                themeName.setTextColor(if (!isDark) Color.WHITE else Color.BLACK)
+                themeIcon.setImageBitmap(theme.image ?: defaultImage)
+            })
+            addView(View(this@HomeActivity).apply {
+                setHeight(8.dp(this@HomeActivity))
+            })
+            addView(View(this@HomeActivity).apply {
+                setHeight(1.dp(this@HomeActivity))
+                setWidth(LinearLayout.LayoutParams.MATCH_PARENT)
+                setBackgroundColor(getColor(R.color.primaryTextSec))
+            })
         }
     }
 

@@ -8,7 +8,8 @@
     </queries>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
     <application
@@ -24,6 +25,7 @@
         <activity android:name=".screens.ImportPack">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.OPENABLE" />
@@ -63,7 +65,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screens.HomeActivity" />
+        <activity
+            android:name=".screens.HomeActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".screens.IntroActivity" />
         <activity android:name="com.dertyp7214.logs.helpers.CrashReportDialog" />
         <activity android:name="com.dertyp7214.logs.screens.Logs" />

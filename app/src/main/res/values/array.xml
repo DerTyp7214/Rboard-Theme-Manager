@@ -10,7 +10,7 @@
     <string-array name="themePath_prefs">
         <item>/system/etc/gboard_theme</item>
         <item>/data/GboardTheme</item>
-        <item>/sdcard/GboardTheme</item>
+        <item>/sdcard/theme-test</item>
     </string-array>
 
     <string-array name="flag_emoji_columns_prefs">

@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -20,7 +21,8 @@ import de.dertyp7214.rboardthememanager.data.MenuItem
 
 class MenuBottomSheet(
     private val items: List<MenuItem>,
-    private val title: String = ""
+    private val title: String = "",
+    private val customHeader: View? = null
 ) :
     RoundedBottomSheetDialogFragment() {
 
@@ -35,7 +37,14 @@ class MenuBottomSheet(
     ): View? {
         val v = inflater.inflate(R.layout.menu_bottom_sheet, container, false)
 
-        v.findViewById<TextView>(R.id.title).text = title
+        v.findViewById<TextView>(R.id.title).apply {
+            text = title
+            if (title.isEmpty()) visibility = GONE
+        }
+
+        v.findViewById<LinearLayout>(R.id.ll).apply {
+            if (customHeader != null) addView(customHeader, 0)
+        }
 
         val recyclerView: RecyclerView = v.findViewById(R.id.recyclerView)
 

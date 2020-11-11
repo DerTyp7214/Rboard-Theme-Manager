@@ -16,6 +16,7 @@ import de.dertyp7214.rboardthememanager.core.decodeBitmap
 import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
+import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import java.io.File
 import java.util.*
@@ -98,5 +99,17 @@ object ThemeUtils {
                 "reboot".runAsCommand()
             }
         }
+    }
+
+    fun getActiveTheme(): ThemeDataClass {
+        val themeName = ThemeHelper.getActiveTheme()
+        return if (themeName.isNotEmpty()) {
+            val image = SuFile(THEME_LOCATION, themeName)
+            ThemeDataClass(
+                image.decodeBitmap(),
+                themeName,
+                SuFile(THEME_LOCATION, "$themeName.zip").absolutePath
+            )
+        } else ThemeDataClass(null, "", "")
     }
 }

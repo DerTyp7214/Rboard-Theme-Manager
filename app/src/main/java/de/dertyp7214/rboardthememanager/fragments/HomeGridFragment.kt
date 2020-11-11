@@ -330,7 +330,7 @@ class HomeGridFragment : Fragment() {
                     }
                 })
             }
-        }).attachToRecyclerView(recyclerView)
+        })/*.attachToRecyclerView(recyclerView)*/
 
         return v
     }

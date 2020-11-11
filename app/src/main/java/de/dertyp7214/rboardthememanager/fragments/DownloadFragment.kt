@@ -125,7 +125,7 @@ class DownloadFragment : Fragment() {
             val json = JSONArray().safeParse(URL(PACKS_URL).readText(UTF_8))
             json.forEach { o, _ ->
                 if (o is JSONObject && o.has("author") && o.has("url") && o.has("title"))
-                    list.add(
+                    tmpList.add(
                         PackItem(
                             o.getString("title"),
                             o.getString("author"),
@@ -140,8 +140,8 @@ class DownloadFragment : Fragment() {
                     )
             }
 
-            list.sortBy { it.name.toLowerCase(Locale.getDefault()) }
-            tmpList.addAll(list)
+            tmpList.sortBy { it.name.toLowerCase(Locale.getDefault()) }
+            list.addAll(tmpList)
 
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
