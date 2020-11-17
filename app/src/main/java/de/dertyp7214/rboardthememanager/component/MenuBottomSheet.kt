@@ -74,9 +74,11 @@ class MenuBottomSheet(
                 holder.text.setText(item.string)
                 holder.text.setTextColor(if (item.selected) accent else primary)
 
-                holder.icon.setImageResource(item.icon)
-                holder.icon.imageTintList =
-                    ColorStateList.valueOf(if (item.selected) accent else primary)
+                if (item.icon != null) {
+                    holder.icon.setImageResource(item.icon)
+                    holder.icon.imageTintList =
+                        ColorStateList.valueOf(if (item.selected) accent else primary)
+                }
 
                 ObjectAnimator.ofInt(
                     holder.card,
@@ -98,6 +100,7 @@ class MenuBottomSheet(
                             items[index].selected = index == position
                         }
                         notifyDataSetChanged()
+                        if (item.closeOnClick) dismiss()
                     }
                 }
             }

@@ -2,7 +2,9 @@ package de.dertyp7214.rboardthememanager.helper
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.dertyp7214.logs.helpers.Logger
@@ -121,49 +123,59 @@ object ThemeHelper {
     }
 
     @SuppressLint("SdCardPath")
-    fun applyTheme(name: String, withBorders: Boolean = false): Boolean {
+    fun applyTheme(name: String, withBorders: Boolean = false, context: Context? = null): Boolean {
         val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName =
             "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
-        Logger.log(Logger.Companion.Type.INFO, "APPLY", "$name $inputPackageName $fileName")
-        val content = SuFileInputStream(SuFile(fileName)).use {
-            it.bufferedReader().readText()
-        }.let {
-
-            var changed = it
-
-            changed = if (changed.contains("<string name=\"additional_keyboard_theme\">"))
-                changed.replace(
-                    "<string name=\"additional_keyboard_theme\">.*</string>".toRegex(),
-                    "<string name=\"additional_keyboard_theme\">system:$name</string>"
-                )
-            else
-                changed.replace(
-                    "<map>",
-                    "<map><string name=\"additional_keyboard_theme\">system:$name</string>"
-                )
-
-            // Change enable_key_border value
-            changed = if (changed.contains("<boolean name=\"enable_key_border\"")) {
-                changed.replace(
-                    "<boolean name=\"enable_key_border\" value=\".*\" />".toRegex(),
-                    "<boolean name=\"enable_key_border\" value=\"$withBorders\" />"
-                )
-            } else {
-                changed.replace(
-                    "<map>",
-                    "<map><boolean name=\"enable_key_border\" value=\"$withBorders\" />"
-                )
+        Logger.log(
+            Logger.Companion.Type.INFO,
+            "APPLY",
+            "[ApplyTheme]: $name $inputPackageName $fileName"
+        )
+        return if (!SuFile(fileName).exists()) {
+            context?.apply {
+                Toast.makeText(this, R.string.please_open_app, Toast.LENGTH_LONG).show()
             }
+            false
+        } else {
+            val content = SuFileInputStream(SuFile(fileName)).use {
+                it.bufferedReader().readText()
+            }.let {
 
-            return@let changed
+                var changed = it
+
+                changed = if (changed.contains("<string name=\"additional_keyboard_theme\">"))
+                    changed.replace(
+                        "<string name=\"additional_keyboard_theme\">.*</string>".toRegex(),
+                        "<string name=\"additional_keyboard_theme\">system:$name</string>"
+                    )
+                else
+                    changed.replace(
+                        "<map>",
+                        "<map><string name=\"additional_keyboard_theme\">system:$name</string>"
+                    )
+
+                // Change enable_key_border value
+                changed = if (changed.contains("<boolean name=\"enable_key_border\"")) {
+                    changed.replace(
+                        "<boolean name=\"enable_key_border\" value=\".*\" />".toRegex(),
+                        "<boolean name=\"enable_key_border\" value=\"$withBorders\" />"
+                    )
+                } else {
+                    changed.replace(
+                        "<map>",
+                        "<map><boolean name=\"enable_key_border\" value=\"$withBorders\" />"
+                    )
+                }
+                return@let changed
+            }
+            SuFileOutputStream(File(fileName)).writer(Charset.defaultCharset())
+                .use { outputStreamWriter ->
+                    outputStreamWriter.write(content)
+                }
+
+            "am force-stop $inputPackageName".runAsCommand()
         }
-        SuFileOutputStream(File(fileName)).writer(Charset.defaultCharset())
-            .use { outputStreamWriter ->
-                outputStreamWriter.write(content)
-            }
-
-        return "am force-stop $inputPackageName".runAsCommand()
     }
 
     @SuppressLint("SdCardPath")

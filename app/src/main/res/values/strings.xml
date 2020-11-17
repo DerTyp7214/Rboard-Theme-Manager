@@ -16,6 +16,7 @@
     <string name="grid_change">Change Grid</string>
     <string name="magiskInstalled">You need Root rights to use this app!</string>
     <string name="default_notification_channel_id">push_channel</string>
+    <string name="ui_mode_service_channel">ui_mode_channel</string>
     <string name="channel_name">Push Notifications</string>
     <string name="channel_description">For updates and informations.</string>
     <string name="title_themes">Themes</string>
@@ -120,4 +121,12 @@
     <string name="themePath_pref">Theme Path</string>
     <string name="download">Download</string>
     <string name="no_flags">No flags found!</string>
+    <string name="channel_name_ui_mode">Ui Mode Service</string>
+    <string name="channel_description_ui_mode">Ui Mode Service Notification</string>
+    <string name="ui_mode_service_title">Ui Mode Service</string>
+    <string name="ui_mode_service_text">Service Notification</string>
+    <string name="apply_theme_both">Apply theme to both</string>
+    <string name="apply_theme_dark">Apply theme to Dark Mode</string>
+    <string name="apply_theme_light">Apply theme to Light Mode</string>
+    <string name="please_open_app">Please open the App!</string>
 </resources>

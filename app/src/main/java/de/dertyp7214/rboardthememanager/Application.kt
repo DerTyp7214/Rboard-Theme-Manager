@@ -25,5 +25,20 @@ class Application : Application() {
                 )
             )
         }
+
+        /*if (UiModeService.RUNNING) stopService(Intent(this, UiModeService::class.java))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startForegroundService(
+                Intent(
+                    this,
+                    UiModeService::class.java
+                )
+            )
+        else startService(
+            Intent(
+                this,
+                UiModeService::class.java
+            )
+        )*/
     }
 }

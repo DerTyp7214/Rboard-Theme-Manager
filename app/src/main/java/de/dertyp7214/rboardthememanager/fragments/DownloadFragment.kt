@@ -10,7 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -283,10 +285,10 @@ class DownloadFragment : Fragment() {
     }
 }
 
-class PreviewAdapter(
+private class PreviewAdapter(
     context: Context,
     private val list: List<ThemeDataClass>
-) : RecyclerView.Adapter<HomeGridFragment.GridThemeAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PreviewAdapter.ViewHolder>() {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private val default = context.resources.getDrawable(
@@ -297,8 +299,8 @@ class PreviewAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): HomeGridFragment.GridThemeAdapter.ViewHolder {
-        return HomeGridFragment.GridThemeAdapter.ViewHolder(
+    ): ViewHolder {
+        return ViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.theme_grid_item_single,
                 parent,
@@ -310,7 +312,7 @@ class PreviewAdapter(
     override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(
-        holder: HomeGridFragment.GridThemeAdapter.ViewHolder,
+        holder: ViewHolder,
         position: Int
     ) {
         val dataClass = list[position]
@@ -341,4 +343,16 @@ class PreviewAdapter(
         holder.card.setCardBackgroundColor(color)
     }
 
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        val themeImage: ImageView = v.findViewById(R.id.theme_image)
+        val themeName: TextView = v.findViewById(R.id.theme_name)
+        val themeNameSelect: TextView = v.findViewById(R.id.theme_name_selected)
+        val selectOverlay: ViewGroup = v.findViewById(R.id.select_overlay)
+        val card: CardView = v.findViewById(R.id.card)
+        val gradient: View? = try {
+            v.findViewById(R.id.gradient)
+        } catch (e: Exception) {
+            null
+        }
+    }
 }

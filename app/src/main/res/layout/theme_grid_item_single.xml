@@ -54,9 +54,9 @@
                         android:layout_marginStart="14dp"
                         android:layout_marginTop="14dp"
                         android:layout_marginBottom="7dp"
-                        android:text="Theme Name"
                         android:textAlignment="viewStart"
-                        android:textColor="@color/primaryText" />
+                        android:textColor="@color/primaryText"
+                        tools:text="Theme Name" />
                 </FrameLayout>
 
             </LinearLayout>
@@ -86,12 +86,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="14dp"
-                    android:text="Theme Name"
                     android:textAlignment="viewStart"
                     android:textColor="@android:color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Theme Name" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
     </androidx.cardview.widget.CardView>

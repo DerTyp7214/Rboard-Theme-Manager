@@ -2,6 +2,7 @@ package de.dertyp7214.rboardthememanager.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
+import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.dpToPx
@@ -25,9 +27,11 @@ import de.dertyp7214.rboardthememanager.core.safeParse
 import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.helper.*
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getSoundPacksPath
+import de.dertyp7214.rboardthememanager.utils.SoundUtils
 import de.dertyp7214.rboardthememanager.viewmodels.SoundsViewModel
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
@@ -125,6 +129,9 @@ class SoundsFragment : Fragment() {
         private val callback: () -> Unit
     ) :
         RecyclerView.Adapter<Adapter.ViewHolder>() {
+
+        val previewsPath: String = File(getSoundPacksPath(context), "previews").absolutePath
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
                 LayoutInflater.from(context).inflate(
@@ -147,54 +154,103 @@ class SoundsFragment : Fragment() {
             holder.author.text = "by ${pack.author}"
 
             holder.layout.setOnClickListener {
-                val pair = downloadDialog(context).apply {
-                    first.isIndeterminate = false
-                }
-                DownloadHelper()
-                    .from(pack.url)
-                    .to(
-                        getSoundPacksPath(context).absolutePath
-                    )
-                    .fileName("tmp.zip")
-                    .setListener(object : DownloadListener {
-                        override fun start() {
-                            Log.d("START", "START")
-                        }
+                val pair = previewDialog(context, previewsPath, pack.name) {
+                    val pair = downloadDialog(context).apply {
+                        first.isIndeterminate = false
+                    }
+                    DownloadHelper()
+                        .from(pack.url)
+                        .to(
+                            getSoundPacksPath(context).absolutePath
+                        )
+                        .fileName("tmp.zip")
+                        .setListener(object : DownloadListener {
+                            override fun start() {
+                                Log.d("START", "START")
+                            }
 
-                        override fun progress(progress: Int, current: Long, total: Long) {
-                            pair.first.progress = progress
-                        }
+                            override fun progress(progress: Int, current: Long, total: Long) {
+                                pair.first.progress = progress
+                            }
 
-                        override fun error(error: String) {
-                            Logger.log(
-                                Logger.Companion.Type.ERROR,
-                                "DOWNLOAD",
-                                "${pack.name} $error"
-                            )
-                        }
-
-                        override fun end(path: String) {
-                            pair.first.isIndeterminate = true
-
-
-                            ThemeHelper.getSoundsDirectory()?.path?.let { soundsPath ->
+                            override fun error(error: String) {
                                 Logger.log(
-                                    Logger.Companion.Type.INFO,
-                                    "DOWNLOAD_ZIP",
-                                    "from: ${Config.MODULE_PATH}$soundsPath/audio/ui to $path"
-                                )
-
-                                ZipHelper().unpackZip(
-                                    "${Config.MODULE_PATH}$soundsPath/audio/ui",
-                                    path
+                                    Logger.Companion.Type.ERROR,
+                                    "DOWNLOAD",
+                                    "${pack.name} $error"
                                 )
                             }
 
-                            pair.second.dismiss()
-                            callback()
+                            override fun end(path: String) {
+                                pair.first.isIndeterminate = true
+
+                                ThemeHelper.getSoundsDirectory()?.path?.let { soundsPath ->
+                                    Logger.log(
+                                        Logger.Companion.Type.INFO,
+                                        "DOWNLOAD_ZIP",
+                                        "from: ${Config.MODULE_PATH}$soundsPath/audio/ui to $path"
+                                    )
+
+                                    ZipHelper().unpackZip(
+                                        "${Config.MODULE_PATH}$soundsPath/audio/ui",
+                                        path
+                                    )
+                                }
+
+                                pair.second.dismiss()
+                                callback()
+                            }
+                        })
+                        .start()
+                }
+
+                DownloadHelper().from(pack.url).to(
+                    getSoundPacksPath(context).absolutePath
+                )
+                    .fileName(
+                        "preview_temp.zip"
+                    ).setListener(
+                        object : DownloadListener {
+                            override fun start() {
+                                SuFile(previewsPath).deleteRecursively()
+                            }
+
+                            override fun progress(progress: Int, current: Long, total: Long) {
+                            }
+
+                            override fun error(error: String) {
+                                Log.d("ERROR", error)
+                            }
+
+                            override fun end(path: String) {
+                                pair.first.isIndeterminate = true
+                                SuFile(previewsPath).mkdirs()
+
+                                ZipHelper().unpackZip(previewsPath, path)
+
+                                val adapter =
+                                    SoundPreviewAdapter(
+                                        context,
+                                        SoundUtils.loadPreviewSounds(context)
+                                    )
+
+                                val recyclerView =
+                                    pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
+                                recyclerView.layoutManager = LinearLayoutManager(context)
+                                recyclerView.setHasFixedSize(true)
+                                recyclerView.adapter = adapter
+                                recyclerView.addItemDecoration(
+                                    StartOffsetItemDecoration(
+                                        0
+                                    )
+                                )
+
+                                recyclerView.visibility = View.VISIBLE
+                                pair.first.visibility = View.GONE
+
+                            }
                         }
-                    })
-                    .start()
+                    ).start()
             }
         }
 
@@ -203,5 +259,57 @@ class SoundsFragment : Fragment() {
             val title: TextView = v.findViewById(R.id.title)
             val author: TextView = v.findViewById(R.id.author)
         }
+    }
+}
+
+
+private class SoundPreviewAdapter(
+    private val context: Context,
+    private val list: List<File>
+) : RecyclerView.Adapter<SoundPreviewAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        return ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.pack_item,
+                parent,
+                false
+            )
+        )
+    }
+
+    override fun getItemCount(): Int = list.size
+
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val file = list[position]
+
+        holder.title.text = file.name.removeSuffix(".ogg")
+        holder.author.text = file.name
+
+        holder.layout.setOnClickListener {
+            MediaPlayer().apply {
+                try {
+                    setDataSource(file.absolutePath)
+                    prepare()
+                    start()
+                    setOnCompletionListener {
+                        release()
+                    }
+                } catch (e: Exception) {
+                    release()
+                }
+            }
+        }
+    }
+
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        val layout: ViewGroup = v.findViewById(R.id.root)
+        val title: TextView = v.findViewById(R.id.title)
+        val author: TextView = v.findViewById(R.id.author)
     }
 }

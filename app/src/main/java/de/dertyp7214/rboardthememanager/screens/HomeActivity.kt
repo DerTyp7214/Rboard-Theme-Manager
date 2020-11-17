@@ -77,7 +77,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
             )
         } else {
-            val dark = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            val dark = View.SYSTEM_UI_FLAG_VISIBLE
             val light = dark or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
             window.decorView.systemUiVisibility = if (isDark) dark else light

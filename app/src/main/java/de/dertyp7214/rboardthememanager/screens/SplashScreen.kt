@@ -28,12 +28,22 @@ import java.util.*
 
 class SplashScreen : AppCompatActivity() {
 
+    private var close = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
         Shell.Config.setFlags(Shell.FLAG_MOUNT_MASTER)
         Shell.Config.verboseLogging(BuildConfig.DEBUG)
+
+        intent.extras?.apply {
+            getString("action")?.apply {
+                when (this) {
+                    "close" -> close = true
+                }
+            }
+        }
 
         createNotificationChannel()
         FirebaseMessaging.getInstance()
@@ -100,7 +110,7 @@ class SplashScreen : AppCompatActivity() {
             start()
         }.doOnEnd {
             checkUpdate {
-                startActivity(Intent(this, IntroActivity::class.java))
+                if (!close) startActivity(Intent(this, IntroActivity::class.java))
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 finish()
             }
@@ -108,7 +118,7 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun startApp() {
-        startActivity(Intent(this, HomeActivity::class.java))
+        if (!close) startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
 
@@ -124,6 +134,15 @@ class SplashScreen : AppCompatActivity() {
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
+
+            val name2 = getString(R.string.channel_name_ui_mode)
+            val channelId2 = getString(R.string.ui_mode_service_channel)
+            val descriptionText2 = getString(R.string.channel_description_ui_mode)
+            val importance2 = NotificationManager.IMPORTANCE_NONE
+            val channel2 = NotificationChannel(channelId2, name2, importance2).apply {
+                description = descriptionText2
+            }
+            notificationManager.createNotificationChannel(channel2)
         }
     }
 
