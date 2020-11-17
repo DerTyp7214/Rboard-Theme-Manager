@@ -21,6 +21,11 @@
             android:entries="@array/themePath_prefs"
             android:entryValues="@array/themePath_prefs"
             android:defaultValue="Select" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="service_key"
+            android:title="@string/service_key" />
         <com.dertyp7214.logs.preferences.LogModeLegacy />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

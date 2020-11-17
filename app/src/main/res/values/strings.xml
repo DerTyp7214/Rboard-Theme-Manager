@@ -129,4 +129,6 @@
     <string name="apply_theme_dark">Apply theme to Dark Mode</string>
     <string name="apply_theme_light">Apply theme to Light Mode</string>
     <string name="please_open_app">Please open the App!</string>
+    <string name="service_key">Change Theme Service</string>
+    <string name="restart_app">Please restart the App</string>
 </resources>

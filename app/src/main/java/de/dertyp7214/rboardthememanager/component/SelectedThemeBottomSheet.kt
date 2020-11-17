@@ -98,61 +98,80 @@ class SelectedThemeBottomSheet(
         }
 
         applyButton.setOnClickListener {
-            MenuBottomSheet(
-                arrayListOf(
-                    MenuItem(
-                        null,
-                        R.string.apply_theme_both,
-                        selected = false,
-                        closeOnClick = true
-                    ) {
-                        requireActivity().getSharedPreferences("darkTheme", Context.MODE_PRIVATE)
-                            .edit {
-                                putString("name", theme.name)
-                                putBoolean("border", enableBorderSwitchSelected)
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
+                if (getBoolean("service_key", false)) {
+                    MenuBottomSheet(
+                        arrayListOf(
+                            MenuItem(
+                                null,
+                                R.string.apply_theme_both,
+                                selected = false,
+                                closeOnClick = true
+                            ) {
+                                requireActivity().getSharedPreferences(
+                                    "darkTheme",
+                                    Context.MODE_PRIVATE
+                                )
+                                    .edit {
+                                        putString("name", theme.name)
+                                        putBoolean("border", enableBorderSwitchSelected)
+                                    }
+                                requireActivity().getSharedPreferences(
+                                    "lightTheme",
+                                    Context.MODE_PRIVATE
+                                )
+                                    .edit {
+                                        putString("name", theme.name)
+                                        putBoolean("border", enableBorderSwitchSelected)
+                                    }
+                                applyTheme(enableBorderSwitchSelected)
+                                dismiss()
+                            },
+                            MenuItem(
+                                null,
+                                R.string.apply_theme_dark,
+                                selected = false,
+                                closeOnClick = true
+                            ) {
+                                requireActivity().getSharedPreferences(
+                                    "darkTheme",
+                                    Context.MODE_PRIVATE
+                                )
+                                    .edit {
+                                        putString("name", theme.name)
+                                        putBoolean("border", enableBorderSwitchSelected)
+                                    }
+                                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO) applyTheme(
+                                    enableBorderSwitchSelected
+                                )
+                                dismiss()
+                            },
+                            MenuItem(
+                                null,
+                                R.string.apply_theme_light,
+                                selected = false,
+                                closeOnClick = true
+                            ) {
+                                requireActivity().getSharedPreferences(
+                                    "lightTheme",
+                                    Context.MODE_PRIVATE
+                                )
+                                    .edit {
+                                        putString("name", theme.name)
+                                        putBoolean("border", enableBorderSwitchSelected)
+                                    }
+                                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) applyTheme(
+                                    enableBorderSwitchSelected
+                                )
+                                dismiss()
                             }
-                        requireActivity().getSharedPreferences("lightTheme", Context.MODE_PRIVATE)
-                            .edit {
-                                putString("name", theme.name)
-                                putBoolean("border", enableBorderSwitchSelected)
-                            }
-                        applyTheme(enableBorderSwitchSelected)
-                        dismiss()
-                    },
-                    MenuItem(
-                        null,
-                        R.string.apply_theme_dark,
-                        selected = false,
-                        closeOnClick = true
-                    ) {
-                        requireActivity().getSharedPreferences("darkTheme", Context.MODE_PRIVATE)
-                            .edit {
-                                putString("name", theme.name)
-                                putBoolean("border", enableBorderSwitchSelected)
-                            }
-                        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO) applyTheme(
-                            enableBorderSwitchSelected
                         )
-                        dismiss()
-                    },
-                    MenuItem(
-                        null,
-                        R.string.apply_theme_light,
-                        selected = false,
-                        closeOnClick = true
-                    ) {
-                        requireActivity().getSharedPreferences("lightTheme", Context.MODE_PRIVATE)
-                            .edit {
-                                putString("name", theme.name)
-                                putBoolean("border", enableBorderSwitchSelected)
-                            }
-                        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) applyTheme(
-                            enableBorderSwitchSelected
-                        )
-                        dismiss()
-                    }
-                )
-            ).show(requireActivity().supportFragmentManager, "Apply")
+                    ).show(requireActivity().supportFragmentManager, "Apply")
+                } else {
+                    applyTheme(enableBorderSwitchSelected)
+                    dismiss()
+                }
+            }
         }
 
         enableBorderSwitch.isChecked = enableBorderSwitchSelected

@@ -2,9 +2,12 @@ package de.dertyp7214.rboardthememanager
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.dertyp7214.logs.helpers.Logger
+import de.dertyp7214.rboardthememanager.services.UiModeService
 
 class Application : Application() {
 
@@ -24,21 +27,27 @@ class Application : Application() {
                     AppCompatDelegate.getDefaultNightMode()
                 )
             )
-        }
-
-        /*if (UiModeService.RUNNING) stopService(Intent(this, UiModeService::class.java))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            startForegroundService(
-                Intent(
-                    this,
-                    UiModeService::class.java
+            if (getBoolean("service_key", false)) {
+                if (UiModeService.RUNNING) stopService(
+                    Intent(
+                        this@Application,
+                        UiModeService::class.java
+                    )
                 )
-            )
-        else startService(
-            Intent(
-                this,
-                UiModeService::class.java
-            )
-        )*/
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    startForegroundService(
+                        Intent(
+                            this@Application,
+                            UiModeService::class.java
+                        )
+                    )
+                else startService(
+                    Intent(
+                        this@Application,
+                        UiModeService::class.java
+                    )
+                )
+            }
+        }
     }
 }

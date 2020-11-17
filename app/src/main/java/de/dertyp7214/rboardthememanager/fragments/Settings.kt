@@ -1,13 +1,17 @@
 package de.dertyp7214.rboardthememanager.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.preference.DropDownPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreference
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.services.UiModeService
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 
 class Settings : PreferenceFragmentCompat() {
@@ -99,6 +103,15 @@ class Settings : PreferenceFragmentCompat() {
                     }
                     true
                 }
+            }
+        }
+
+        preferenceManager.findPreference<SwitchPreference>("service_key")?.apply {
+            setOnPreferenceClickListener {
+                if (isChecked) Toast.makeText(context, R.string.restart_app, Toast.LENGTH_LONG)
+                    .show()
+                else context.stopService(Intent(context, UiModeService::class.java))
+                true
             }
         }
     }
