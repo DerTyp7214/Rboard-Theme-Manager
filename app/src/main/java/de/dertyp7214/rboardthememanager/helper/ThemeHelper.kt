@@ -248,10 +248,16 @@ object ThemeHelper {
                             """<${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
                         )
                     } else {
-                        fileText.replace(
-                            "<map>",
-                            """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
-                        )
+                        if (fileText.contains(Regex("<map[ |]/>")))
+                            fileText.replace(
+                                Regex("<map[ |]/>"),
+                                """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" /></map>"""
+                            )
+                        else
+                            fileText.replace(
+                                "<map>",
+                                """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
+                            )
                     }
             } else {
                 fileText =
@@ -261,10 +267,16 @@ object ThemeHelper {
                             """<${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
                         )
                     } else {
-                        fileText.replace(
-                            "<map>",
-                            """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
-                        )
+                        if (fileText.contains(Regex("<map[ |]/>")))
+                            fileText.replace(
+                                Regex("<map[ |]/>"),
+                                """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string></map>"""
+                            )
+                        else
+                            fileText.replace(
+                                "<map>",
+                                """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
+                            )
                     }
             }
 
