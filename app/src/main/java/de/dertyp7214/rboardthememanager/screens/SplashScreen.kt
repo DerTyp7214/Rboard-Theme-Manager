@@ -177,7 +177,7 @@ class SplashScreen : AppCompatActivity() {
             val perm = it.requestedPermissions?.filterIndexed { index, p ->
                 p == "android.permission.READ_EXTERNAL_STORAGE" && ((it.requestedPermissionsFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0)
             }
-            perm != null && perm.contains("android.permission.READ_EXTERNAL_STORAGE")
+            perm != null && "android.permission.READ_EXTERNAL_STORAGE" in perm
         } ?: false
     }
 

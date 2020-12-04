@@ -66,19 +66,16 @@ object MagiskUtils {
                     SuFile(moduleDir, file.key).apply {
                         var text = SuFileInputStream(this).readBytes().toString(UTF_8)
 
-                        if (text.contains(file.value?.split("=")?.get(0).toString())) {
+                        if (file.value?.split("=")?.get(0).toString() in text) {
                             text = text.replace(
                                 text.lines()
                                     .first {
-                                        it.contains(
-                                            file.value?.split("=")?.get(0).toString()
-                                        )
+                                        file.value?.split("=")?.get(0).toString() in it
                                     }, file.value ?: ""
                             )
                         } else {
                             text += "\n${file.value ?: ""}"
                         }
-
 
                         if (text.lines().isEmpty()) {
                             text = file.value ?: ""

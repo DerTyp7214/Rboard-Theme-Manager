@@ -157,7 +157,7 @@ class IntroActivity : AppCompatActivity() {
             MagiskUtils.installModule(meta, file)
             MaterialDialog(this).show {
                 setContentView(R.layout.reboot_dialog)
-                findViewById<MaterialButton>(R.id.button_later).setOnClickListener { exitProcess(0)}
+                findViewById<MaterialButton>(R.id.button_later).setOnClickListener { exitProcess(0) }
                 findViewById<MaterialButton>(R.id.button_restart).setOnClickListener {
                     "reboot".runAsCommand()
                 }
@@ -226,7 +226,7 @@ class IntroActivity : AppCompatActivity() {
             val perm = it.requestedPermissions?.filterIndexed { index, p ->
                 p == "android.permission.READ_EXTERNAL_STORAGE" && ((it.requestedPermissionsFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0)
             }
-            perm != null && perm.contains("android.permission.READ_EXTERNAL_STORAGE")
+            perm != null && "android.permission.READ_EXTERNAL_STORAGE" in perm
         } ?: false
     }
 }

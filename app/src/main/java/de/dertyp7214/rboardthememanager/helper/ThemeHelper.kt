@@ -148,7 +148,7 @@ object ThemeHelper {
 
                 var changed = it
 
-                changed = if (changed.contains("<string name=\"additional_keyboard_theme\">"))
+                changed = if ("<string name=\"additional_keyboard_theme\">" in changed)
                     changed.replace(
                         "<string name=\"additional_keyboard_theme\">.*</string>".toRegex(),
                         "<string name=\"additional_keyboard_theme\">system:$name</string>"
@@ -160,7 +160,7 @@ object ThemeHelper {
                     )
 
                 // Change enable_key_border value
-                changed = if (changed.contains("<boolean name=\"enable_key_border\"")) {
+                changed = if ("<boolean name=\"enable_key_border\"" in changed) {
                     changed.replace(
                         "<boolean name=\"enable_key_border\" value=\".*\" />".toRegex(),
                         "<boolean name=\"enable_key_border\" value=\"$withBorders\" />"
@@ -246,13 +246,13 @@ object ThemeHelper {
 
             if (flagType != RKBDFlagType.string) {
                 fileText =
-                    if (fileText.contains("<${flagType.rawValue} name=\"${flag.rawValue}\"")) {
+                    if ("<${flagType.rawValue} name=\"${flag.rawValue}\"" in fileText) {
                         fileText.replace(
                             """<${flagType.rawValue} name="${flag.rawValue}" value=".*" />""".toRegex(),
                             """<${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
                         )
                     } else {
-                        if (fileText.contains(Regex("<map[ |]/>")))
+                        if (Regex("<map[ |]/>") in fileText)
                             fileText.replace(
                                 Regex("<map[ |]/>"),
                                 """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" /></map>"""
@@ -265,13 +265,13 @@ object ThemeHelper {
                     }
             } else {
                 fileText =
-                    if (fileText.contains("<${flagType.rawValue} name=\"${flag.rawValue}\">")) {
+                    if ("<${flagType.rawValue} name=\"${flag.rawValue}\">" in fileText) {
                         fileText.replace(
                             """<${flagType.rawValue} name="${flag.rawValue}">.*</string>""".toRegex(),
                             """<${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
                         )
                     } else {
-                        if (fileText.contains(Regex("<map[ |]/>")))
+                        if (Regex("<map[ |]/>") in fileText)
                             fileText.replace(
                                 Regex("<map[ |]/>"),
                                 """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string></map>"""

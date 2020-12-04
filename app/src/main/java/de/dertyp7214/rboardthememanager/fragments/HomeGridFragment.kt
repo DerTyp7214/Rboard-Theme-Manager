@@ -456,7 +456,7 @@ class HomeGridFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val timingLogger = TimeLogger("HomeGridFragment", "OnBind Adapter", false)
             timingLogger.reset()
-            val selection = list.map { it.selected }.contains(true)
+            val selection = true in list.map { it.selected }
             val dataClass = list[position]
 
             timingLogger.addSplit("Init")
@@ -516,7 +516,7 @@ class HomeGridFragment : Fragment() {
                             notifyDataSetChanged()
                             if (list[position].selected) addItemSelect(dataClass, position)
                             if (!list[position].selected) removeItemSelect(dataClass, position)
-                            if (!list.map { it.selected }.contains(true)) selectToggle(false)
+                            if (true !in list.map { it.selected }) selectToggle(false)
                         }.start()
                 } else {
                     SelectedThemeBottomSheet(dataClass, default, color, isColorLight(color)) {
