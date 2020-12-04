@@ -15,6 +15,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import com.dertyp7214.logs.helpers.Logger
 import com.google.firebase.messaging.FirebaseMessaging
 import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
@@ -70,7 +71,13 @@ class SplashScreen : AppCompatActivity() {
         if (Shell.rootAccess()) {
             if (!checkGboardPermission()) requestGboardStorage()
             if (ThemeUtils.checkForExistingThemes()) ThemeUtils.getThemesPathFromProps()
-                ?.apply { Config.THEME_LOCATION = this }
+                ?.apply { Config.THEME_LOCATION = this }.let {
+                    Logger.log(
+                        Logger.Companion.Type.DEBUG,
+                        "THEME PATH",
+                        it
+                    )
+                }
 
             //ThemeUtils.changeThemesPath("/data/GboardThemes")
 

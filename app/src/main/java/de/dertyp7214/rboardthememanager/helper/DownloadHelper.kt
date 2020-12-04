@@ -87,6 +87,8 @@ fun previewDialog(
         val downloadButton: MaterialButton = findViewById(R.id.download_button)
         val closeButton: MaterialButton = findViewById(R.id.close_button)
 
+        downloadButton.isEnabled = false
+
         downloadButton.setOnClickListener {
             clickDownload { dismiss() }
         }

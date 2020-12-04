@@ -22,8 +22,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
+import com.google.android.material.button.MaterialButton
 import com.topjohnwu.superuser.io.SuFile
-import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.Config.PACKS_URL
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.*
@@ -219,6 +219,9 @@ class DownloadFragment : Fragment() {
                                         ArrayList(ThemeUtils.loadPreviewThemes(activity))
                                     )
 
+                                pair.second.findViewById<MaterialButton>(R.id.download_button).isEnabled =
+                                    true
+
                                 val recyclerView =
                                     pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
                                 recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -267,12 +270,16 @@ class DownloadFragment : Fragment() {
 
                     override fun end(path: String) {
                         pair.first.isIndeterminate = true
+                        val cacheDir = SuFile(getThemePacksPath(activity), "tmp_themes")
                         Logger.log(
                             Logger.Companion.Type.INFO,
                             "DOWNLOAD_ZIP",
-                            "from: $path to $MAGISK_THEME_LOC"
+                            "from: $path to $cacheDir"
                         )
-                        ZipHelper().unpackZip(MAGISK_THEME_LOC, path)
+                        ZipHelper().unpackZip(cacheDir.absolutePath, path)
+                        cacheDir.listFiles()?.forEach {
+                            ThemeHelper.installTheme(it)
+                        }
                         pair.second.dismiss()
                         callback()
                     }

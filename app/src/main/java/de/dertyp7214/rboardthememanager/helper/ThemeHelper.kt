@@ -118,8 +118,8 @@ object ThemeHelper {
             }
         } else {
             val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
-            SuFile(MAGISK_THEME_LOC).mkdirs()
             listOf(
+                "mkdir -p $MAGISK_THEME_LOC",
                 "cp ${zip.absolutePath} ${installPath.absolutePath}",
                 "chmod 644 ${installPath.absolutePath}"
             ).runAsCommand()
