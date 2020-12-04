@@ -1,5 +1,6 @@
 package de.dertyp7214.rboardthememanager.component
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.view.KeyEvent
@@ -7,13 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputLayout
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.dpToPx
 import de.dertyp7214.rboardthememanager.core.setMargin
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
+
 
 class InputBottomSheet(
     private val text: String = "",
@@ -39,8 +41,13 @@ class InputBottomSheet(
         val input = v.findViewById<CustomTextInputEditText>(R.id.editText)
         inputLayout = v.findViewById(R.id.inputLayout)
 
-        inputLayout!!.setStartIconOnClickListener { onSubmit(input.text, this) }
-        inputLayout!!.setEndIconOnClickListener { onMenu(it, this) }
+        inputLayout!!.setStartIconOnClickListener {
+            onSubmit(input.text, this)
+        }
+        inputLayout!!.setEndIconOnClickListener {
+            closeKeyboard()
+            onMenu(it, this)
+        }
 
         if (!text.isBlank()) input.setText(text)
         input.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH)
@@ -55,14 +62,41 @@ class InputBottomSheet(
             } else false
         }
 
+        input.requestFocus()
+        showKeyboard()
+
         return v
+    }
+
+    private fun showKeyboard() {
+        val inputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(
+            InputMethodManager.SHOW_FORCED,
+            0
+        )
+    }
+
+    private fun closeKeyboard() {
+        val inputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(
+            InputMethodManager.HIDE_IMPLICIT_ONLY,
+            0
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        closeKeyboard()
     }
 
     fun setKeyBoardHeightObserver(
         lifecycleOwner: FragmentActivity,
         homeViewModel: HomeViewModel
     ): InputBottomSheet {
-        homeViewModel.keyboardHeightObserver(lifecycleOwner, Observer {
+        homeViewModel.keyboardHeightObserver(lifecycleOwner, {
             inputLayout?.setMargin(bottomMargin = (it + 5.dpToPx(lifecycleOwner).toInt()))
         })
         return this

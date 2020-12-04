@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         tools:context="de.dertyp7214.rboardthememanager.screens.InfoScreen">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment"
             android:name="de.dertyp7214.rboardthememanager.fragments.InfoFragment"
             android:layout_width="0dp"

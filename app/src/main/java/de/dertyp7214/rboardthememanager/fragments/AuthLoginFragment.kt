@@ -33,13 +33,15 @@ class AuthLoginFragment : Fragment() {
         val emailInput = v.findViewById<TextInputEditText>(R.id.email_input)
         val emailBox = v.findViewById<TextInputLayout>(R.id.email_parent)
 
+        val activity = requireActivity()
+
         v.findViewById<ViewGroup>(R.id.root).setOnClickListener {
-            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         }
 
         buttonRegister.setOnClickListener {
-            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-            activity?.onBackPressed()
+            activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            activity.onBackPressed()
         }
 
         emailBox.setOnClickListener { emailBox.isErrorEnabled = false }
@@ -47,7 +49,7 @@ class AuthLoginFragment : Fragment() {
         emailInput.doOnTextChanged { _, _, _, _ -> emailBox.isErrorEnabled = false }
 
         buttonLogin.setOnClickListener {
-            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             if (emailInput.text.isNullOrEmpty() || emailInput.text.isNullOrBlank()) {
                 emailBox.error = getString(R.string.inputError)
                 emailBox.isErrorEnabled = true
@@ -58,7 +60,7 @@ class AuthLoginFragment : Fragment() {
                 }
                 Thread {
                     val response = Api.login(emailInput.text.toString())
-                    activity?.runOnUiThread {
+                    activity.runOnUiThread {
                         if (response) controller.navigate(R.id.action_authLoginFragment_to_authSuccessFragment)
                         else controller.navigate(R.id.action_authLoginFragment_to_authFailedFragment)
                         buttonRegister.enable(accent)

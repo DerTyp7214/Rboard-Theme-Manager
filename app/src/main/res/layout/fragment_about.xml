@@ -11,6 +11,10 @@
         <variable
             name="clickRk"
             type="de.dertyp7214.rboardthememanager.data.ClickListener" />
+
+        <variable
+            name="clickNylon"
+            type="de.dertyp7214.rboardthememanager.data.ClickListener" />
     </data>
 
     <LinearLayout
@@ -111,6 +115,50 @@
 
             <ImageView
                 android:id="@+id/rk_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/paypal_nylon_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:onClick="@{() -> clickNylon.click.invoke()}"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/paypal_nylon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nylon_title"
+                    android:textColor="@color/primaryText"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/paypal_nylon_sum"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nylon_summary"
+                    android:textColor="@color/primaryTextSec"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/nylon_image"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="4dp"

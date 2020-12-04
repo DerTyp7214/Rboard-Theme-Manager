@@ -6,4 +6,26 @@
         <item>Dark Theme</item>
         <item>Follow Battery Saver</item>
     </string-array>
+
+    <string-array name="themePath_prefs">
+        <item>/system/etc/gboard_theme</item>
+        <item>/data/GboardTheme</item>
+        <item>/sdcard/theme-test</item>
+    </string-array>
+
+    <string-array name="flag_emoji_columns_prefs">
+        <item>5</item>
+        <item>7</item>
+        <item>9</item>
+        <item>12</item>
+        <item>15</item>
+    </string-array>
+
+    <integer-array name="flag_emoji_columns_prefs_vlaues">
+        <item>5</item>
+        <item>7</item>
+        <item>9</item>
+        <item>12</item>
+        <item>15</item>
+    </integer-array>
 </resources>

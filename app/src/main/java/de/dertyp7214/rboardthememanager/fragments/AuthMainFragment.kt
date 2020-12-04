@@ -35,12 +35,14 @@ class AuthMainFragment : Fragment() {
         val keyBox = v.findViewById<TextInputLayout>(R.id.key_parent)
         val emailBox = v.findViewById<TextInputLayout>(R.id.email_parent)
 
+        val activity = requireActivity()
+
         v.findViewById<ViewGroup>(R.id.root).setOnClickListener {
-            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         }
 
         buttonLogin.setOnClickListener {
-            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             controller.navigate(R.id.action_authMainFragment_to_authLoginFragment)
         }
 
@@ -52,7 +54,7 @@ class AuthMainFragment : Fragment() {
         keyInput.doOnTextChanged { _, _, _, _ -> keyBox.isErrorEnabled = false }
 
         buttonRegister.setOnClickListener {
-            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             if (emailInput.text.isNullOrEmpty() || emailInput.text.isNullOrBlank() || keyInput.text.isNullOrEmpty() || keyInput.text.isNullOrBlank()) {
                 if (emailInput.text.isNullOrEmpty() || emailInput.text.isNullOrBlank()) {
                     emailBox.error = getString(R.string.inputError)
@@ -70,7 +72,7 @@ class AuthMainFragment : Fragment() {
                 Thread {
                     val response =
                         Api.register(keyInput.text.toString(), emailInput.text.toString())
-                    activity?.runOnUiThread {
+                    activity.runOnUiThread {
                         if (response) controller.navigate(R.id.action_authMainFragment_to_authSuccessFragment)
                         else controller.navigate(R.id.action_authMainFragment_to_authFailedFragment)
                         buttonRegister.enable(accent)

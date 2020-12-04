@@ -2,6 +2,7 @@ package de.dertyp7214.rboardthememanager.core
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import androidx.core.os.postDelayed
 
 
@@ -24,5 +25,5 @@ fun Context.getNavigationBarHeight(): Int {
 }
 
 fun delayed(delay: Long, callback: () -> Unit) {
-    Handler().postDelayed(delay) { callback() }
+    Handler(Looper.getMainLooper()).postDelayed(delay) { callback() }
 }

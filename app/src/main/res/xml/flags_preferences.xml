@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:asp="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:key="flags_general"
+        android:title="Gboard Flags">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_emoji_compat"
+            android:key="flags_emoji_fix"
+            android:title="Emoji compat fix" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_backspace_24px"
+            android:key="flags_joystick_delete"
+            android:title="Joystick delete" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_logo"
+            android:key="flags_deprecate_search"
+            asp:isPreferenceVisible="false"
+            android:title="Google icon" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_navbar"
+            android:key="flags_nav_bar_theming"
+            android:title="Navbar color" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_share_24px"
+            android:key="flags_enable_sharing"
+            android:title="Share icon" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_mdi_alternate_email"
+            android:key="flags_email_provider"
+            android:title="Email provider" />
+
+        <EditTextPreference
+            android:defaultValue="9"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:icon="@drawable/ic_rows"
+            android:key="flags_emoji_picker_columns"
+            android:summary="Number of emoji in a row"
+            android:title="Emoji columns"
+            asp:isPreferenceVisible="false" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_popup_v2"
+            android:key="flags_popup_v2"
+            android:title="Popup v2" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_debug"
+            android:key="flags_logging"
+            android:title="Logging and debug" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Gboard Preferences">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_crop_din_24px_outlined"
+            android:key="flags_enable_key_border"
+            android:title="Enable key border" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_debug"
+            android:key="flags_enable_secondary_symbols"
+            android:title="Enable secondary symbols"
+            asp:icon="@drawable/ic_numeric" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_debug"
+            android:key="flags_show_suggestions"
+            android:title="Show suggestions"
+            asp:icon="@drawable/ic_alphabetical" />
+
+        <SeekBarPreference
+            android:defaultValue="10"
+            android:key="flags_keyboard_height_ratio"
+            android:max="30"
+            android:title="Keyboard height ratio"
+            asp:icon="@drawable/ic_keyboard_hide_24px_outlined"
+            asp:min="5" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:summary="Reboot after changing these values"
+        android:title="Gboard Props">
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:key="props_ro.com.google.ime.kb_pad_port_b"
+            android:title="Bottom padding"
+
+            />
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:key="props_ro.com.google.ime.kb_pad_port_r"
+            android:title="Right padding"
+            asp:icon="@drawable/ic_right_outlined" />
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:key="props_ro.com.google.ime.kb_pad_port_l"
+            android:title="Left padding"
+            asp:icon="@drawable/ic_left_outlined" />
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:key="props_ro.com.google.ime.kb_pad_land_b"
+            android:title="Bottom padding (landscape)"
+
+            />
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:key="props_ro.com.google.ime.kb_pad_land_r"
+            android:title="Right padding (landscape)"
+
+            />
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:key="props_ro.com.google.ime.kb_pad_land_l"
+            android:title="Left padding (landscape)" />
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:key="props_ro.com.google.ime.corner_key_l"
+            android:title="Bottom corners"
+
+            />
+
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>

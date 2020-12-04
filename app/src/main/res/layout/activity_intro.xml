@@ -5,6 +5,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="match_parent"
         tools:context=".screens.IntroActivity"
         tools:ignore="MissingDefaultResource">

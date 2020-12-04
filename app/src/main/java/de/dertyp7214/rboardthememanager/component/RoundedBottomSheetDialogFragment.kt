@@ -2,6 +2,7 @@ package de.dertyp7214.rboardthememanager.component
 
 import android.app.Dialog
 import android.os.Bundle
+import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.dertyp7214.rboardthememanager.R

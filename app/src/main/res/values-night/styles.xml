@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="Splash" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Splash" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_bg</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -10,7 +10,7 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="md_color_button_text">@color/colorAccent</item>
         <item name="md_ripple_color">@color/colorAccent</item>
@@ -27,13 +27,19 @@
         <item name="colorBackgroundFloating">@color/colorPrimaryLight</item>
         <item name="android:colorBackgroundFloating">@color/colorPrimaryLight</item>
         <item name="android:colorControlHighlight">@color/ripple</item>
+        <item name="android:colorControlActivated">@color/colorAccentTransparent</item>
+        <item name="android:trackTint">@color/switch_color</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowContentTransitions">false</item>
     </style>
-
     <style name="ActionBar" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextColor">@color/primaryText</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/primaryText</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
@@ -48,6 +54,8 @@
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/primaryText</item>
+        <item name="android:textColorSecondary">@color/primaryTextSec</item>
     </style>
 
 </resources>

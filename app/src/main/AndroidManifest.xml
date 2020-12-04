@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="de.dertyp7214.rboardthememanager">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:name=".Application"
@@ -17,11 +24,23 @@
         android:windowSoftInputMode="stateAlwaysVisible|adjustPan"
         tools:ignore="AllowBackup">
         <activity android:name=".screens.ImportPack">
-            <intent-filter tools:ignore="AppLinkUrlError">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/*" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.OPENABLE" />
+
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.pack" />
+                <data android:pathPattern=".*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pack" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.pack" />
+                <data android:scheme="content" />
             </intent-filter>
         </activity>
         <activity android:name=".screens.AuthenticationActivity" />
@@ -29,6 +48,7 @@
         <activity android:name=".screens.LogsScreen" />
         <activity android:name=".screens.AboutActivity" />
         <activity android:name=".screens.InfoScreen" />
+        <activity android:name=".screens.FlagsActivity" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -46,7 +66,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screens.HomeActivity" />
+        <activity
+            android:name=".screens.HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity android:name=".screens.IntroActivity" />
         <activity android:name="com.dertyp7214.logs.helpers.CrashReportDialog" />
         <activity android:name="com.dertyp7214.logs.screens.Logs" />
@@ -58,9 +81,19 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service
+            android:name=".services.UiModeService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver android:name=".services.UiModeService$BootBroadcastReceiver">
+            <intent-filter tools:ignore="IntentFilterExportedReceiver">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <provider
-            android:name=".utils.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
             android:exported="false"
             android:grantUriPermissions="true">

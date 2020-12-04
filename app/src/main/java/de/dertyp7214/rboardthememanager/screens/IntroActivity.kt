@@ -1,6 +1,5 @@
 package de.dertyp7214.rboardthememanager.screens
 
-import android.Manifest
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.content.Context
 import android.content.Intent
@@ -14,18 +13,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.button.MaterialButton
+import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.fragments.SelectRuntimeData
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import de.dertyp7214.rboardthememanager.viewmodels.IntroViewModel
 import kotlinx.android.synthetic.main.activity_intro.*
 import kotlinx.android.synthetic.main.intro_navigator.*
+import kotlin.system.exitProcess
 
 class IntroActivity : AppCompatActivity() {
 
@@ -56,7 +59,7 @@ class IntroActivity : AppCompatActivity() {
             openPage()
         }
 
-        introViewModel.rboardStorage.observe(this, Observer {
+        introViewModel.rboardStorage.observe(this, {
             val controller = fragment.findNavController()
             val name = resources.getResourceEntryName(controller.currentDestination?.id ?: 0)
             if (name == "permissionsFragment") {
@@ -67,7 +70,7 @@ class IntroActivity : AppCompatActivity() {
             }
         })
 
-        introViewModel.gboardStorage.observe(this, Observer {
+        introViewModel.gboardStorage.observe(this, {
             val controller = fragment.findNavController()
             val name = resources.getResourceEntryName(controller.currentDestination?.id ?: 0)
             if (name == "permissionsFragment") {
@@ -78,7 +81,7 @@ class IntroActivity : AppCompatActivity() {
             }
         })
 
-        introViewModel.magiskInstalled.observe(this, Observer {
+        introViewModel.magiskInstalled.observe(this, {
             floatingActionButton.isEnabled = it
             floatingActionButton.backgroundTintList =
                 ColorStateList.valueOf(if (it) getColor(R.color.colorAccent) else colorDisabled)
@@ -90,7 +93,7 @@ class IntroActivity : AppCompatActivity() {
     private fun skipIntro() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            arrayOf(READ_EXTERNAL_STORAGE),
             1234
         )
     }
@@ -147,18 +150,26 @@ class IntroActivity : AppCompatActivity() {
             val file = mapOf(
                 Pair(
                     "system.prop",
-                    "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=/$THEME_LOCATION"
+                    "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=$THEME_LOCATION"
                 ),
                 Pair(THEME_LOCATION, null)
             )
             MagiskUtils.installModule(meta, file)
+            MaterialDialog(this).show {
+                setContentView(R.layout.reboot_dialog)
+                findViewById<MaterialButton>(R.id.button_later).setOnClickListener { exitProcess(0)}
+                findViewById<MaterialButton>(R.id.button_restart).setOnClickListener {
+                    "reboot".runAsCommand()
+                }
+            }
+        } else {
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
         }
         //}
-        startActivity(Intent(this, HomeActivity::class.java))
         getSharedPreferences("start", Context.MODE_PRIVATE).apply {
             edit {
                 putBoolean("first", false)
-                finish()
             }
         }
     }
@@ -207,10 +218,11 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkGboardPermission(): Boolean { // TODO: does not work
-        return packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS).find {
-            it.packageName == "com.google.android.inputmethod.latin"
-        }?.let {
+    private fun checkGboardPermission(): Boolean {
+        return packageManager.getPackageInfo(
+            Config.GBOARD_PACKAGE_NAME,
+            PackageManager.GET_PERMISSIONS
+        )?.let {
             val perm = it.requestedPermissions?.filterIndexed { index, p ->
                 p == "android.permission.READ_EXTERNAL_STORAGE" && ((it.requestedPermissionsFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0)
             }

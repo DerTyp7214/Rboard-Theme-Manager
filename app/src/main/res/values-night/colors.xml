@@ -16,4 +16,5 @@
     <color name="backgroundDim">#8B000000</color>
     <color name="disabled_fg">#10FFFFFF</color>
     <color name="disabledText">#AAAAAA</color>
+
 </resources>

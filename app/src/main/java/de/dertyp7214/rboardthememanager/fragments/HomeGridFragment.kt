@@ -1,7 +1,6 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -12,23 +11,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.animation.doOnEnd
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.transition.ChangeBounds
-import androidx.transition.TransitionManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
 import com.dertyp7214.preferencesplus.core.setMargins
@@ -53,7 +51,6 @@ import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.max
 
 class HomeGridFragment : Fragment() {
 
@@ -72,12 +69,12 @@ class HomeGridFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_home_grid, container, false)
 
-        toolbar = activity!!.findViewById(R.id.select_toolbar)
+        toolbar = requireActivity().findViewById(R.id.select_toolbar)
 
         val fabAdd = v.findViewById<FloatingActionButton>(R.id.fabAdd)
         refreshLayout = v.findViewById(R.id.refreshLayout)
         recyclerView = v.findViewById(R.id.theme_list)
-        homeViewModel = activity!!.run {
+        homeViewModel = requireActivity().run {
             ViewModelProviders.of(this)[HomeViewModel::class.java]
         }
 
@@ -87,7 +84,7 @@ class HomeGridFragment : Fragment() {
         refreshLayout.setProgressViewOffset(
             true,
             0,
-            context!!.getStatusBarHeight() + 5.dpToPx(context!!).toInt()
+            5.dpToPx(requireContext()).toInt()
         )
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorPrimaryLight)
         refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.primaryText)
@@ -103,10 +100,18 @@ class HomeGridFragment : Fragment() {
                 else if (dy < 0)
                     fabAdd.show()
             }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (newState == SCROLL_STATE_IDLE) {
+                    fabAdd.show()
+                }
+            }
         })
 
         refreshLayout.isRefreshing = true
-        fabAdd.setMargin(bottomMargin = 68.dpToPx(context!!).toInt())
+        fabAdd.setMargin(bottomMargin = 68.dpToPx(requireContext()).toInt())
         fabAdd.setOnClickListener {
             val intent = Intent()
                 .setType("application/*")
@@ -116,7 +121,7 @@ class HomeGridFragment : Fragment() {
         }
 
         val adapter =
-            GridThemeAdapter(activity!!, themeList, homeViewModel, addItemSelect = { _, _ ->
+            GridThemeAdapter(requireActivity(), themeList, homeViewModel, addItemSelect = { _, _ ->
                 toolbar.title = "${themeList.count { it.selected }}"
             }, removeItemSelect = { _, _ ->
                 toolbar.title = "${themeList.count { it.selected }}"
@@ -125,7 +130,8 @@ class HomeGridFragment : Fragment() {
                 toggleToolbar(it)
             })
 
-        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_arrow_back, null)
+        toolbar.navigationIcon =
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back)
         toolbar.setNavigationOnClickListener {
             themeList.forEachIndexed { index, _ -> themeList[index].selected = false }
             adapter.notifyDataSetChanged()
@@ -134,13 +140,13 @@ class HomeGridFragment : Fragment() {
         toolbar.setOnMenuItemClickListener { it ->
             when (it.itemId) {
                 R.id.theme_delete -> {
-                    MaterialDialog(context!!).show {
+                    MaterialDialog(requireContext()).show {
                         cornerRadius(12F)
                         message(res = R.string.delete_themes_confirm)
                         positiveButton(res = R.string.yes) { dialog ->
                             var noError = false
                             themeList.filter { theme -> theme.selected }
-                                .forEachIndexed { index, theme ->
+                                .forEachIndexed { _, theme ->
                                     if (theme.delete() && !noError) noError = true
                                 }
                             if (noError) Toast.makeText(
@@ -164,13 +170,13 @@ class HomeGridFragment : Fragment() {
                     toolbar.title = "${themeList.count { it.selected }}"
                 }
                 R.id.theme_share -> {
-                    ThemeHelper.shareThemes(activity!!, themeList.filter { it.selected })
+                    ThemeHelper.shareThemes(requireActivity(), themeList.filter { it.selected })
                 }
             }
             true
         }
 
-        homeViewModel.gridLayoutObserve(this, Observer {
+        homeViewModel.gridLayoutObserve(this) {
             recyclerView.stopScroll()
             adapter.dataSetChanged()
             if (recyclerView.layoutManager is GridLayoutManager) {
@@ -181,32 +187,32 @@ class HomeGridFragment : Fragment() {
                 }
                 recyclerView.addItemDecoration(
                     GridTopOffsetItemDecoration(
-                        context!!.getStatusBarHeight(),
+                        0,
                         columns
                     )
                 )
                 recyclerView.addItemDecoration(
                     GridBottomOffsetItemDecoration(
-                        56.dpToPx(context!!).toInt(),
+                        56.dpToPx(requireContext()).toInt(),
                         columns
                     )
                 )
             }
-        })
+        }
 
-        homeViewModel.observeRefetch(this, Observer {
+        homeViewModel.observeRefetch(this) {
             if (it) {
                 homeViewModel.setFilter(homeViewModel.getFilter())
             }
-        })
+        }
 
-        homeViewModel.gridLayoutObserve(this, Observer {
+        homeViewModel.gridLayoutObserve(this) {
             recyclerView.stopScroll()
             adapter.dataSetChanged()
             recyclerView.scheduleLayoutAnimation()
-        })
+        }
 
-        homeViewModel.themesObserve(this, Observer { list ->
+        homeViewModel.themesObserve(this) { list ->
             if (tmpList.isEmpty() || list.size > tmpList.size) tmpList.apply {
                 clear(adapter)
                 addAll(list)
@@ -218,9 +224,9 @@ class HomeGridFragment : Fragment() {
                     )
                 }
             }
-        })
+        }
 
-        homeViewModel.observeFilter(this, Observer { filter ->
+        homeViewModel.observeFilter(this) { filter ->
             refreshLayout.isRefreshing = true
             themeList.clear(adapter)
             Thread {
@@ -245,31 +251,32 @@ class HomeGridFragment : Fragment() {
                 }
                 keyboardImg.alpha = if (themeList.size > 0) 0F else 1F
             }.start()
-        })
+        }
 
-        delayed(200) {
-            if (!homeViewModel.themesExist()) {
-                Thread {
-                    loadThemes().apply {
-                        themeList.clear(adapter)
-                        themeList.addAll(sortedBy { it.name.toLowerCase(Locale.ROOT) })
-                    }
-                    activity?.runOnUiThread {
-                        homeViewModel.setThemes(themeList)
-                        recyclerView.stopScroll()
-                        adapter.dataSetChanged()
-                        refreshLayout.isRefreshing = false
-                        recyclerView.scheduleLayoutAnimation()
-                    }
-                }.start()
-            } else {
-                themeList.clear(adapter)
-                themeList.addAll(homeViewModel.getThemes())
-                recyclerView.stopScroll()
-                adapter.dataSetChanged()
-                refreshLayout.isRefreshing = false
-                recyclerView.scheduleLayoutAnimation()
-            }
+        if (!homeViewModel.themesExist()) {
+            Thread {
+                loadThemes().apply {
+                    themeList.clear(adapter)
+                    themeList.addAll(sortedBy { it.name.toLowerCase(Locale.ROOT) })
+                }
+                activity?.runOnUiThread {
+                    homeViewModel.setThemes(themeList)
+                    recyclerView.stopScroll()
+                    adapter.dataSetChanged()
+                    refreshLayout.isRefreshing = false
+                    homeViewModel.setFilter(homeViewModel.getFilter())
+                    recyclerView.scheduleLayoutAnimation()
+                    keyboardImg.alpha = if (themeList.size > 0) 0F else 1F
+                }
+            }.start()
+        } else {
+            themeList.clear(adapter)
+            themeList.addAll(homeViewModel.getThemes())
+            recyclerView.stopScroll()
+            adapter.dataSetChanged()
+            refreshLayout.isRefreshing = false
+            homeViewModel.setFilter(homeViewModel.getFilter())
+            recyclerView.scheduleLayoutAnimation()
         }
 
         val columns = if (homeViewModel.getGridLayout() == GridLayout.SINGLE) 1 else 2
@@ -281,13 +288,13 @@ class HomeGridFragment : Fragment() {
         recyclerView.setItemViewCacheSize(200)
         recyclerView.addItemDecoration(
             GridTopOffsetItemDecoration(
-                context!!.getStatusBarHeight(),
+                requireContext().getStatusBarHeight(),
                 columns
             )
         )
         recyclerView.addItemDecoration(
             GridBottomOffsetItemDecoration(
-                56.dpToPx(context!!).toInt(),
+                56.dpToPx(requireContext()).toInt(),
                 columns
             )
         )
@@ -298,7 +305,7 @@ class HomeGridFragment : Fragment() {
             }
         }
 
-        ItemTouchHelper(object : SwipeToDeleteCallback(activity!!) {
+        ItemTouchHelper(object : SwipeToDeleteCallback(requireActivity()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val item = adapter.getItem(position)
@@ -323,42 +330,27 @@ class HomeGridFragment : Fragment() {
                     }
                 })
             }
-        }).attachToRecyclerView(recyclerView)
+        })/*.attachToRecyclerView(recyclerView)*/
 
         return v
     }
 
     private fun toggleToolbar(visible: Boolean) {
         val scale = if (visible) 1F else .0F
-        val margin = if (visible) 0 else 120.dpToPx(context!!).toInt()
-        val corners1 = if (visible) 20.dpToPx(activity!!) else 0F
-        val corners2 = if (visible) 0F else 20.dpToPx(activity!!)
-        val longDelay = if (visible) 100L else 800L
-        ObjectAnimator.ofFloat(toolbar, "scaleY", max(scale, .5F)).apply {
-            duration = longDelay
-            start()
-        }
-        ObjectAnimator.ofFloat(toolbar, "scaleX", scale).apply {
-            duration = 300
-            start()
-        }
-        ObjectAnimator.ofFloat(toolbar, "alpha", scale).apply {
-            duration = longDelay
-            start()
-        }
-        ChangeBounds().apply {
-            startDelay = 0
-            interpolator = AccelerateDecelerateInterpolator()
-            duration = 300
-            TransitionManager.beginDelayedTransition(toolbar, this)
-        }
-        toolbar.setMargins(0, margin, 0, 0)
-        ValueAnimator.ofFloat(corners1, corners2).apply {
-            duration = 50
-            addUpdateListener {
-                toolbar.background = getShape(it.animatedValue as Float)
+        val margin = 0
+
+        val anim = ObjectAnimator.ofFloat(toolbar, "alpha", scale).apply {
+            duration = 180
+            if (visible) {
+                toolbar.visibility = View.VISIBLE
             }
-        }.start()
+            start()
+        }
+        anim.doOnEnd {
+            if (!visible) toolbar.visibility = View.GONE
+        }
+
+        toolbar.setMargins(0, margin, 0, 0)
     }
 
     private fun getShape(radius: Float): Drawable {
@@ -375,11 +367,12 @@ class HomeGridFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
+            val activity = requireActivity()
             val zip =
                 File(
-                    FileUtils.getThemePacksPath(context!!),
-                    data.data!!.getFileName(activity!!)
-                ).apply { data.data!!.writeToFile(context!!, this) }
+                    FileUtils.getThemePacksPath(activity),
+                    data.data!!.getFileName(activity)
+                ).apply { data.data!!.writeToFile(activity, this) }
             if (ThemeHelper.installTheme(zip, false)) Toast.makeText(
                 context,
                 R.string.theme_added,
@@ -410,10 +403,10 @@ class HomeGridFragment : Fragment() {
                 ?: 0
 
         private var activeTheme = ""
-        private val default = context.resources.getDrawable(
-            R.drawable.ic_keyboard,
-            null
-        ).getBitmap()
+        private val default = ContextCompat.getDrawable(
+            context,
+            R.drawable.ic_keyboard
+        )!!.getBitmap()
 
         override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
             super.onAttachedToRecyclerView(recyclerView)
@@ -490,9 +483,13 @@ class HomeGridFragment : Fragment() {
             timingLogger.addSplit("Apply Image")
 
             holder.themeName.text =
-                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == activeTheme) "(applied)" else ""}"
+                "${
+                    dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+                } ${if (dataClass.name == activeTheme) "(applied)" else ""}"
             holder.themeNameSelect.text =
-                "${dataClass.name.split("_").joinToString(" ") { it.capitalize() }} ${if (dataClass.name == activeTheme) "(applied)" else ""}"
+                "${
+                    dataClass.name.split("_").joinToString(" ") { it.capitalize() }
+                } ${if (dataClass.name == activeTheme) "(applied)" else ""}"
 
             timingLogger.addSplit("Titles")
 

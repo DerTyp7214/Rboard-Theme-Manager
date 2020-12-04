@@ -23,7 +23,7 @@
                 android:layout_marginTop="25dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/user_popup"
+                android:background="@drawable/rounded_background"
                 android:orientation="vertical"
                 android:paddingTop="10dp">
 

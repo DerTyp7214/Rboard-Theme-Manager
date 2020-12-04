@@ -37,6 +37,12 @@
         <item name="boxStrokeWidth">1dp</item>
     </style>
 
+    <style name="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/primaryText</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+
     <style name="ActionBar" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextColor">@color/primaryText</item>
     </style>

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.Config
+import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
 import de.dertyp7214.rboardthememanager.Config.themeCount
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.data.MagiskInfo
@@ -42,7 +43,7 @@ class InfoFragment : Fragment() {
         )
 
         binding.versions = Versions(
-            getGboardVersion(context!!).split("-")[0],
+            getGboardVersion(requireContext()).split("-")[0],
             Build.VERSION.RELEASE,
             BuildConfig.VERSION_NAME
         )
@@ -51,7 +52,8 @@ class InfoFragment : Fragment() {
             if (usingModule) getString(R.string.magisk) else getString(
                 R.string.root
             ),
-            themeCount?.toString() ?: getString(R.string.loading)
+            themeCount?.toString() ?: getString(R.string.loading),
+            THEME_LOCATION
         )
 
         if (themeCount === null) Thread {
@@ -61,7 +63,8 @@ class InfoFragment : Fragment() {
                     if (usingModule) getString(R.string.magisk) else getString(
                         R.string.root
                     ),
-                    themeCount!!.toString()
+                    themeCount!!.toString(),
+                    THEME_LOCATION
                 )
             }
         }.start()
