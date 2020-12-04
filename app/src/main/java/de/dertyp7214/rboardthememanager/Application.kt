@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.dertyp7214.logs.helpers.Logger
+import com.topjohnwu.superuser.Shell
 import de.dertyp7214.rboardthememanager.services.UiModeService
 
 class Application : Application() {
@@ -14,6 +15,7 @@ class Application : Application() {
     companion object {
         var context: Context? = null
             private set
+        var SHELL: Shell? = null
     }
 
     override fun onCreate() {

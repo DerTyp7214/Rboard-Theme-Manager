@@ -68,7 +68,8 @@
         </activity>
         <activity
             android:name=".screens.HomeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity android:name=".screens.IntroActivity" />
         <activity android:name="com.dertyp7214.logs.helpers.CrashReportDialog" />
         <activity android:name="com.dertyp7214.logs.screens.Logs" />
@@ -86,13 +87,13 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver android:name=".services.UiModeService$BootBroadcastReceiver">
-            <intent-filter>
+            <intent-filter tools:ignore="IntentFilterExportedReceiver">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <provider
-            android:name=".utils.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
             android:exported="false"
             android:grantUriPermissions="true">

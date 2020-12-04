@@ -18,4 +18,12 @@
         android:icon="@drawable/ic_share"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_share_magisk_module"
+        android:orderInCategory="400"
+        android:title="@string/share_module"
+        android:icon="@drawable/ic_share"
+        android:visible="false"
+        app:showAsAction="never" />
+
 </menu>

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessaging
+import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
@@ -34,8 +35,12 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        Shell.Config.setFlags(Shell.FLAG_MOUNT_MASTER)
         Shell.Config.verboseLogging(BuildConfig.DEBUG)
+
+        Shell.setDefaultBuilder(Shell.Builder.create().apply {
+            setFlags(Shell.FLAG_MOUNT_MASTER)
+            setInitializers(BusyBoxInstaller::class.java)
+        })
 
         intent.extras?.apply {
             getString("action")?.apply {

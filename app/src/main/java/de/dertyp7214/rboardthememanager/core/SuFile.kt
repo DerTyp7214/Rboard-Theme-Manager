@@ -40,3 +40,7 @@ fun SuFile.decodeBitmap(opts: BitmapFactory.Options? = null): Bitmap? {
     }
     return bm
 }
+
+fun SuFile.tar(zip: File): Boolean {
+    return listOf("cd $absolutePath", "tar -cf ${zip.absolutePath} .").runAsCommand()
+}

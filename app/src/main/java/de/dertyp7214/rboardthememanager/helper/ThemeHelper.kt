@@ -105,7 +105,7 @@ object ThemeHelper {
                     )
                     if (!move || "cp ${zip.absolutePath} ${newZip.absoluteFile}".runAsCommand()) {
                         ZipHelper().unpackZip(installDir.absolutePath, newZip.absolutePath)
-                        newZip.deleteOnExit()
+                        newZip.delete()
                         if (installDir.isDirectory) {
                             var noError = false
                             installDir.listFiles()?.forEach { theme ->
@@ -118,7 +118,11 @@ object ThemeHelper {
             }
         } else {
             val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
-            "cp ${zip.absolutePath} ${installPath.absolutePath} && chmod 644 ${installPath.absolutePath}".runAsCommand()
+            installPath.mkdirs()
+            listOf(
+                "cp ${zip.absolutePath} ${installPath.absolutePath}",
+                "chmod 644 ${installPath.absolutePath}"
+            ).runAsCommand()
         }
     }
 
@@ -202,7 +206,7 @@ object ThemeHelper {
             if (image.exists()) files.add(image)
         }
         val zip = File(context.cacheDir, "themes.pack")
-        zip.deleteOnExit()
+        zip.delete()
         ZipHelper().zip(files.map { it.absolutePath }, zip.absolutePath)
         files.forEach { it.deleteOnExit() }
         val uri = FileProvider.getUriForFile(

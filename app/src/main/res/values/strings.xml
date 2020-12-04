@@ -131,4 +131,5 @@
     <string name="please_open_app">Please open the App!</string>
     <string name="service_key">Change Theme Service</string>
     <string name="restart_app">Please restart the App</string>
+    <string name="share_module">Share Magisk-Module</string>
 </resources>
