@@ -18,14 +18,18 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
+import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.appupdater.core.checkUpdate
 import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.NoRootBottomSheet
 import de.dertyp7214.rboardthememanager.core.runAsCommand
+import de.dertyp7214.rboardthememanager.utils.FileUtils
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils
+import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 class SplashScreen : AppCompatActivity() {
 
@@ -35,6 +39,7 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
+        Shell.Config.setFlags(Shell.FLAG_MOUNT_MASTER)
         Shell.Config.verboseLogging(BuildConfig.DEBUG)
 
         Shell.setDefaultBuilder(Shell.Builder.create().apply {
@@ -55,6 +60,12 @@ class SplashScreen : AppCompatActivity() {
             .subscribeToTopic("update-${BuildConfig.BUILD_TYPE.toLowerCase(Locale.ROOT)}")
 
         "rm -rf ${cacheDir.absolutePath}/*".runAsCommand()
+        val files = ArrayList<File>()
+        files += FileUtils.getThemePacksPath(this).listFiles()!!
+        files += FileUtils.getSoundPacksPath(this).listFiles()!!
+        files.forEach {
+            SuFile(it.absolutePath).deleteRecursive()
+        }
 
         if (Shell.rootAccess()) {
             if (!checkGboardPermission()) requestGboardStorage()

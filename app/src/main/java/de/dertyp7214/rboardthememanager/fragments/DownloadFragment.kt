@@ -196,7 +196,7 @@ class DownloadFragment : Fragment() {
                     ).setListener(
                         object : DownloadListener {
                             override fun start() {
-                                SuFile(previewsPath).deleteRecursively()
+                                SuFile(previewsPath).deleteRecursive()
                             }
 
                             override fun progress(progress: Int, current: Long, total: Long) {
@@ -213,7 +213,7 @@ class DownloadFragment : Fragment() {
                                 ZipHelper().unpackZip(previewsPath, path)
 
                                 val adapter =
-                                    PreviewAdapter(activity, ThemeUtils.loadPreviewThemes(activity))
+                                    PreviewAdapter(activity, ArrayList(ThemeUtils.loadPreviewThemes(activity)))
 
                                 val recyclerView =
                                     pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
@@ -228,7 +228,6 @@ class DownloadFragment : Fragment() {
 
                                 recyclerView.visibility = View.VISIBLE
                                 pair.first.visibility = View.GONE
-
                             }
                         }
                     ).start()

@@ -2,6 +2,8 @@ package de.dertyp7214.rboardthememanager.utils
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.os.Build
 import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
 import com.google.android.material.button.MaterialButton
@@ -48,7 +50,10 @@ object ThemeUtils {
         }?.map {
             val imageFile = File(themeDir.absolutePath, it.name.removeSuffix(".zip"))
             if (imageFile.exists()) ThemeDataClass(
-                BitmapFactory.decodeFile(imageFile.path),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                    ImageDecoder.decodeBitmap(ImageDecoder.createSource(imageFile))
+                else
+                    BitmapFactory.decodeFile(imageFile.path),
                 it.name.removeSuffix(".zip"),
                 it.absolutePath
             )
