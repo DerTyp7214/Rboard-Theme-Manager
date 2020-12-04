@@ -6,8 +6,11 @@ import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 
 fun ThemeDataClass.delete(): Boolean {
-    return SuFile(path).delete().apply {
-        Logger.log(Logger.Companion.Type.INFO, "DELETE THEME", "delete \"$name\" -> $this")
+    if (image != null) "rm -rf ${path.removeSuffix(".zip")}".runAsCommand { image ->
+        Logger.log(Logger.Companion.Type.INFO, "DELETE THEME IMAGE", image.contentToString())
+    }
+    return "rm -rf $path".runAsCommand {
+        Logger.log(Logger.Companion.Type.INFO, "DELETE THEME", it.contentToString())
     }
 }
 

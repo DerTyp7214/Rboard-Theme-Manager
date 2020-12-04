@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -213,7 +214,10 @@ class DownloadFragment : Fragment() {
                                 ZipHelper().unpackZip(previewsPath, path)
 
                                 val adapter =
-                                    PreviewAdapter(activity, ArrayList(ThemeUtils.loadPreviewThemes(activity)))
+                                    PreviewAdapter(
+                                        activity,
+                                        ArrayList(ThemeUtils.loadPreviewThemes(activity))
+                                    )
 
                                 val recyclerView =
                                     pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
@@ -285,7 +289,7 @@ class DownloadFragment : Fragment() {
 }
 
 private class PreviewAdapter(
-    context: Context,
+    private val context: Context,
     private val list: List<ThemeDataClass>
 ) : RecyclerView.Adapter<PreviewAdapter.ViewHolder>() {
 
@@ -340,6 +344,24 @@ private class PreviewAdapter(
             holder.selectOverlay.alpha = 0F
 
         holder.card.setCardBackgroundColor(color)
+
+        holder.card.setOnClickListener {
+            val success = ThemeHelper.installTheme(SuFile(dataClass.path))
+                    && if (dataClass.image != null) ThemeHelper.installTheme(
+                SuFile(
+                    dataClass.path.removeSuffix(
+                        ".zip"
+                    )
+                )
+            )
+            else true
+            Logger.log(
+                Logger.Companion.Type.DEBUG,
+                "INSTALL THEME",
+                "${dataClass.name}: $success | Image: ${dataClass.image != null}"
+            )
+            if (success) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_LONG).show()
+        }
     }
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {

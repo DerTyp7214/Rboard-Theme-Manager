@@ -28,11 +28,11 @@ import kotlin.system.exitProcess
 object ThemeUtils {
     fun loadThemes(): List<ThemeDataClass> {
         val themeDir =
-            SuFile(THEME_LOCATION)
+            SuFile(MAGISK_THEME_LOC)
         return themeDir.listFiles()?.filter {
             it.name.toLowerCase(Locale.ROOT).endsWith(".zip")
         }?.map {
-            val imageFile = SuFile(THEME_LOCATION, it.name.removeSuffix(".zip"))
+            val imageFile = SuFile(MAGISK_THEME_LOC, it.name.removeSuffix(".zip"))
             if (imageFile.exists()) ThemeDataClass(
                 imageFile.decodeBitmap(),
                 it.name.removeSuffix(".zip"),

@@ -118,7 +118,7 @@ object ThemeHelper {
             }
         } else {
             val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
-            installPath.mkdirs()
+            SuFile(MAGISK_THEME_LOC).mkdirs()
             listOf(
                 "cp ${zip.absolutePath} ${installPath.absolutePath}",
                 "chmod 644 ${installPath.absolutePath}"
