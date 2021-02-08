@@ -22,7 +22,7 @@ fun SuFile.decodeBitmap(opts: BitmapFactory.Options? = null): Bitmap? {
     var bm: Bitmap? = null
     var stream: InputStream? = null
     try {
-        stream = SuFileInputStream(pathName)
+        stream = SuFileInputStream.open(pathName)
         bm = BitmapFactory.decodeStream(stream, null, opts)
     } catch (e: Exception) {
         /*  do nothing.

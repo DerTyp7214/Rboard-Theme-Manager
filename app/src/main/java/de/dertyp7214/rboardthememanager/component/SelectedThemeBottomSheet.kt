@@ -1,8 +1,6 @@
 package de.dertyp7214.rboardthememanager.component
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -22,7 +20,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.setSwitchColor
-import de.dertyp7214.rboardthememanager.data.MenuItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 
@@ -98,80 +95,8 @@ class SelectedThemeBottomSheet(
         }
 
         applyButton.setOnClickListener {
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
-                if (getBoolean("service_key", false)) {
-                    MenuBottomSheet(
-                        arrayListOf(
-                            MenuItem(
-                                null,
-                                R.string.apply_theme_both,
-                                selected = false,
-                                closeOnClick = true
-                            ) {
-                                requireActivity().getSharedPreferences(
-                                    "darkTheme",
-                                    Context.MODE_PRIVATE
-                                )
-                                    .edit {
-                                        putString("name", theme.name)
-                                        putBoolean("border", enableBorderSwitchSelected)
-                                    }
-                                requireActivity().getSharedPreferences(
-                                    "lightTheme",
-                                    Context.MODE_PRIVATE
-                                )
-                                    .edit {
-                                        putString("name", theme.name)
-                                        putBoolean("border", enableBorderSwitchSelected)
-                                    }
-                                applyTheme(enableBorderSwitchSelected)
-                                dismiss()
-                            },
-                            MenuItem(
-                                null,
-                                R.string.apply_theme_dark,
-                                selected = false,
-                                closeOnClick = true
-                            ) {
-                                requireActivity().getSharedPreferences(
-                                    "darkTheme",
-                                    Context.MODE_PRIVATE
-                                )
-                                    .edit {
-                                        putString("name", theme.name)
-                                        putBoolean("border", enableBorderSwitchSelected)
-                                    }
-                                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO) applyTheme(
-                                    enableBorderSwitchSelected
-                                )
-                                dismiss()
-                            },
-                            MenuItem(
-                                null,
-                                R.string.apply_theme_light,
-                                selected = false,
-                                closeOnClick = true
-                            ) {
-                                requireActivity().getSharedPreferences(
-                                    "lightTheme",
-                                    Context.MODE_PRIVATE
-                                )
-                                    .edit {
-                                        putString("name", theme.name)
-                                        putBoolean("border", enableBorderSwitchSelected)
-                                    }
-                                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) applyTheme(
-                                    enableBorderSwitchSelected
-                                )
-                                dismiss()
-                            }
-                        )
-                    ).show(requireActivity().supportFragmentManager, "Apply")
-                } else {
-                    applyTheme(enableBorderSwitchSelected)
-                    dismiss()
-                }
-            }
+            applyTheme(enableBorderSwitchSelected)
+            dismiss()
         }
 
         enableBorderSwitch.isChecked = enableBorderSwitchSelected
@@ -192,8 +117,7 @@ class SelectedThemeBottomSheet(
     }
 
     private fun applyTheme(border: Boolean) {
-        val response = ThemeHelper.applyTheme("${theme.name}.zip", border)
-        if (response) Toast.makeText(
+        if (ThemeHelper.applyTheme("${theme.name}.zip", border)) Toast.makeText(
             context,
             getString(R.string.applied),
             Toast.LENGTH_SHORT

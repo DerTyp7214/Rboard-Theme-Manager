@@ -7,7 +7,7 @@ import java.io.InputStream
 import kotlin.text.Charsets.UTF_8
 
 fun File.parseModuleMeta(): ModuleMeta {
-    val text = SuFileInputStream(this).readBytes().toString(UTF_8)
+    val text = SuFileInputStream.open(this).readBytes().toString(UTF_8)
     val map = HashMap<String, Any>()
     text.split("\n").forEach {
         val line = it.split("=")

@@ -263,7 +263,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
             DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
                 InputSource(
                     StringReader(
-                        SuFileInputStream(xmlFile).bufferedReader().readText()
+                        SuFileInputStream.open(xmlFile).bufferedReader().readText()
                     )
                 )
             ).getElementsByTagName("map")

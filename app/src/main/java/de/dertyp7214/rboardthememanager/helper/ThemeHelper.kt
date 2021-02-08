@@ -127,7 +127,11 @@ object ThemeHelper {
     }
 
     @SuppressLint("SdCardPath")
-    fun applyTheme(name: String, withBorders: Boolean = false, context: Context? = null): Boolean {
+    fun applyTheme(
+        name: String,
+        withBorders: Boolean = false,
+        context: Context? = null
+    ): Boolean {
         val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName =
             "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
@@ -142,10 +146,9 @@ object ThemeHelper {
             }
             false
         } else {
-            val content = SuFileInputStream(SuFile(fileName)).use {
+            val content = SuFileInputStream.open(SuFile(fileName)).use {
                 it.bufferedReader().readText()
             }.let {
-
                 var changed = it
 
                 changed = if ("<string name=\"additional_keyboard_theme\">" in changed)
@@ -173,7 +176,7 @@ object ThemeHelper {
                 }
                 return@let changed
             }
-            SuFileOutputStream(File(fileName)).writer(Charset.defaultCharset())
+            SuFileOutputStream.open(File(fileName)).writer(Charset.defaultCharset())
                 .use { outputStreamWriter ->
                     outputStreamWriter.write(content)
                 }
@@ -188,7 +191,8 @@ object ThemeHelper {
         val fileLol =
             SuFile("/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml")
         return try {
-            SuFileInputStream(fileLol).bufferedReader().readText()
+            if (!fileLol.exists()) ""
+            else SuFileInputStream.open(fileLol).bufferedReader().readText()
                 .split("<string name=\"additional_keyboard_theme\">")
                 .let { if (it.size > 1) it[1].split("</string>")[0] else "" }.replace("system:", "")
                 .replace(".zip", "")
@@ -239,7 +243,7 @@ object ThemeHelper {
     ): Boolean {
         val inputPackageName = GBOARD_PACKAGE_NAME
         val fileName = "/data/data/$inputPackageName/shared_prefs/${file.rawValue}"
-        val content = SuFileInputStream(SuFile(fileName)).use {
+        val content = SuFileInputStream.open(SuFile(fileName)).use {
             it.bufferedReader().readText()
         }.let {
             var fileText = it
@@ -342,8 +346,9 @@ object ThemeHelper {
     }
 
     private fun writeSuFile(file: SuFile, content: String) {
-        SuFileOutputStream(file).use {
-            it.write(content.toByteArray(Charsets.UTF_8))
-        }
+        SuFileOutputStream.open(file).writer(Charset.defaultCharset())
+            .use { outputStreamWriter ->
+                outputStreamWriter.write(content)
+            }
     }
 }

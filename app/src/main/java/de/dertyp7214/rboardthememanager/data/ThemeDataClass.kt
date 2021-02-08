@@ -1,5 +1,12 @@
 package de.dertyp7214.rboardthememanager.data
 
 import android.graphics.Bitmap
+import android.graphics.ColorFilter
 
-data class ThemeDataClass(val image: Bitmap? = null, val name: String, val path: String, var selected: Boolean = false)
+data class ThemeDataClass(
+    val image: Bitmap? = null,
+    val name: String,
+    val path: String,
+    var selected: Boolean = false,
+    val colorFilter: ColorFilter? = null
+)

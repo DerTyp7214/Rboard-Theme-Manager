@@ -1,13 +1,19 @@
 package de.dertyp7214.rboardthememanager.utils
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Build
+import android.util.TypedValue
+import androidx.appcompat.view.ContextThemeWrapper
 import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
 import com.google.android.material.button.MaterialButton
 import com.topjohnwu.superuser.io.SuFile
+import de.dertyp7214.rboardthememanager.Application
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.Config.MODULE_ID
 import de.dertyp7214.rboardthememanager.Config.THEME_LOCATION
@@ -20,6 +26,7 @@ import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
+import java.io.BufferedInputStream
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -108,13 +115,70 @@ object ThemeUtils {
 
     fun getActiveTheme(): ThemeDataClass {
         val themeName = ThemeHelper.getActiveTheme()
-        return if (themeName.isNotEmpty()) {
+        return if (themeName.startsWith("assets:") && Application.context != null) {
+            val imgName =
+                themeName
+                    .removePrefix("assets:theme_package_metadata_")
+                    .removeSuffix(".binarypb")
+            val image = Application.context?.let {
+                try {
+                    val inputStream = it.resources.openRawResource(
+                        FileUtils.getResourceId(
+                            it,
+                            imgName,
+                            "raw",
+                            it.packageName
+                        )
+                    )
+                    BitmapFactory.decodeStream(BufferedInputStream(inputStream))
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            ThemeDataClass(
+                image,
+                imgName.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }, ""
+            )
+        } else if (themeName.isNotEmpty()) {
             val image = SuFile(THEME_LOCATION, themeName)
             ThemeDataClass(
                 image.decodeBitmap(),
                 themeName,
                 SuFile(THEME_LOCATION, "$themeName.zip").absolutePath
             )
-        } else ThemeDataClass(null, "", "")
+        } else {
+            if (Application.context != null) {
+                val isDark =
+                    (Application.context!!.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+                val image = Application.context?.let {
+                    val inputStream = it.resources.openRawResource(
+                        FileUtils.getResourceId(
+                            it,
+                            if (isDark) "google_blue_dark" else "default_snapshot",
+                            "raw",
+                            it.packageName
+                        )
+                    )
+                    BitmapFactory.decodeStream(BufferedInputStream(inputStream))
+                }
+                ThemeDataClass(
+                    image,
+                    "System auto",
+                    "",
+                    colorFilter = if (isDark) null else PorterDuffColorFilter(
+                        getDeviceAccentColor(Application.context!!),
+                        PorterDuff.Mode.MULTIPLY
+                    )
+                )
+            } else ThemeDataClass(null, "", "")
+        }
+    }
+
+    @JvmStatic
+    fun getDeviceAccentColor(context: Context): Int {
+        val value = TypedValue()
+        val ctx = ContextThemeWrapper(context, android.R.style.Theme_DeviceDefault)
+        ctx.theme.resolveAttribute(android.R.attr.colorAccent, value, true)
+        return value.data
     }
 }

@@ -1,7 +1,6 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -15,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -155,7 +155,7 @@ class DownloadFragment : Fragment() {
     }
 
     class Adapter(
-        private val activity: Activity,
+        private val activity: FragmentActivity,
         private val list: ArrayList<PackItem>
     ) :
         RecyclerView.Adapter<Adapter.ViewHolder>() {
@@ -182,62 +182,62 @@ class DownloadFragment : Fragment() {
             holder.author.text = "by ${pack.author}"
 
             holder.layout.setOnClickListener {
-                val pair = previewDialog(activity, previewsPath, pack.name) {
+                val pair = previewDialog(activity, previewsPath, pack, {
                     downloadThemePack(pack) {
                         it()
                         if (activity is HomeActivity) activity.navigate(R.id.navigation_themes)
                     }
+                }) { pair ->
+                    DownloadHelper().from(pack.url).to(
+                        getThemePacksPath(activity).absolutePath
+                    )
+                        .fileName(
+                            "preview_temp.zip"
+                        ).setListener(
+                            object : DownloadListener {
+                                override fun start() {
+                                    SuFile(previewsPath).deleteRecursive()
+                                }
+
+                                override fun progress(progress: Int, current: Long, total: Long) {
+                                }
+
+                                override fun error(error: String) {
+                                    Log.d("ERROR", error)
+                                }
+
+                                override fun end(path: String) {
+                                    pair.first.isIndeterminate = true
+                                    SuFile(previewsPath).mkdirs()
+
+                                    ZipHelper().unpackZip(previewsPath, path)
+
+                                    val adapter =
+                                        PreviewAdapter(
+                                            activity,
+                                            ArrayList(ThemeUtils.loadPreviewThemes(activity))
+                                        )
+
+                                    pair.second.findViewById<MaterialButton>(R.id.download_button).isEnabled =
+                                        true
+
+                                    val recyclerView =
+                                        pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
+                                    recyclerView.layoutManager = LinearLayoutManager(activity)
+                                    recyclerView.setHasFixedSize(true)
+                                    recyclerView.adapter = adapter
+                                    recyclerView.addItemDecoration(
+                                        StartOffsetItemDecoration(
+                                            0
+                                        )
+                                    )
+
+                                    recyclerView.visibility = View.VISIBLE
+                                    pair.first.visibility = View.GONE
+                                }
+                            }
+                        ).start()
                 }
-
-                DownloadHelper().from(pack.url).to(
-                    getThemePacksPath(activity).absolutePath
-                )
-                    .fileName(
-                        "preview_temp.zip"
-                    ).setListener(
-                        object : DownloadListener {
-                            override fun start() {
-                                SuFile(previewsPath).deleteRecursive()
-                            }
-
-                            override fun progress(progress: Int, current: Long, total: Long) {
-                            }
-
-                            override fun error(error: String) {
-                                Log.d("ERROR", error)
-                            }
-
-                            override fun end(path: String) {
-                                pair.first.isIndeterminate = true
-                                SuFile(previewsPath).mkdirs()
-
-                                ZipHelper().unpackZip(previewsPath, path)
-
-                                val adapter =
-                                    PreviewAdapter(
-                                        activity,
-                                        ArrayList(ThemeUtils.loadPreviewThemes(activity))
-                                    )
-
-                                pair.second.findViewById<MaterialButton>(R.id.download_button).isEnabled =
-                                    true
-
-                                val recyclerView =
-                                    pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
-                                recyclerView.layoutManager = LinearLayoutManager(activity)
-                                recyclerView.setHasFixedSize(true)
-                                recyclerView.adapter = adapter
-                                recyclerView.addItemDecoration(
-                                    StartOffsetItemDecoration(
-                                        0
-                                    )
-                                )
-
-                                recyclerView.visibility = View.VISIBLE
-                                pair.first.visibility = View.GONE
-                            }
-                        }
-                    ).start()
             }
         }
 

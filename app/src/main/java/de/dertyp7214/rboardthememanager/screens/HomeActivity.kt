@@ -224,7 +224,10 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                     R.drawable.ic_keyboard
                 )!!.getBitmap()
 
-                val color = ColorUtils.dominantColor(theme.image ?: defaultImage)
+                themeIcon.setImageBitmap(theme.image ?: defaultImage)
+                themeIcon.colorFilter = theme.colorFilter
+
+                val color = ColorUtils.dominantColor(themeIcon.drawable.getBitmap())
                 val isDark = ColorUtils.isColorLight(color)
 
                 if (gradient != null) {
@@ -240,7 +243,6 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                 themeName.text =
                     theme.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
                 themeName.setTextColor(if (!isDark) Color.WHITE else Color.BLACK)
-                themeIcon.setImageBitmap(theme.image ?: defaultImage)
             })
             addView(View(this@HomeActivity).apply {
                 setHeight(8.dp(this@HomeActivity))

@@ -53,7 +53,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:maxImageSize="24dp"
-                app:tint="@android:color/white" />
+                app:tint="@android:color/white"
+                tools:ignore="ContentDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

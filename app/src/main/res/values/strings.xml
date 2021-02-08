@@ -132,4 +132,5 @@
     <string name="service_key">Change Theme Service</string>
     <string name="restart_app">Please restart the App</string>
     <string name="share_module">Share Magisk-Module</string>
+    <string name="install_pack">Install Pack</string>
 </resources>

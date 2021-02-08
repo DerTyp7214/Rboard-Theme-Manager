@@ -10,6 +10,7 @@ import de.dertyp7214.rboardthememanager.core.getString
 import de.dertyp7214.rboardthememanager.core.parseModuleMeta
 import de.dertyp7214.rboardthememanager.data.MagiskModule
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
+import java.nio.charset.Charset
 import kotlin.text.Charsets.UTF_8
 
 object MagiskUtils {
@@ -60,11 +61,14 @@ object MagiskUtils {
         RootUtils.runWithRoot {
             val moduleDir = SuFile(MODULES_PATH, meta.id)
             moduleDir.mkdirs()
-            writeSuFile(SuFile(moduleDir, "module.prop"), meta.getString())
+            writeSuFile(
+                SuFile(moduleDir, "module.prop").apply { deleteRecursive() },
+                meta.getString()
+            )
             files.forEach { file ->
                 if (SuFile(moduleDir, file.key).exists()) {
                     SuFile(moduleDir, file.key).apply {
-                        var text = SuFileInputStream(this).readBytes().toString(UTF_8)
+                        var text = SuFileInputStream.open(this).readBytes().toString(UTF_8)
 
                         if (file.value?.split("=")?.get(0).toString() in text) {
                             text = text.replace(
@@ -82,6 +86,7 @@ object MagiskUtils {
                         }
 
                         SuFile(moduleDir, file.key).apply {
+                            deleteRecursive()
                             writeSuFile(this, text)
                         }
                     }
@@ -96,8 +101,9 @@ object MagiskUtils {
     }
 
     private fun writeSuFile(file: SuFile, content: String) {
-        SuFileOutputStream(file).use {
-            it.write(content.toByteArray(UTF_8))
-        }
+        SuFileOutputStream.open(file).writer(Charset.defaultCharset())
+            .use { outputStreamWriter ->
+                outputStreamWriter.write(content)
+            }
     }
 }

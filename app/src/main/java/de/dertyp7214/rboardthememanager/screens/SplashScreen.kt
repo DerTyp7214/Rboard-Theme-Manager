@@ -40,9 +40,7 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        Shell.Config.setFlags(Shell.FLAG_MOUNT_MASTER)
-        Shell.Config.verboseLogging(BuildConfig.DEBUG)
-
+        Shell.enableVerboseLogging = BuildConfig.DEBUG
         Shell.setDefaultBuilder(Shell.Builder.create().apply {
             setFlags(Shell.FLAG_MOUNT_MASTER)
             setInitializers(BusyBoxInstaller::class.java)

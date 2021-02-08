@@ -150,7 +150,7 @@ class IntroActivity : AppCompatActivity() {
             val file = mapOf(
                 Pair(
                     "system.prop",
-                    "ro.com.google.ime.theme_file=vue.zip\nro.com.google.ime.themes_dir=$THEME_LOCATION"
+                    "ro.com.google.ime.theme_file=veu.zip\nro.com.google.ime.themes_dir=$THEME_LOCATION"
                 ),
                 Pair(THEME_LOCATION, null)
             )

@@ -20,7 +20,7 @@ class ImportPack : AppCompatActivity() {
             val zip = File(
                 getThemePacksPath(this),
                 it.getFileName(this)
-            ).apply { it.writeToFile(this@ImportPack, this) }
+            ).apply { delete(); it.writeToFile(this@ImportPack, this) }
             if (zip.exists() && ThemeHelper.installTheme(zip, false)) Toast.makeText(
                 this,
                 R.string.theme_added,

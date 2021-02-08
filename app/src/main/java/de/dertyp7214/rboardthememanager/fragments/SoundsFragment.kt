@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,7 +58,7 @@ class SoundsFragment : Fragment() {
         soundsViewModel =
             activity.run { ViewModelProviders.of(this)[SoundsViewModel::class.java] }
 
-        adapter = Adapter(context, list) {
+        adapter = Adapter(requireActivity(), list) {
             soundsViewModel.setRefetch(true)
             Toast.makeText(
                 context,
@@ -124,7 +125,7 @@ class SoundsFragment : Fragment() {
     }
 
     class Adapter(
-        private val context: Context,
+        private val context: FragmentActivity,
         private val list: ArrayList<PackItem>,
         private val callback: () -> Unit
     ) :
@@ -154,7 +155,7 @@ class SoundsFragment : Fragment() {
             holder.author.text = "by ${pack.author}"
 
             holder.layout.setOnClickListener {
-                val pair = previewDialog(context, previewsPath, pack.name) {
+                val pair = previewDialog(context, previewsPath, pack, {
                     val pair = downloadDialog(context).apply {
                         first.isIndeterminate = false
                     }
@@ -202,55 +203,55 @@ class SoundsFragment : Fragment() {
                             }
                         })
                         .start()
+                }) { pair ->
+                    DownloadHelper().from(pack.url).to(
+                        getSoundPacksPath(context).absolutePath
+                    )
+                        .fileName(
+                            "preview_temp.zip"
+                        ).setListener(
+                            object : DownloadListener {
+                                override fun start() {
+                                    SuFile(previewsPath).deleteRecursively()
+                                }
+
+                                override fun progress(progress: Int, current: Long, total: Long) {
+                                }
+
+                                override fun error(error: String) {
+                                    Log.d("ERROR", error)
+                                }
+
+                                override fun end(path: String) {
+                                    pair.first.isIndeterminate = true
+                                    SuFile(previewsPath).mkdirs()
+
+                                    ZipHelper().unpackZip(previewsPath, path)
+
+                                    val adapter =
+                                        SoundPreviewAdapter(
+                                            context,
+                                            SoundUtils.loadPreviewSounds(context)
+                                        )
+
+                                    val recyclerView =
+                                        pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
+                                    recyclerView.layoutManager = LinearLayoutManager(context)
+                                    recyclerView.setHasFixedSize(true)
+                                    recyclerView.adapter = adapter
+                                    recyclerView.addItemDecoration(
+                                        StartOffsetItemDecoration(
+                                            0
+                                        )
+                                    )
+
+                                    recyclerView.visibility = View.VISIBLE
+                                    pair.first.visibility = View.GONE
+
+                                }
+                            }
+                        ).start()
                 }
-
-                DownloadHelper().from(pack.url).to(
-                    getSoundPacksPath(context).absolutePath
-                )
-                    .fileName(
-                        "preview_temp.zip"
-                    ).setListener(
-                        object : DownloadListener {
-                            override fun start() {
-                                SuFile(previewsPath).deleteRecursively()
-                            }
-
-                            override fun progress(progress: Int, current: Long, total: Long) {
-                            }
-
-                            override fun error(error: String) {
-                                Log.d("ERROR", error)
-                            }
-
-                            override fun end(path: String) {
-                                pair.first.isIndeterminate = true
-                                SuFile(previewsPath).mkdirs()
-
-                                ZipHelper().unpackZip(previewsPath, path)
-
-                                val adapter =
-                                    SoundPreviewAdapter(
-                                        context,
-                                        SoundUtils.loadPreviewSounds(context)
-                                    )
-
-                                val recyclerView =
-                                    pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
-                                recyclerView.layoutManager = LinearLayoutManager(context)
-                                recyclerView.setHasFixedSize(true)
-                                recyclerView.adapter = adapter
-                                recyclerView.addItemDecoration(
-                                    StartOffsetItemDecoration(
-                                        0
-                                    )
-                                )
-
-                                recyclerView.visibility = View.VISIBLE
-                                pair.first.visibility = View.GONE
-
-                            }
-                        }
-                    ).start()
             }
         }
 

@@ -20,4 +20,12 @@ object FileUtils {
             ), "SoundPacks"
         ).apply { if (!exists()) mkdirs() }
     }
+
+    fun getResourceId(context: Context, variableName: String, resourceName: String, packageName: String): Int {
+        return try {
+            context.resources.getIdentifier(variableName, resourceName, packageName)
+        } catch (e: Exception) {
+            -1
+        }
+    }
 }

@@ -16,7 +16,7 @@ class ZipHelper {
     fun zip(_files: List<String>, zipFileName: String) {
         try {
             var origin: BufferedInputStream?
-            val dest = SuFileOutputStream(zipFileName)
+            val dest = SuFileOutputStream.open(zipFileName)
             val out = ZipOutputStream(
                 BufferedOutputStream(
                     dest
@@ -24,7 +24,7 @@ class ZipHelper {
             )
             val data = ByteArray(buffer)
             for (i in _files.indices) {
-                val fi = SuFileInputStream(_files[i])
+                val fi = SuFileInputStream.open(_files[i])
                 origin = BufferedInputStream(fi, buffer)
                 val entry =
                     ZipEntry(_files[i].substring(_files[i].lastIndexOf("/") + 1))

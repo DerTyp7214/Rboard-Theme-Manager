@@ -1,12 +1,10 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '30.0.2'
+    buildToolsVersion '30.0.3'
     buildFeatures.dataBinding = true
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -16,8 +14,8 @@ android {
         applicationId "de.dertyp7214.rboardthememanager"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 24
-        versionName "2.4"
+        versionCode 2520
+        versionName "2.5.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -45,7 +43,7 @@ android {
 }
 
 dependencies {
-    def libsuVersion = '3.0.2'
+    def libsuVersion = '3.1.1'
     implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
     implementation "com.github.topjohnwu.libsu:io:${libsuVersion}"
     implementation "com.github.topjohnwu.libsu:busybox:${libsuVersion}"
@@ -59,15 +57,15 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation 'com.google.android.material:material:1.3.0-alpha04'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
+    implementation 'com.google.android.material:material:1.3.0-rc01'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.3'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.3'
     implementation 'me.relex:circleindicator:2.1.4'
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
     implementation 'com.jaredrummler:android-shell:1.0.0'
-    implementation 'com.google.firebase:firebase-analytics:18.0.0'
-    implementation 'com.google.firebase:firebase-messaging:21.0.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.2'
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'de.dertyp7214:AppUpdater:v2.0'
     implementation 'com.bignerdranch.android:simple-item-decoration:1.0.0'
