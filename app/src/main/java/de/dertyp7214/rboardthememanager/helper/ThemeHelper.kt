@@ -99,11 +99,15 @@ object ThemeHelper {
         return if (zip.extension == "pack") {
             Application.context.let {
                 if (it != null) {
-                    val installDir = File(it.cacheDir, "tmpInstall")
-                    val newZip = File(
+                    val installDir = SuFile(it.cacheDir, "tmpInstall")
+                    val newZip = SuFile(
                         getThemePacksPath(it).apply { if (!exists()) mkdirs() }, zip.name
                     )
-                    if (!move || "cp ${zip.absolutePath} ${newZip.absoluteFile}".runAsCommand()) {
+                    if (!move || listOf(
+                            "cp ${zip.absolutePath} ${newZip.absoluteFile}",
+                            "chmod 664 ${newZip.absoluteFile}"
+                        ).runAsCommand()
+                    ) {
                         ZipHelper().unpackZip(installDir.absolutePath, newZip.absolutePath)
                         newZip.delete()
                         if (installDir.isDirectory) {

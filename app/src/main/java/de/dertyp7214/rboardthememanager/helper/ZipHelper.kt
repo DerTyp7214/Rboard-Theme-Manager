@@ -6,7 +6,6 @@ import com.topjohnwu.superuser.io.SuFileInputStream
 import com.topjohnwu.superuser.io.SuFileOutputStream
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -46,7 +45,7 @@ class ZipHelper {
             SuFile(path).mkdirs()
             zip.entries().asSequence().forEach { entry ->
                 zip.getInputStream(entry).use { input ->
-                    FileOutputStream(SuFile(path, entry.name)).use { output ->
+                    SuFileOutputStream.open(SuFile(path, entry.name)).use { output ->
                         Logger.log(
                             Logger.Companion.Type.DEBUG,
                             "OUTPUT",

@@ -15,6 +15,7 @@
             android:id="@+id/dialog_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:textColor="@color/primaryText"
             android:textSize="22sp"
             android:textStyle="bold"
