@@ -1,9 +1,12 @@
 package de.dertyp7214.rboardthememanager.utils
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_META_DATA
+import android.content.pm.PackageManager.NameNotFoundException
 import com.dertyp7214.logs.helpers.Logger
 import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
+
 
 object GboardUtils {
     fun getGboardVersion(context: Context): String {
@@ -16,6 +19,15 @@ object GboardUtils {
                 "$GBOARD_PACKAGE_NAME: ${error.stackTraceToString()}"
             )
             ""
+        }
+    }
+
+    fun isPackageInstalled(packageName: String, packageManager: PackageManager): Boolean {
+        return try {
+            packageManager.getPackageInfo(packageName, 0)
+            true
+        } catch (e: NameNotFoundException) {
+            false
         }
     }
 }

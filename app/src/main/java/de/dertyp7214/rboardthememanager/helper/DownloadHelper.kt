@@ -9,6 +9,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.MaterialBottomSheet
@@ -81,6 +83,12 @@ fun previewDialog(
         val author = findViewById<TextView>(R.id.author)
         title.text = themePack.name
         author.text = themePack.author
+
+        dialog?.apply {
+            if (this is BottomSheetDialog) {
+                behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            }
+        }
 
         onShow(Pair(progressBar, this))
 

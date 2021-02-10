@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import com.dertyp7214.logs.helpers.Logger
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
@@ -27,7 +29,9 @@ import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.NoRootBottomSheet
 import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.utils.FileUtils
+import de.dertyp7214.rboardthememanager.utils.GboardUtils.isPackageInstalled
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -66,38 +70,50 @@ class SplashScreen : AppCompatActivity() {
             SuFile(it.absolutePath).deleteRecursive()
         }
 
-        if (Shell.rootAccess()) {
-            if (!checkGboardPermission()) requestGboardStorage()
-            if (ThemeUtils.checkForExistingThemes()) ThemeUtils.getThemesPathFromProps()
-                ?.apply { Config.THEME_LOCATION = this }.let {
-                    Logger.log(
-                        Logger.Companion.Type.DEBUG,
-                        "THEME PATH",
-                        it
-                    )
-                }
+        if (isPackageInstalled(Config.GBOARD_PACKAGE_NAME, packageManager)) {
+            if (Shell.rootAccess()) {
+                if (!checkGboardPermission()) requestGboardStorage()
+                if (ThemeUtils.checkForExistingThemes()) ThemeUtils.getThemesPathFromProps()
+                    ?.apply { Config.THEME_LOCATION = this }.let {
+                        Logger.log(
+                            Logger.Companion.Type.DEBUG,
+                            "THEME PATH",
+                            it
+                        )
+                    }
 
-            //ThemeUtils.changeThemesPath("/data/GboardThemes")
+                //ThemeUtils.changeThemesPath("/data/GboardThemes")
 
-            getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
-                //if (getBoolean("registered", false)) {
-                getSharedPreferences("start", Context.MODE_PRIVATE).apply {
-                    if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
-                            this@SplashScreen,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) runAnimation()
-                    else {
-                        checkUpdate {
-                            startApp()
+                getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
+                    //if (getBoolean("registered", false)) {
+                    getSharedPreferences("start", Context.MODE_PRIVATE).apply {
+                        if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
+                                this@SplashScreen,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) runAnimation()
+                        else {
+                            checkUpdate {
+                                startApp()
+                            }
                         }
                     }
+                    //} else {
+                    //    startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
+                    //}
                 }
-                //} else {
-                //    startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
-                //}
-            }
-        } else NoRootBottomSheet().show(supportFragmentManager, "YEET")
+            } else NoRootBottomSheet().show(supportFragmentManager, "YEET")
+        } else Snackbar.make(root, R.string.installGboard, Snackbar.LENGTH_INDEFINITE)
+            .setActionTextColor(getColor(R.color.colorAccent))
+            .setAction(R.string.download) {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=${Config.GBOARD_PACKAGE_NAME}")
+                    )
+                )
+                finish()
+            }.show()
     }
 
     private fun checkUpdate(callback: () -> Unit) {

@@ -50,8 +50,6 @@ class MaterialBottomSheet : RoundedBottomSheetDialogFragment() {
             val bottomSheet =
                 d.findViewById<FrameLayout>(R.id.design_bottom_sheet)!!
             bottomSheet.setMargins(0, 120, 0, 0)
-            BottomSheetBehavior.from(bottomSheet).state =
-                BottomSheetBehavior.STATE_EXPANDED
             BottomSheetBehavior.from(bottomSheet).isHideable = true
         }
         return bottomSheetDialog
@@ -61,7 +59,8 @@ class MaterialBottomSheet : RoundedBottomSheetDialogFragment() {
         return view?.findViewById(id)!!
     }
 
-    fun setOnCancelListener(runnable: DialogInterface.OnCancelListener) = dialog?.setOnCancelListener(
-        runnable
-    )
+    fun setOnCancelListener(runnable: DialogInterface.OnCancelListener) =
+        dialog?.setOnCancelListener(
+            runnable
+        )
 }

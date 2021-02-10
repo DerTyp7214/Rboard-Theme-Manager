@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".screens.SplashScreen">
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -17,6 +17,7 @@
             android:scaleX="0"
             android:scaleY="0"
             android:transitionName="splashImage"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

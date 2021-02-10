@@ -5,6 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +24,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.Config.PACKS_URL
@@ -182,7 +186,7 @@ class DownloadFragment : Fragment() {
             holder.author.text = "by ${pack.author}"
 
             holder.layout.setOnClickListener {
-                val pair = previewDialog(activity, previewsPath, pack, {
+                previewDialog(activity, previewsPath, pack, {
                     downloadThemePack(pack) {
                         it()
                         if (activity is HomeActivity) activity.navigate(R.id.navigation_themes)
@@ -234,6 +238,14 @@ class DownloadFragment : Fragment() {
 
                                     recyclerView.visibility = View.VISIBLE
                                     pair.first.visibility = View.GONE
+
+                                    val bDialog = pair.second.dialog
+                                    if (bDialog is BottomSheetDialog) {
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            bDialog.behavior.state =
+                                                BottomSheetBehavior.STATE_EXPANDED
+                                        }, 100)
+                                    }
                                 }
                             }
                         ).start()
