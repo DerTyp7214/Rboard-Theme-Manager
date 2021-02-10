@@ -14,6 +14,7 @@ fun SuFile.copy(newFile: File): Boolean {
 }
 
 fun SuFile.copyRecursively(newFile: File): Boolean {
+    if (!newFile.exists()) newFile.mkdirs()
     return "\\cp -a $absolutePath/. ${newFile.absolutePath}".runAsCommand()
 }
 

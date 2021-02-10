@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -157,7 +158,9 @@ class SoundsFragment : Fragment() {
             val pack = list[position]
 
             holder.title.text = pack.name
-            holder.author.text = "by ${pack.author}"
+            holder.author.text = pack.author
+            holder.image.setImageResource(R.drawable.ic_sounds)
+            holder.image.setColorFilter(context.getColor(R.color.colorAccent))
 
             holder.layout.setOnClickListener {
                 previewDialog(context, previewsPath, pack, {
@@ -279,10 +282,10 @@ class SoundsFragment : Fragment() {
             val layout: ViewGroup = v.findViewById(R.id.root)
             val title: TextView = v.findViewById(R.id.title)
             val author: TextView = v.findViewById(R.id.author)
+            val image: ImageView = v.findViewById(R.id.image)
         }
     }
 }
-
 
 private class SoundPreviewAdapter(
     private val list: List<File>

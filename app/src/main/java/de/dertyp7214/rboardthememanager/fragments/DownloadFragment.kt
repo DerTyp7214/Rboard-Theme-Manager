@@ -147,8 +147,15 @@ class DownloadFragment : Fragment() {
                     )
             }
 
-            tmpList.sortBy { it.name.toLowerCase(Locale.getDefault()) }
-            list.addAll(tmpList)
+            val tmp = tmpList
+            tmp.sortBy { it.name.toLowerCase(Locale.getDefault()) }
+            try {
+                tmpList.clear()
+                tmpList.addAll(tmp)
+            } catch (e: Exception) {
+                Logger.log(Logger.Companion.Type.ERROR, "FetchDownload", e.localizedMessage)
+            }
+            list.addAll(tmp)
 
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
@@ -183,7 +190,9 @@ class DownloadFragment : Fragment() {
             val pack = list[position]
 
             holder.title.text = pack.name
-            holder.author.text = "by ${pack.author}"
+            holder.author.text = pack.author
+            holder.image.setImageResource(R.drawable.ic_style)
+            holder.image.setColorFilter(activity.getColor(R.color.colorAccent))
 
             holder.layout.setOnClickListener {
                 previewDialog(activity, previewsPath, pack, {
@@ -303,6 +312,7 @@ class DownloadFragment : Fragment() {
             val layout: ViewGroup = v.findViewById(R.id.root)
             val title: TextView = v.findViewById(R.id.title)
             val author: TextView = v.findViewById(R.id.author)
+            val image: ImageView = v.findViewById(R.id.image)
         }
     }
 }
