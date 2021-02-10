@@ -13,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -61,7 +61,7 @@ class SoundsFragment : Fragment() {
 
         refreshLayout = v.findViewById(R.id.refreshLayout)
         soundsViewModel =
-            activity.run { ViewModelProviders.of(this)[SoundsViewModel::class.java] }
+            activity.run { ViewModelProvider(this)[SoundsViewModel::class.java] }
 
         adapter = Adapter(requireActivity(), list) {
             soundsViewModel.setRefetch(true)

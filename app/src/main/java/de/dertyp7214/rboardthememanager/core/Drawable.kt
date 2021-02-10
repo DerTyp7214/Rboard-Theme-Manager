@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import androidx.core.graphics.drawable.DrawableCompat
 
-
 fun Drawable.getBitmap(): Bitmap {
     val drawable = DrawableCompat.wrap(this).mutate()
 

@@ -5,9 +5,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
-
 
 class CustomEditText : androidx.appcompat.widget.AppCompatEditText {
 
@@ -33,7 +31,6 @@ class CustomEditText : androidx.appcompat.widget.AppCompatEditText {
         left: Drawable?, top: Drawable?,
         right: Drawable?, bottom: Drawable?
     ) {
-        Log.d("DRAWWWWW", "${left != null} ${top != null} ${right != null} ${bottom != null}")
         if (left != null) {
             drawableLeft = left
         }

@@ -22,7 +22,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -75,7 +75,7 @@ class HomeGridFragment : Fragment() {
         refreshLayout = v.findViewById(R.id.refreshLayout)
         recyclerView = v.findViewById(R.id.theme_list)
         homeViewModel = requireActivity().run {
-            ViewModelProviders.of(this)[HomeViewModel::class.java]
+            ViewModelProvider(this)[HomeViewModel::class.java]
         }
 
         val keyboardImg = v.findViewById<ImageView>(R.id.imageView5)
@@ -353,16 +353,6 @@ class HomeGridFragment : Fragment() {
         toolbar.setMargins(0, margin, 0, 0)
     }
 
-    private fun getShape(radius: Float): Drawable {
-        val color = resources.getColor(R.color.colorPrimary, null)
-        val gradientDrawable = GradientDrawable(
-            GradientDrawable.Orientation.TL_BR,
-            intArrayOf(color, color)
-        )
-        gradientDrawable.cornerRadius = radius
-        return gradientDrawable
-    }
-
     @SuppressLint("InflateParams", "SdCardPath")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -454,7 +444,7 @@ class HomeGridFragment : Fragment() {
 
         @SuppressLint("SetTextI18n", "DefaultLocale")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val timingLogger = TimeLogger("HomeGridFragment", "OnBind Adapter", false)
+            val timingLogger = TimeLogger("OnBind Adapter", false)
             timingLogger.reset()
             val selection = true in list.map { it.selected }
             val dataClass = list[position]
@@ -539,9 +529,8 @@ class HomeGridFragment : Fragment() {
                 true
             }
 
-            timingLogger.addSplit("Longclick Listener")
+            timingLogger.addSplit("LongClick Listener")
 
-            timingLogger.dumpToLog()
             setAnimation(holder.card, position)
         }
 

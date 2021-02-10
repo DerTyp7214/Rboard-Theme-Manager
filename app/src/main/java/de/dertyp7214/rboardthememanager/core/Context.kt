@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.os.postDelayed
 
-
 fun Context.getStatusBarHeight(): Int {
     var result = 0
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")

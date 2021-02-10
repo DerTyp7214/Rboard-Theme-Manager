@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package de.dertyp7214.rboardthememanager.keyboardheight
 
 import android.app.Activity
@@ -44,15 +46,15 @@ class KeyboardHeightProvider
         get() = activity.resources.configuration.orientation
 
     init {
-        val inflator = activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        this.popupView = inflator.inflate(R.layout.popupwindow, null, false)
+        val inflater = activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        this.popupView = inflater.inflate(R.layout.popupwindow, null, false)
         contentView = popupView
 
         softInputMode =
             SOFT_INPUT_ADJUST_RESIZE or SOFT_INPUT_STATE_ALWAYS_VISIBLE
         inputMethodMode = INPUT_METHOD_NEEDED
 
-        parentView = activity.findViewById<View>(android.R.id.content)
+        parentView = activity.findViewById(android.R.id.content)
 
         width = 0
         height = ViewGroup.LayoutParams.MATCH_PARENT
@@ -114,14 +116,18 @@ class KeyboardHeightProvider
         val orientation = screenOrientation
         val keyboardHeight = screenSize.y - rect.bottom
 
-        if (keyboardHeight == 0) {
-            notifyKeyboardHeightChanged(0, orientation)
-        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            this.keyboardPortraitHeight = keyboardHeight
-            notifyKeyboardHeightChanged(keyboardPortraitHeight, orientation)
-        } else {
-            this.keyboardLandscapeHeight = keyboardHeight
-            notifyKeyboardHeightChanged(keyboardLandscapeHeight, orientation)
+        when {
+            keyboardHeight == 0 -> {
+                notifyKeyboardHeightChanged(0, orientation)
+            }
+            orientation == Configuration.ORIENTATION_PORTRAIT -> {
+                this.keyboardPortraitHeight = keyboardHeight
+                notifyKeyboardHeightChanged(keyboardPortraitHeight, orientation)
+            }
+            else -> {
+                this.keyboardLandscapeHeight = keyboardHeight
+                notifyKeyboardHeightChanged(keyboardLandscapeHeight, orientation)
+            }
         }
     }
 
@@ -129,12 +135,6 @@ class KeyboardHeightProvider
         if (observer != null) {
             observer!!.onKeyboardHeightChanged(height, orientation)
         }
-    }
-
-    companion object {
-
-        /** The tag for logging purposes  */
-        private val TAG = "sample_KeyboardHeightProvider"
     }
 }
 

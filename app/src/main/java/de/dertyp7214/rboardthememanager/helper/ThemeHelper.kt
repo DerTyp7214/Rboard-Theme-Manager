@@ -26,9 +26,9 @@ import java.io.File
 import java.nio.charset.Charset
 
 enum class RKBDFlagType(val rawValue: String) {
-    boolean("boolean"),
-    long("long"),
-    string("string");
+    BOOLEAN("boolean"),
+    LONG("long"),
+    STRING("string");
 
     override fun toString(): String {
         return "[${javaClass.simpleName}] $name: $rawValue"
@@ -45,7 +45,7 @@ enum class RKBDFlag(val rawValue: String) {
     EmojiPickerV2Columns("emojipickerv2_columns"),
     EnablePopupViewV2("enable_popup_view_v2"),
 
-    //Loggging flags
+    //Logging flags
     Logging1("log_all_sticker_shares_to_training_cache"),
     Logging2("log_all_gif_shares_to_training_cache"),
     Logging3("log_all_emoji_shares_to_training_cache"),
@@ -248,7 +248,7 @@ object ThemeHelper {
         }.let {
             var fileText = it
 
-            if (flagType != RKBDFlagType.string) {
+            if (flagType != RKBDFlagType.STRING) {
                 fileText =
                     if ("<${flagType.rawValue} name=\"${flag.rawValue}\"" in fileText) {
                         fileText.replace(

@@ -82,10 +82,7 @@ class SplashScreen : AppCompatActivity() {
                         )
                     }
 
-                //ThemeUtils.changeThemesPath("/data/GboardThemes")
-
                 getSharedPreferences("auth", Context.MODE_PRIVATE).apply {
-                    //if (getBoolean("registered", false)) {
                     getSharedPreferences("start", Context.MODE_PRIVATE).apply {
                         if (getBoolean("first", true) || ContextCompat.checkSelfPermission(
                                 this@SplashScreen,
@@ -98,9 +95,6 @@ class SplashScreen : AppCompatActivity() {
                             }
                         }
                     }
-                    //} else {
-                    //    startActivity(Intent(this@SplashScreen, AuthenticationActivity::class.java))
-                    //}
                 }
             } else NoRootBottomSheet().show(supportFragmentManager, "YEET")
         } else Snackbar.make(root, R.string.installGboard, Snackbar.LENGTH_INDEFINITE)
@@ -171,15 +165,6 @@ class SplashScreen : AppCompatActivity() {
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
-
-            val name2 = getString(R.string.channel_name_ui_mode)
-            val channelId2 = getString(R.string.ui_mode_service_channel)
-            val descriptionText2 = getString(R.string.channel_description_ui_mode)
-            val importance2 = NotificationManager.IMPORTANCE_NONE
-            val channel2 = NotificationChannel(channelId2, name2, importance2).apply {
-                description = descriptionText2
-            }
-            notificationManager.createNotificationChannel(channel2)
         }
     }
 
@@ -195,7 +180,7 @@ class SplashScreen : AppCompatActivity() {
         } ?: false
     }
 
-    private fun requestGboardStorage() {
-        "pm grant ${Config.GBOARD_PACKAGE_NAME} android.permission.READ_EXTERNAL_STORAGE".runAsCommand()
+    private fun requestGboardStorage(): Boolean {
+        return "pm grant ${Config.GBOARD_PACKAGE_NAME} android.permission.READ_EXTERNAL_STORAGE".runAsCommand()
     }
 }

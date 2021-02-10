@@ -12,7 +12,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import de.dertyp7214.rboardthememanager.R
@@ -29,7 +29,7 @@ class WelcomeFragment : Fragment() {
         ac = requireActivity()
 
         introViewModel = ac.run {
-            ViewModelProviders.of(this)[IntroViewModel::class.java]
+            ViewModelProvider(this)[IntroViewModel::class.java]
         }
     }
 

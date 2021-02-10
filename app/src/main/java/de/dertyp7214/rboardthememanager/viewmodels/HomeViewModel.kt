@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package de.dertyp7214.rboardthememanager.viewmodels
 
 import android.app.Activity
@@ -68,10 +70,6 @@ class HomeViewModel : ViewModel() {
 
     fun observeFilterDownloads(owner: LifecycleOwner, observer: Observer<String>) {
         filterDownloads.observe(owner, observer)
-    }
-
-    fun getKeyboardHeight(): Int {
-        return keyboardHeight.value ?: 0
     }
 
     fun setKeyboardHeight(value: Int) {

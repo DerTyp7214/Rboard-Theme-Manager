@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
 
-
 fun Bitmap.getDominantColor(): Int {
     val newBitmap = Bitmap.createScaledBitmap(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && config == Bitmap.Config.HARDWARE) this.copy(

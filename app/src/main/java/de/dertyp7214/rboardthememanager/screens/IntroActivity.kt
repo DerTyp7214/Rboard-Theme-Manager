@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.button.MaterialButton
@@ -42,7 +42,7 @@ class IntroActivity : AppCompatActivity() {
 
         colorDisabled = if (resources.getBoolean(R.bool.darkmode)) Color.DKGRAY else Color.LTGRAY
 
-        introViewModel = ViewModelProviders.of(this)[IntroViewModel::class.java]
+        introViewModel = ViewModelProvider(this)[IntroViewModel::class.java]
         introViewModel.selectRuntimeData.value = SelectRuntimeData()
         introViewModel.setRboardPermission(
             ContextCompat.checkSelfPermission(
@@ -137,7 +137,6 @@ class IntroActivity : AppCompatActivity() {
     }
 
     private fun startApp() {
-        //if (introViewModel.selectRuntimeData.value?.magisk == true) {
         if (!MagiskUtils.getModules().any { it.id == MODULE_ID }) {
             val meta = ModuleMeta(
                 MODULE_ID,
@@ -166,7 +165,6 @@ class IntroActivity : AppCompatActivity() {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
         }
-        //}
         getSharedPreferences("start", Context.MODE_PRIVATE).apply {
             edit {
                 putBoolean("first", false)

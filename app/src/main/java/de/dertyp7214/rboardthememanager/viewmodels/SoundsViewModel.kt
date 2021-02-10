@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package de.dertyp7214.rboardthememanager.viewmodels
 
 import android.app.Activity
@@ -8,7 +10,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 
 class SoundsViewModel : ViewModel() {
@@ -19,16 +20,8 @@ class SoundsViewModel : ViewModel() {
     private val filter = MutableLiveData<String>()
     private val refetch = MutableLiveData<Boolean>()
 
-    fun getRefetch(): Boolean {
-        return refetch.value == true
-    }
-
     fun setRefetch(r: Boolean) {
         refetch.value = r
-    }
-
-    fun observeRefetch(owner: LifecycleOwner, observer: Observer<Boolean>) {
-        refetch.observe(owner, observer)
     }
 
     fun getFilter(): String {

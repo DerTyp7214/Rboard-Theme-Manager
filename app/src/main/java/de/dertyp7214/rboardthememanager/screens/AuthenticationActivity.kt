@@ -29,20 +29,6 @@ class AuthenticationActivity : AppCompatActivity() {
         )
     }
 
-    private fun openPage() {
-        val controller = authNav.findNavController()
-        when (resources.getResourceEntryName(controller.currentDestination?.id ?: 0)) {
-            getString(R.string.label_nav_auth_main) -> {
-            }
-            getString(R.string.label_nav_auth_login) -> {
-            }
-            getString(R.string.label_nav_auth_success) -> {
-            }
-            getString(R.string.label_nav_auth_failed) -> {
-            }
-        }
-    }
-
     override fun onBackPressed() {
         val controller = authNav.findNavController()
         when (controller.currentDestination?.label ?: "") {

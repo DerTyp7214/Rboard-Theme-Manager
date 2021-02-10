@@ -5,14 +5,12 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.dertyp7214.logs.helpers.Logger
-import com.topjohnwu.superuser.Shell
 
 class Application : Application() {
 
     companion object {
         var context: Context? = null
             private set
-        var SHELL: Shell? = null
     }
 
     override fun onCreate() {

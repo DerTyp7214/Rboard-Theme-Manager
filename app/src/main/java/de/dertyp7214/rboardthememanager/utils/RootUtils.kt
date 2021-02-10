@@ -4,7 +4,7 @@ import com.topjohnwu.superuser.Shell
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-annotation class RunWithRoot(val throwError: Boolean = false)
+annotation class RunWithRoot
 
 object RootUtils {
     @RunWithRoot

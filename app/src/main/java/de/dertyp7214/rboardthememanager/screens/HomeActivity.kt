@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package de.dertyp7214.rboardthememanager.screens
 
 import android.annotation.SuppressLint
@@ -16,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.dertyp7214.preferencesplus.core.dp
 import com.dertyp7214.preferencesplus.core.setHeight
 import com.dertyp7214.preferencesplus.core.setMargins
@@ -83,7 +85,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
             window.decorView.systemUiVisibility = if (isDark) dark else light
         }
 
-        homeViewModel = ViewModelProviders.of(this)[HomeViewModel::class.java]
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         homeViewModel.loadFromStorage(this)
 
         supportFragmentManager.beginTransaction().apply {

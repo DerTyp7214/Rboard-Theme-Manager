@@ -7,7 +7,6 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import java.io.File
 
-
 @SuppressLint("Recycle")
 fun Uri.getFileName(activity: Activity): String {
     var result: String? = null

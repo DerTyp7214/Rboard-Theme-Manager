@@ -17,7 +17,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -64,7 +64,7 @@ class DownloadFragment : Fragment() {
 
         refreshLayout = v.findViewById(R.id.refreshLayout)
         homeViewModel = requireActivity().run {
-            ViewModelProviders.of(this)[HomeViewModel::class.java]
+            ViewModelProvider(this)[HomeViewModel::class.java]
         }
 
         adapter = Adapter(requireActivity(), list)

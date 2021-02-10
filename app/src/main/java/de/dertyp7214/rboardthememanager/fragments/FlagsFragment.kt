@@ -45,7 +45,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EmojiCompatFix,
                     if (newValue) "*" else "disabled",
-                    RKBDFlagType.string
+                    RKBDFlagType.STRING
                 )
             }
         }
@@ -58,7 +58,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EnableJoystickDelete,
                     newValue,
-                    RKBDFlagType.boolean
+                    RKBDFlagType.BOOLEAN
                 )
             }
         }
@@ -71,7 +71,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.DeprecateSearch,
                     !newValue,
-                    RKBDFlagType.boolean
+                    RKBDFlagType.BOOLEAN
                 )
             }
         }
@@ -84,7 +84,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EnableSharing,
                     newValue,
-                    RKBDFlagType.boolean
+                    RKBDFlagType.BOOLEAN
                 )
             }
         }
@@ -98,7 +98,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.ThemedNavBarStyle,
                     if (newValue) 2 else 1,
-                    RKBDFlagType.long
+                    RKBDFlagType.LONG
                 )
             }
         }
@@ -111,7 +111,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EnableEmailProviderCompletion,
                     newValue,
-                    RKBDFlagType.boolean
+                    RKBDFlagType.BOOLEAN
                 )
             }
         }
@@ -121,7 +121,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EnablePopupViewV2,
                     newValue,
-                    RKBDFlagType.boolean
+                    RKBDFlagType.BOOLEAN
                 )
             }
         }
@@ -130,7 +130,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
             if (newValue is Boolean) {
                 GlobalScope.launch {
                     ThemeHelper.loggingFlags.forEach { flag ->
-                        ThemeHelper.applyFlag(flag, newValue, RKBDFlagType.boolean)
+                        ThemeHelper.applyFlag(flag, newValue, RKBDFlagType.BOOLEAN)
                     }
                 }
             }
@@ -145,7 +145,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                     ThemeHelper.applyFlag(
                         RKBDFlag.KeyboardHeightRatio,
                         newValue.toDouble() / 10,
-                        RKBDFlagType.string,
+                        RKBDFlagType.STRING,
                         RKBDFile.Preferences
                     )
                 }
@@ -160,7 +160,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EnableKeyBorder,
                     newValue,
-                    RKBDFlagType.boolean,
+                    RKBDFlagType.BOOLEAN,
                     RKBDFile.Preferences
                 )
             }
@@ -174,7 +174,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EnableSecondarySymbols,
                     newValue,
-                    RKBDFlagType.boolean,
+                    RKBDFlagType.BOOLEAN,
                     RKBDFile.Preferences
                 )
             }
@@ -188,7 +188,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.ShowSuggestions,
                     newValue,
-                    RKBDFlagType.boolean,
+                    RKBDFlagType.BOOLEAN,
                     RKBDFile.Preferences
                 )
             }
@@ -202,7 +202,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyFlag(
                     RKBDFlag.EmojiPickerV2Columns,
                     newValue.toLong(),
-                    RKBDFlagType.long
+                    RKBDFlagType.LONG
                 )
             }
         }
