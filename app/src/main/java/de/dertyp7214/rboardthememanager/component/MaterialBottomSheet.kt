@@ -55,8 +55,8 @@ class MaterialBottomSheet : RoundedBottomSheetDialogFragment() {
         return bottomSheetDialog
     }
 
-    fun <T : View?> findViewById(id: Int): T {
-        return view?.findViewById(id)!!
+    fun <T : View?> findViewById(id: Int): T? {
+        return view?.findViewById(id)
     }
 
     fun setOnCancelListener(runnable: DialogInterface.OnCancelListener) =

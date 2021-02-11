@@ -122,7 +122,11 @@ class SoundsFragment : Fragment() {
                     )
             }
 
-            list.sortBy { it.name.toLowerCase(Locale.getDefault()) }
+            try {
+                list.sortBy { it.name.toLowerCase(Locale.getDefault()) }
+            } catch (e: Exception) {
+                Logger.log(Logger.Companion.Type.ERROR, "FetchDownload", e.localizedMessage)
+            }
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
                 refreshLayout.isRefreshing = false
@@ -247,21 +251,21 @@ class SoundsFragment : Fragment() {
                                             SoundUtils.loadPreviewSounds(context)
                                         )
 
-                                    pair.second.findViewById<MaterialButton>(R.id.download_button).isEnabled =
+                                    pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
                                         true
 
                                     val recyclerView =
                                         pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
-                                    recyclerView.layoutManager = LinearLayoutManager(context)
-                                    recyclerView.setHasFixedSize(true)
-                                    recyclerView.adapter = adapter
-                                    recyclerView.addItemDecoration(
+                                    recyclerView?.layoutManager = LinearLayoutManager(context)
+                                    recyclerView?.setHasFixedSize(true)
+                                    recyclerView?.adapter = adapter
+                                    recyclerView?.addItemDecoration(
                                         StartOffsetItemDecoration(
                                             0
                                         )
                                     )
 
-                                    recyclerView.visibility = View.VISIBLE
+                                    recyclerView?.visibility = View.VISIBLE
                                     pair.first.visibility = View.GONE
 
                                     val bDialog = pair.second.dialog

@@ -81,8 +81,8 @@ fun previewDialog(
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val title = findViewById<TextView>(R.id.dialog_title)
         val author = findViewById<TextView>(R.id.author)
-        title.text = themePack.name
-        author.text = themePack.author
+        title?.text = themePack.name
+        author?.text = themePack.author
 
         dialog?.apply {
             if (this is BottomSheetDialog) {
@@ -90,13 +90,13 @@ fun previewDialog(
             }
         }
 
-        onShow(Pair(progressBar, this))
+        if (progressBar != null) onShow(Pair(progressBar, this))
 
-        val downloadButton: MaterialButton = findViewById(R.id.download_button)
+        val downloadButton: MaterialButton? = findViewById(R.id.download_button)
 
-        downloadButton.isEnabled = false
+        downloadButton?.isEnabled = false
 
-        downloadButton.setOnClickListener {
+        downloadButton?.setOnClickListener {
             clickDownload { dismiss() }
         }
 

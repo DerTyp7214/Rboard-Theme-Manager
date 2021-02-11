@@ -57,10 +57,14 @@ object ThemeUtils {
         }?.map {
             val imageFile = File(themeDir.absolutePath, it.name.removeSuffix(".zip"))
             if (imageFile.exists()) ThemeDataClass(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                    ImageDecoder.decodeBitmap(ImageDecoder.createSource(imageFile))
-                else
-                    BitmapFactory.decodeFile(imageFile.path),
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                        ImageDecoder.decodeBitmap(ImageDecoder.createSource(imageFile))
+                    else
+                        BitmapFactory.decodeFile(imageFile.path)
+                } catch (e: Exception) {
+                    BitmapFactory.decodeFile(imageFile.path)
+                },
                 it.name.removeSuffix(".zip"),
                 it.absolutePath
             )

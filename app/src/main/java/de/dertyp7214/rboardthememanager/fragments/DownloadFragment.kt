@@ -56,6 +56,8 @@ class DownloadFragment : Fragment() {
     private val list = ArrayList<PackItem>()
     private val tmpList = ArrayList<PackItem>()
 
+    private var fetching: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -126,43 +128,44 @@ class DownloadFragment : Fragment() {
     }
 
     private fun fetchDownloadList(callback: () -> Unit = {}) {
-        list.removeAll(list)
-        tmpList.clear()
-        Thread {
-            val json = JSONArray().safeParse(URL(PACKS_URL).readText(UTF_8))
-            json.forEach { o, _ ->
-                if (o is JSONObject && o.has("author") && o.has("url") && o.has("title"))
-                    tmpList.add(
-                        PackItem(
-                            o.getString("title"),
-                            o.getString("author"),
-                            o.getString("url")
-                        ).apply {
-                            Logger.log(
-                                Logger.Companion.Type.INFO,
-                                "DOWNLOAD ITEM",
-                                "$name | $author | $url"
-                            )
-                        }
-                    )
-            }
+        if (!fetching) {
+            tmpList.clear()
+            Thread {
+                fetching = true
+                val json = JSONArray().safeParse(URL(PACKS_URL).readText(UTF_8))
+                json.forEach { o, _ ->
+                    if (o is JSONObject && o.has("author") && o.has("url") && o.has("title"))
+                        tmpList.add(
+                            PackItem(
+                                o.getString("title"),
+                                o.getString("author"),
+                                o.getString("url")
+                            ).apply {
+                                Logger.log(
+                                    Logger.Companion.Type.INFO,
+                                    "DOWNLOAD ITEM",
+                                    "$name | $author | $url"
+                                )
+                            }
+                        )
+                }
 
-            val tmp = tmpList
-            tmp.sortBy { it.name.toLowerCase(Locale.getDefault()) }
-            try {
-                tmpList.clear()
-                tmpList.addAll(tmp)
-            } catch (e: Exception) {
-                Logger.log(Logger.Companion.Type.ERROR, "FetchDownload", e.localizedMessage)
-            }
-            list.addAll(tmp)
+                try {
+                    tmpList.sortBy { it.name.toLowerCase(Locale.getDefault()) }
+                } catch (e: Exception) {
+                    Logger.log(Logger.Companion.Type.ERROR, "FetchDownload", e.localizedMessage)
+                }
+                list.removeAll(list)
+                list.addAll(tmpList)
 
-            activity?.runOnUiThread {
-                adapter.notifyDataSetChanged()
-                refreshLayout.isRefreshing = false
-                callback()
-            }
-        }.start()
+                activity?.runOnUiThread {
+                    adapter.notifyDataSetChanged()
+                    refreshLayout.isRefreshing = false
+                    callback()
+                }
+                fetching = false
+            }.start()
+        }
     }
 
     class Adapter(
@@ -225,35 +228,43 @@ class DownloadFragment : Fragment() {
 
                                     ZipHelper().unpackZip(previewsPath, path)
 
-                                    val adapter =
-                                        PreviewAdapter(
-                                            activity,
-                                            ArrayList(ThemeUtils.loadPreviewThemes(activity))
+                                    try {
+                                        val adapter =
+                                            PreviewAdapter(
+                                                activity,
+                                                ArrayList(ThemeUtils.loadPreviewThemes(activity))
+                                            )
+
+                                        pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
+                                            true
+
+                                        val recyclerView =
+                                            pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
+                                        recyclerView?.layoutManager = LinearLayoutManager(activity)
+                                        recyclerView?.setHasFixedSize(true)
+                                        recyclerView?.adapter = adapter
+                                        recyclerView?.addItemDecoration(
+                                            StartOffsetItemDecoration(
+                                                0
+                                            )
                                         )
 
-                                    pair.second.findViewById<MaterialButton>(R.id.download_button).isEnabled =
-                                        true
+                                        recyclerView?.visibility = View.VISIBLE
+                                        pair.first.visibility = View.GONE
 
-                                    val recyclerView =
-                                        pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
-                                    recyclerView.layoutManager = LinearLayoutManager(activity)
-                                    recyclerView.setHasFixedSize(true)
-                                    recyclerView.adapter = adapter
-                                    recyclerView.addItemDecoration(
-                                        StartOffsetItemDecoration(
-                                            0
+                                        val bDialog = pair.second.dialog
+                                        if (bDialog is BottomSheetDialog) {
+                                            Handler(Looper.getMainLooper()).postDelayed({
+                                                bDialog.behavior.state =
+                                                    BottomSheetBehavior.STATE_EXPANDED
+                                            }, 100)
+                                        }
+                                    } catch (e: Exception) {
+                                        Logger.log(
+                                            Logger.Companion.Type.ERROR,
+                                            "Previews",
+                                            e.localizedMessage
                                         )
-                                    )
-
-                                    recyclerView.visibility = View.VISIBLE
-                                    pair.first.visibility = View.GONE
-
-                                    val bDialog = pair.second.dialog
-                                    if (bDialog is BottomSheetDialog) {
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            bDialog.behavior.state =
-                                                BottomSheetBehavior.STATE_EXPANDED
-                                        }, 100)
                                     }
                                 }
                             }
