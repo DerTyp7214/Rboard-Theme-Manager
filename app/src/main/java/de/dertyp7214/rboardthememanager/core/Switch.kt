@@ -20,7 +20,7 @@ fun SwitchMaterial.setSwitchColor(@ColorInt color: Int) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         val trackStates = ColorStateList(
             arrayOf(intArrayOf(-android.R.attr.state_enabled), intArrayOf()),
-            intArrayOf(Color.GRAY, Color.BLACK)
+            intArrayOf(Color.GRAY, Color.TRANSPARENT)
         )
         trackTintList = trackStates
         trackTintMode = PorterDuff.Mode.OVERLAY

@@ -19,4 +19,6 @@
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">@color/inputBorder</color>
     <color name="success">#4CAF50</color>
     <color name="failed">#F44336</color>
+    <color name="bottomSheetDimBackground">#6F000000</color>
+    <color name="switchThumbDeactivated">#5C5C5C</color>
 </resources>

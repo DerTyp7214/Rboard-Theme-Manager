@@ -40,6 +40,13 @@ private fun recordInitialPaddingForView(view: View) = InitialPadding(
     view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom
 )
 
+fun View.parent(max: Int = Int.MAX_VALUE): View {
+    var p = this
+    var index = 0
+    while (p.parent is View && index++ < max) p = p.parent as View
+    return p
+}
+
 fun View.requestApplyInsetsWhenAttached() {
     if (isAttachedToWindow) {
         requestApplyInsets()

@@ -19,7 +19,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.R
-import de.dertyp7214.rboardthememanager.core.setSwitchColor
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.ThemeHelper
 
@@ -63,12 +62,6 @@ class SelectedThemeBottomSheet(
         }
 
         card.setCardBackgroundColor(color)
-        if (resources.getBoolean(R.bool.darkmode)) enableBorderSwitch.setSwitchColor(
-            resources.getColor(
-                R.color.colorAccent,
-                null
-            )
-        )
 
         themeName.text = theme.name.split("_").joinToString(" ") { it.capitalize() }
         themeName.setTextColor(if (!isDark) Color.WHITE else Color.BLACK)
