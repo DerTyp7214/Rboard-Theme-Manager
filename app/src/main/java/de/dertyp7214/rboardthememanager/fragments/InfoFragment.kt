@@ -45,7 +45,7 @@ class InfoFragment : Fragment() {
         binding.versions = Versions(
             getGboardVersion(requireContext()).split("-")[0],
             Build.VERSION.RELEASE,
-            BuildConfig.VERSION_NAME
+            "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
         )
 
         binding.themes = Themes(
