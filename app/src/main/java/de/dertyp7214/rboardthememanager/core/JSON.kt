@@ -22,3 +22,18 @@ fun JSONArray.safeParse(string: String): JSONArray {
 fun JSONArray.forEach(run: (o: Any, index: Int) -> Unit) {
     for (i in 0 until length()) run(get(i), i)
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <V> JSONArray.toList(): ArrayList<V> {
+    val list = ArrayList<V>()
+    forEach { o, _ -> list += o as V }
+    return list
+}
+
+fun <V> JSONObject.getList(key: String): ArrayList<V> {
+    return try {
+        getJSONArray(key).toList()
+    } catch (e: Exception) {
+        ArrayList()
+    }
+}

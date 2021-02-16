@@ -134,4 +134,5 @@
     <string name="share_module">Share Magisk-Module</string>
     <string name="install_pack">Install Pack</string>
     <string name="installGboard">Install Gboard first please!</string>
+    <string name="tags">Tags</string>
 </resources>

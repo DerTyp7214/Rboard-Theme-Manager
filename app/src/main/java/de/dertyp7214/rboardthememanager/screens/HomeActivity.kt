@@ -7,9 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
-import android.view.WindowInsetsController
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
@@ -30,6 +28,7 @@ import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
 import de.dertyp7214.rboardthememanager.core.delayed
 import de.dertyp7214.rboardthememanager.core.getBitmap
+import de.dertyp7214.rboardthememanager.data.Filter
 import de.dertyp7214.rboardthememanager.data.MenuItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
@@ -101,7 +100,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
         searchButton.setOnClickListener { _ ->
             inputBottomSheet =
                 InputBottomSheet(
-                    if (currentFragment == R.id.navigation_themes) homeViewModel.getFilter() else homeViewModel.getFilterDownloads(),
+                    if (currentFragment == R.id.navigation_themes) homeViewModel.getFilter() else homeViewModel.getFilterDownloads().value,
                     { _, keyCode, _ ->
                         if (keyCode == KeyEvent.KEYCODE_BACK) inputBottomSheet?.dismiss()
                         true
@@ -109,7 +108,9 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                     { text, it ->
                         when (currentFragment) {
                             R.id.navigation_themes -> homeViewModel.setFilter(text.toString())
-                            R.id.navigation_downloads -> homeViewModel.setFilterDownloads(text.toString())
+                            R.id.navigation_downloads -> homeViewModel.setFilterDownloads {
+                                Filter(text.toString(), it.tags)
+                            }
                         }
                         it.dismiss()
                     }) { input, _ ->

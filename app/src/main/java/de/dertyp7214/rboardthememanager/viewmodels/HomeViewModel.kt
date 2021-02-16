@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import de.dertyp7214.rboardthememanager.data.Filter
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
 
@@ -20,7 +21,7 @@ class HomeViewModel : ViewModel() {
     private val recyclerViewState = MutableLiveData<Parcelable>()
     private val keyboardHeight = MutableLiveData<Int>()
     private val filter = MutableLiveData<String>()
-    private val filterDownloads = MutableLiveData<String>()
+    private val filterDownloads = MutableLiveData<Filter>()
     private val refetch = MutableLiveData<Boolean>()
     private val refetchDownloads = MutableLiveData<Boolean>()
 
@@ -60,15 +61,19 @@ class HomeViewModel : ViewModel() {
         filter.observe(owner, observer)
     }
 
-    fun getFilterDownloads(): String {
-        return filterDownloads.value ?: ""
+    fun getFilterDownloads(): Filter {
+        return filterDownloads.value ?: Filter("")
     }
 
-    fun setFilterDownloads(f: String) {
+    fun setFilterDownloads(f: Filter) {
         filterDownloads.value = f
     }
 
-    fun observeFilterDownloads(owner: LifecycleOwner, observer: Observer<String>) {
+    fun setFilterDownloads(run: (Filter) -> Filter) {
+        filterDownloads.value = run(getFilterDownloads())
+    }
+
+    fun observeFilterDownloads(owner: LifecycleOwner, observer: Observer<Filter>) {
         filterDownloads.observe(owner, observer)
     }
 

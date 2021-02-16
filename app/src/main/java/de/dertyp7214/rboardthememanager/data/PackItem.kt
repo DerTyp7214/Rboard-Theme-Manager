@@ -1,3 +1,8 @@
 package de.dertyp7214.rboardthememanager.data
 
-data class PackItem(val name: String, val author: String, val url: String)
+data class PackItem(
+    val name: String,
+    val author: String,
+    val url: String,
+    val tags: List<String> = arrayListOf()
+)

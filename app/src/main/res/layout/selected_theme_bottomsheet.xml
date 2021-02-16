@@ -55,7 +55,7 @@
                     android:id="@+id/enable_border_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_crop_din_24px_outlined"
+                    app:srcCompat="@drawable/ic_keyboard_alt_24px_4"
                     tools:ignore="ContentDescription" />
 
                 <TextView

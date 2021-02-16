@@ -1,7 +1,9 @@
 package de.dertyp7214.rboardthememanager.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -10,6 +12,8 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -27,10 +31,14 @@ import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecora
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.topjohnwu.superuser.io.SuFile
+import de.dertyp7214.rboardthememanager.BuildConfig
 import de.dertyp7214.rboardthememanager.Config.PACKS_URL
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.*
+import de.dertyp7214.rboardthememanager.data.Filter
 import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.*
@@ -52,6 +60,8 @@ class DownloadFragment : Fragment() {
     private lateinit var adapter: Adapter
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var refreshLayout: SwipeRefreshLayout
+    private lateinit var tagsGroup: ChipGroup
+    private lateinit var clearTags: Chip
 
     private val list = ArrayList<PackItem>()
     private val tmpList = ArrayList<PackItem>()
@@ -64,10 +74,13 @@ class DownloadFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_download, container, false)
 
+        tagsGroup = v.findViewById(R.id.tags)
         refreshLayout = v.findViewById(R.id.refreshLayout)
         homeViewModel = requireActivity().run {
             ViewModelProvider(this)[HomeViewModel::class.java]
         }
+
+        clearTags = v.findViewById(R.id.clear_tags)
 
         adapter = Adapter(requireActivity(), list)
 
@@ -94,18 +107,31 @@ class DownloadFragment : Fragment() {
             EndOffsetItemDecoration(56.dpToPx(requireContext()).toInt())
         )
 
+        if (homeViewModel.getFilterDownloads().tags.any { it.second }) clearTags.visibility =
+            VISIBLE
+        else clearTags.visibility = GONE
+
+        clearTags.setOnClickListener {
+            homeViewModel.setFilterDownloads {
+                Filter(it.value, it.tags.map { tag -> Pair(tag.first, false) })
+            }
+            refreshChips(homeViewModel.getFilterDownloads().tags, requireActivity())
+        }
+
         homeViewModel.observeFilterDownloads(this) { filter ->
             refreshLayout.isRefreshing = true
             fun filter() {
                 list.clear(adapter)
                 list.addAll(tmpList.filter {
-                    filter.isBlank() || it.name.contains(
-                        filter,
+                    (filter.value.isBlank() || it.name.contains(
+                        filter.value,
                         true
                     ) || it.author.contains(
-                        filter,
+                        filter.value,
                         true
-                    )
+                    )) && (filter.tags.filter { tag -> tag.second }.map { tag -> tag.first }
+                        .containsAny(it.tags) || !filter.tags.map { tag -> tag.second }
+                        .contains(true))
                 }.sortedBy {
                     it.name.toLowerCase(
                         Locale.getDefault()
@@ -139,7 +165,8 @@ class DownloadFragment : Fragment() {
                             PackItem(
                                 o.getString("title"),
                                 o.getString("author"),
-                                o.getString("url")
+                                o.getString("url"),
+                                o.getList("tags")
                             ).apply {
                                 Logger.log(
                                     Logger.Companion.Type.INFO,
@@ -159,12 +186,64 @@ class DownloadFragment : Fragment() {
                 list.addAll(tmpList)
 
                 activity?.runOnUiThread {
+                    homeViewModel.setFilterDownloads {
+                        val tags = ArrayList<Pair<String, Boolean>>()
+                        tmpList.forEach { item ->
+                            tags.addAll(item.tags.map { tag -> Pair(tag, false) })
+                        }
+                        if (BuildConfig.DEBUG) for (i in 0..20) tags.add(Pair("YEET-$i", false))
+                        refreshChips(tags, requireActivity())
+                        Filter(it.value, tags)
+                    }
+
                     adapter.notifyDataSetChanged()
                     refreshLayout.isRefreshing = false
+                    homeViewModel.setRefetchDownloads(false)
                     callback()
                 }
                 fetching = false
             }.start()
+        }
+    }
+
+    private fun refreshChips(tags: List<Pair<String, Boolean>>, activity: Activity) {
+        tagsGroup.removeAllViews()
+        tags.forEach { tag ->
+            val defaultColor = activity.getColor(R.color.primaryTextSec)
+            val accentColor = activity.getColor(R.color.colorAccent)
+            val accentTransparentColor =
+                activity.getColor(R.color.colorAccentTransparent)
+
+            val chip = Chip(activity)
+            chip.rippleColor =
+                ColorStateList.valueOf(if (tag.second) accentColor else defaultColor)
+            chip.chipBackgroundColor =
+                ColorStateList.valueOf(if (tag.second) accentTransparentColor.changeAlpha(0x30) else Color.TRANSPARENT)
+            chip.chipStrokeColor =
+                ColorStateList.valueOf(if (tag.second) accentColor else defaultColor)
+            chip.chipStrokeWidth = 1.dpToPx(activity)
+            chip.text = tag.first
+            chip.setOnClickListener {
+                toggleTag(tag.first, !tag.second)
+                refreshChips(homeViewModel.getFilterDownloads().tags, activity)
+            }
+
+            if (tags.any { it.second }) clearTags.visibility =
+                VISIBLE
+            else clearTags.visibility = GONE
+
+            tagsGroup.addView(chip)
+
+        }
+    }
+
+    private fun toggleTag(tag: String, value: Boolean) {
+        homeViewModel.setFilterDownloads {
+            val tags = ArrayList<Pair<String, Boolean>>()
+            it.tags.forEach { item ->
+                tags.add(Pair(item.first, if (item.first == tag) value else item.second))
+            }
+            Filter(it.value, tags)
         }
     }
 
@@ -249,8 +328,8 @@ class DownloadFragment : Fragment() {
                                             )
                                         )
 
-                                        recyclerView?.visibility = View.VISIBLE
-                                        pair.first.visibility = View.GONE
+                                        recyclerView?.visibility = VISIBLE
+                                        pair.first.visibility = GONE
 
                                         val bDialog = pair.second.dialog
                                         if (bDialog is BottomSheetDialog) {
