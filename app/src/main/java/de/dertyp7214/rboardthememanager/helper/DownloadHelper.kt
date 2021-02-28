@@ -75,6 +75,7 @@ fun previewDialog(
     previewPath: String,
     themePack: PackItem,
     clickDownload: (closeDialog: () -> Unit) -> Unit = { it() },
+    onClose: () -> Unit = { },
     onShow: (Pair<ProgressBar, MaterialBottomSheet>) -> Unit
 ) {
     MaterialBottomSheet().show(activity.supportFragmentManager, R.layout.preview) {
@@ -90,19 +91,23 @@ fun previewDialog(
             }
         }
 
-        if (progressBar != null) onShow(Pair(progressBar, this))
-
         val downloadButton: MaterialButton? = findViewById(R.id.download_button)
 
         downloadButton?.isEnabled = false
 
         downloadButton?.setOnClickListener {
-            clickDownload { dismiss() }
+            clickDownload {
+                dismiss()
+                onClose()
+            }
         }
 
         setOnCancelListener {
             File(previewPath).deleteRecursively()
+            onClose()
         }
+
+        if (progressBar != null) onShow(Pair(progressBar, this))
     }
 }
 

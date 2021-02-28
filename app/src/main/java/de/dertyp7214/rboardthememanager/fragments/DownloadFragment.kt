@@ -2,10 +2,8 @@ package de.dertyp7214.rboardthememanager.fragments
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,8 +15,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -40,10 +36,8 @@ import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.Filter
 import de.dertyp7214.rboardthememanager.data.PackItem
-import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.*
 import de.dertyp7214.rboardthememanager.screens.HomeActivity
-import de.dertyp7214.rboardthememanager.utils.ColorUtils
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
@@ -403,96 +397,6 @@ class DownloadFragment : Fragment() {
             val title: TextView = v.findViewById(R.id.title)
             val author: TextView = v.findViewById(R.id.author)
             val image: ImageView = v.findViewById(R.id.image)
-        }
-    }
-}
-
-private class PreviewAdapter(
-    private val context: Context,
-    private val list: List<ThemeDataClass>
-) : RecyclerView.Adapter<PreviewAdapter.ViewHolder>() {
-
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private val default = context.resources.getDrawable(
-        R.drawable.ic_keyboard,
-        null
-    ).getBitmap()
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
-        return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.theme_grid_item_single,
-                parent,
-                false
-            )
-        )
-    }
-
-    override fun getItemCount(): Int = list.size
-
-    override fun onBindViewHolder(
-        holder: ViewHolder,
-        position: Int
-    ) {
-        val dataClass = list[position]
-        val color = ColorUtils.dominantColor(dataClass.image ?: default)
-        if (holder.gradient != null) {
-            val gradient = GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT,
-                intArrayOf(color, Color.TRANSPARENT)
-            )
-            holder.gradient.background = gradient
-        }
-
-        holder.themeImage.setImageBitmap(dataClass.image ?: default)
-        holder.themeImage.alpha = if (dataClass.image != null) 1F else .3F
-
-        holder.themeName.text =
-            dataClass.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
-        holder.themeNameSelect.text =
-            dataClass.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
-
-        holder.themeName.setTextColor(if (ColorUtils.isColorLight(color)) Color.BLACK else Color.WHITE)
-
-        if (dataClass.selected)
-            holder.selectOverlay.alpha = 1F
-        else
-            holder.selectOverlay.alpha = 0F
-
-        holder.card.setCardBackgroundColor(color)
-
-        holder.card.setOnClickListener {
-            val success = ThemeHelper.installTheme(SuFile(dataClass.path))
-                    && if (dataClass.image != null) ThemeHelper.installTheme(
-                SuFile(
-                    dataClass.path.removeSuffix(
-                        ".zip"
-                    )
-                )
-            )
-            else true
-            Logger.log(
-                Logger.Companion.Type.DEBUG,
-                "INSTALL THEME",
-                "${dataClass.name}: $success | Image: ${dataClass.image != null}"
-            )
-            if (success) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val themeImage: ImageView = v.findViewById(R.id.theme_image)
-        val themeName: TextView = v.findViewById(R.id.theme_name)
-        val themeNameSelect: TextView = v.findViewById(R.id.theme_name_selected)
-        val selectOverlay: ViewGroup = v.findViewById(R.id.select_overlay)
-        val card: CardView = v.findViewById(R.id.card)
-        val gradient: View? = try {
-            v.findViewById(R.id.gradient)
-        } catch (e: Exception) {
-            null
         }
     }
 }

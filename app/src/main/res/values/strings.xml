@@ -47,12 +47,6 @@
     <string name="downloading">Downloading</string>
     <string name="downloaded">Downloaded</string>
     <string name="about">About</string>
-    <string name="typ_summary">Developer of this Application</string>
-    <string name="typ_title">DerTyp7214</string>
-    <string name="rk_title">RKBDI</string>
-    <string name="rk_summary">Creator of many themes and the Magisk Module</string>
-    <string name="nylon_title">nylonW</string>
-    <string name="nylon_summary">Co-Developer</string>
     <string name="device">Device</string>
     <string name="themes">Themes</string>
     <string name="themesMode">Themes installed using %s</string>
@@ -75,18 +69,6 @@
     <string name="title_name_popup">Choose a name for the Theme</string>
     <string name="name">Name</string>
     <string name="theme_added">Theme added</string>
-    <string name="typ_twitter">https://twitter.com/DerTyp7214</string>
-    <string name="typ_github">https://github.com/DerTyp7214</string>
-    <string name="rk_twitter">https://twitter.com/RKBDI</string>
-    <string name="rk_github">https://github.com/RadekBledowski</string>
-    <string name="nylon_twitter">https://twitter.com/marcinslusarek</string>
-    <string name="nylon_github">https://github.com/nylonW</string>
-    <string name="twitter">Twitter</string>
-    <string name="github">GitHub</string>
-    <string name="paypal">PayPal</string>
-    <string name="typ_paypal">https://paypal.me/JosuaLengwenath</string>
-    <string name="rk_paypal">https://paypal.me/rkbdi</string>
-    <string name="nylon_paypal">https://paypal.me/nylonw</string>
     <string name="settings">Settings</string>
     <string name="flags">Flags</string>
     <string name="theme_pref">Theme</string>
@@ -135,4 +117,41 @@
     <string name="install_pack">Install Pack</string>
     <string name="installGboard">Install Gboard first please!</string>
     <string name="tags">Tags</string>
+    <string name="default_value">Default</string>
+    <string name="twitter">Twitter</string>
+    <string name="github">GitHub</string>
+    <string name="paypal">PayPal</string>
+
+
+    <string name="typ_summary">Developer of this Application</string>
+    <string name="typ_title">DerTyp7214</string>
+    <string name="typ_twitter">https://twitter.com/DerTyp7214</string>
+    <string name="typ_github">https://github.com/DerTyp7214</string>
+    <string name="typ_paypal">https://paypal.me/JosuaLengwenath</string>
+
+    <string name="rk_title">RKBDI</string>
+    <string name="rk_summary">Creator of many themes and the Magisk Module</string>
+    <string name="rk_twitter">https://twitter.com/RKBDI</string>
+    <string name="rk_github">https://github.com/RadekBledowski</string>
+    <string name="rk_paypal">https://paypal.me/rkbdi2</string>
+
+    <string name="nylon_title">nylonW</string>
+    <string name="nylon_summary">Co-Developer</string>
+    <string name="nylon_twitter">https://twitter.com/marcinslusarek</string>
+    <string name="nylon_github">https://github.com/nylonW</string>
+    <string name="nylon_paypal">https://paypal.me/nylonw</string>
+
+    <string name="pandan_title">DanGLES3</string>
+    <string name="pandan_summary">TODO</string>
+    <string name="pandan_twitter">https://twitter.com/DanielGLES3</string>
+    <string name="pandan_github">https://github.com/DanGLES3</string>
+    <string name="pandan_paypal">https://www.paypal.com/donate?hosted_button_id=GHAYUFKDHUCSU</string>
+    <string name="pandan_image">https://avatars.githubusercontent.com/u/32078304</string>
+
+    <string name="akos_title">AkosPaha</string>
+    <string name="akos_summary">Creator of many themes</string>
+    <string name="akos_twitter">https://twitter.com/pahaakos</string>
+    <string name="akos_github">https://github.com/AkosPaha</string>
+    <string name="akos_paypal">http://paypal.me/akospaha01</string>
+    <string name="akos_image">https://avatars.githubusercontent.com/u/57151668</string>
 </resources>

@@ -88,7 +88,7 @@
             android:title="Show suggestions"
             asp:icon="@drawable/ic_alphabetical" />
 
-        <SeekBarPreference
+        <de.dertyp7214.rboardthememanager.component.CustomDialogPreference
             android:defaultValue="10"
             android:key="flags_keyboard_height_ratio"
             android:max="30"

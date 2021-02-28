@@ -16,20 +16,20 @@ class ImportPack : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_import_pack)
 
-        intent.data?.let {
+        when (intent.data?.let {
             val zip = File(
                 getThemePacksPath(this),
                 it.getFileName(this)
             ).apply { delete(); it.writeToFile(this@ImportPack, this) }
-            if (zip.exists() && ThemeHelper.installTheme(zip, false)) Toast.makeText(
+            if (!zip.exists() || !ThemeHelper.installTheme(zip, false, this)) Toast.makeText(
                 this,
-                R.string.theme_added,
-                Toast.LENGTH_SHORT
+                R.string.error,
+                Toast.LENGTH_LONG
             ).show()
-            else Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show()
             true
-        } ?: Toast.makeText(this, R.string.noFile, Toast.LENGTH_LONG).show()
-
-        finishAndRemoveTask()
+        }) {
+            null -> Toast.makeText(this, R.string.noFile, Toast.LENGTH_LONG).show()
+            false -> finishAndRemoveTask()
+        }
     }
 }

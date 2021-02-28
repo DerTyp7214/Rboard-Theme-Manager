@@ -4,10 +4,27 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dertyp7214.logs.helpers.Logger
+import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import com.topjohnwu.superuser.io.SuFileOutputStream
@@ -16,14 +33,20 @@ import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.getBitmap
 import de.dertyp7214.rboardthememanager.core.moveToCache
 import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
+import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
+import de.dertyp7214.rboardthememanager.utils.ColorUtils
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
+import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import java.io.File
 import java.nio.charset.Charset
+import java.util.*
+import kotlin.collections.ArrayList
 
 enum class RKBDFlagType(val rawValue: String) {
     BOOLEAN("boolean"),
@@ -95,7 +118,7 @@ enum class RKBDProp(val rawValue: String) {
 }
 
 object ThemeHelper {
-    fun installTheme(zip: File, move: Boolean = true): Boolean {
+    fun installTheme(zip: File, move: Boolean = true, activity: FragmentActivity? = null): Boolean {
         return if (zip.extension == "pack") {
             Application.context.let {
                 if (it != null) {
@@ -111,9 +134,68 @@ object ThemeHelper {
                         ZipHelper().unpackZip(installDir.absolutePath, newZip.absolutePath)
                         newZip.delete()
                         if (installDir.isDirectory) {
-                            var noError = false
-                            installDir.listFiles()?.forEach { theme ->
-                                if (installTheme(theme) && !noError) noError = true
+                            var noError = true
+                            val themes = ArrayList<SuFile>()
+                            installDir.listFiles()?.let { files -> themes.addAll(files) }
+
+                            activity?.let { activity ->
+                                val packItem = PackItem("Shared Pack", "Rboard Theme Manager", "")
+                                previewDialog(
+                                    activity,
+                                    installDir.absolutePath,
+                                    packItem,
+                                    { closeDialog ->
+                                        var noErrorInstall = true
+                                        themes.forEach { theme ->
+                                            if (!installTheme(theme)) noErrorInstall = false
+                                        }
+                                        if (noErrorInstall) Toast.makeText(
+                                            activity,
+                                            R.string.theme_added,
+                                            Toast.LENGTH_LONG
+                                        ).show() else Toast.makeText(
+                                            activity,
+                                            R.string.error,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        closeDialog()
+                                    }, {
+                                        activity.finishAndRemoveTask()
+                                    }) { pair ->
+                                    val adapter =
+                                        PreviewAdapter(
+                                            activity,
+                                            ArrayList(ThemeUtils.loadThemes(installDir))
+                                        )
+
+                                    pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
+                                        true
+
+                                    val recyclerView =
+                                        pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
+                                    recyclerView?.layoutManager = LinearLayoutManager(activity)
+                                    recyclerView?.setHasFixedSize(true)
+                                    recyclerView?.adapter = adapter
+                                    recyclerView?.addItemDecoration(
+                                        StartOffsetItemDecoration(
+                                            0
+                                        )
+                                    )
+
+                                    recyclerView?.visibility = View.VISIBLE
+                                    pair.first.visibility = View.GONE
+
+                                    val bDialog = pair.second.dialog
+                                    if (bDialog is BottomSheetDialog) {
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            bDialog.behavior.state =
+                                                BottomSheetBehavior.STATE_EXPANDED
+                                        }, 100)
+                                    }
+                                }
+                                true
+                            } ?: themes.forEach { theme ->
+                                if (!installTheme(theme)) noError = false
                             }
                             noError
                         } else false
@@ -354,5 +436,95 @@ object ThemeHelper {
             .use { outputStreamWriter ->
                 outputStreamWriter.write(content)
             }
+    }
+}
+
+class PreviewAdapter(
+    private val context: Context,
+    private val list: List<ThemeDataClass>
+) : RecyclerView.Adapter<PreviewAdapter.ViewHolder>() {
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private val default = context.resources.getDrawable(
+        R.drawable.ic_keyboard,
+        null
+    ).getBitmap()
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        return ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.theme_grid_item_single,
+                parent,
+                false
+            )
+        )
+    }
+
+    override fun getItemCount(): Int = list.size
+
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val dataClass = list[position]
+        val color = ColorUtils.dominantColor(dataClass.image ?: default)
+        if (holder.gradient != null) {
+            val gradient = GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                intArrayOf(color, Color.TRANSPARENT)
+            )
+            holder.gradient.background = gradient
+        }
+
+        holder.themeImage.setImageBitmap(dataClass.image ?: default)
+        holder.themeImage.alpha = if (dataClass.image != null) 1F else .3F
+
+        holder.themeName.text =
+            dataClass.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
+        holder.themeNameSelect.text =
+            dataClass.name.split("_").joinToString(" ") { it.capitalize(Locale.getDefault()) }
+
+        holder.themeName.setTextColor(if (ColorUtils.isColorLight(color)) Color.BLACK else Color.WHITE)
+
+        if (dataClass.selected)
+            holder.selectOverlay.alpha = 1F
+        else
+            holder.selectOverlay.alpha = 0F
+
+        holder.card.setCardBackgroundColor(color)
+
+        holder.card.setOnClickListener {
+            val success = ThemeHelper.installTheme(SuFile(dataClass.path))
+                    && if (dataClass.image != null) ThemeHelper.installTheme(
+                SuFile(
+                    dataClass.path.removeSuffix(
+                        ".zip"
+                    )
+                )
+            )
+            else true
+            Logger.log(
+                Logger.Companion.Type.DEBUG,
+                "INSTALL THEME",
+                "${dataClass.name}: $success | Image: ${dataClass.image != null}"
+            )
+            if (success) Toast.makeText(context, R.string.theme_added, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        val themeImage: ImageView = v.findViewById(R.id.theme_image)
+        val themeName: TextView = v.findViewById(R.id.theme_name)
+        val themeNameSelect: TextView = v.findViewById(R.id.theme_name_selected)
+        val selectOverlay: ViewGroup = v.findViewById(R.id.select_overlay)
+        val card: CardView = v.findViewById(R.id.card)
+        val gradient: View? = try {
+            v.findViewById(R.id.gradient)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

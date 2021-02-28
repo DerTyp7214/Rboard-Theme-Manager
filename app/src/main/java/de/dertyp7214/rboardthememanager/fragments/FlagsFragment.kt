@@ -8,6 +8,7 @@ import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileInputStream
 import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.component.CustomDialogPreference
 import de.dertyp7214.rboardthememanager.core.booleanOrNull
 import de.dertyp7214.rboardthememanager.core.iterator
 import de.dertyp7214.rboardthememanager.helper.*
@@ -136,7 +137,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        bindPreference<SeekBarPreference>(
+        bindPreference<CustomDialogPreference>(
             "flags_keyboard_height_ratio",
             RKBDFlag.KeyboardHeightRatio
         ) { newValue ->
@@ -144,7 +145,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                 GlobalScope.launch {
                     ThemeHelper.applyFlag(
                         RKBDFlag.KeyboardHeightRatio,
-                        newValue.toDouble() / 10,
+                        newValue.toDouble() / 100,
                         RKBDFlagType.STRING,
                         RKBDFile.Preferences
                     )
@@ -304,13 +305,18 @@ class FlagsFragment : PreferenceFragmentCompat() {
                         }
                         is SeekBarPreference -> {
                             val default = (defaultValues[flag.rawValue] ?: "0.0") as String
-                            setDefaultValue((default.toDouble()).toString())
-                            setSummary("${default.toDouble()}")
+                            setDefaultValue(default)
+                            setSummary(default)
                         }
                         is EditTextPreference -> {
                             val default = (defaultValues[flag.rawValue] ?: "") as String
                             setDefaultValue(default)
                             setSummary(default)
+                        }
+                        is CustomDialogPreference -> {
+                            val default = (defaultValues[flag.rawValue] ?: "0.0") as String
+                            setDefaultValue((default.toDouble() * 100).toInt())
+                            summary = default
                         }
                     }
                 } else {
@@ -327,14 +333,19 @@ class FlagsFragment : PreferenceFragmentCompat() {
 
                         }
                         is SeekBarPreference -> {
-                            val default = sharedPreferences.getInt("${key}_pref", 10)
-                            setDefaultValue((default.toDouble() / 10).toString())
-                            setSummary("${default.toDouble() / 10}")
+                            val default = sharedPreferences.getInt("${key}_pref", 95)
+                            setDefaultValue((default.toDouble() / 100).toString())
+                            setSummary("${default.toDouble() / 100}")
                         }
                         is EditTextPreference -> {
                             val default = sharedPreferences.getString("${key}_pref", "")
                             setDefaultValue(default)
                             setSummary("$default")
+                        }
+                        is CustomDialogPreference -> {
+                            val default = sharedPreferences.getInt("${key}_pref", 95)
+                            setDefaultValue(default)
+                            setSummary(default / 100)
                         }
 
                     }
@@ -356,7 +367,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
                                 }
                                 is SeekBarPreference -> {
                                     if (newValue is Int) {
-                                        val value: Double = newValue.toDouble() / 10.toDouble()
+                                        val value: Double = (newValue.toDouble() / 10)
                                         setSummary("$value")
                                     }
                                 }
@@ -364,6 +375,14 @@ class FlagsFragment : PreferenceFragmentCompat() {
                                     if (newValue is String) {
                                         setSummary(newValue)
                                     }
+                                }
+                                is CustomDialogPreference -> {
+                                    if (newValue is Number) {
+                                        summary = (newValue.toDouble() / 100).toString()
+                                    }
+                                }
+                                else -> {
+                                    summary = newValue.toString()
                                 }
                             }
 

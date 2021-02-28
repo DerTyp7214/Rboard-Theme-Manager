@@ -50,8 +50,10 @@ object ThemeUtils {
     }
 
     fun loadPreviewThemes(context: Context): List<ThemeDataClass> {
-        val themeDir = File(getThemePacksPath(context), "previews")
+        return loadThemes(File(getThemePacksPath(context), "previews"))
+    }
 
+    fun loadThemes(themeDir: File): List<ThemeDataClass> {
         return themeDir.listFiles()?.filter {
             it.name.toLowerCase(Locale.ROOT).endsWith("zip")
         }?.map {

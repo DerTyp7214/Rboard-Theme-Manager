@@ -17,156 +17,186 @@
             type="de.dertyp7214.rboardthememanager.data.ClickListener" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:context="de.dertyp7214.rboardthememanager.fragments.AboutFragment">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@string/about_title"
-            android:textColor="@color/primaryText"
-            android:textSize="22sp" />
-
         <LinearLayout
-            android:id="@+id/paypal_typ_layout"
+            android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:onClick="@{() -> clickTyp.click.invoke()}"
+            android:baselineAligned="false"
             android:orientation="horizontal"
-            android:padding="8dp">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UselessParent">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/typ_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="180dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal|top"
+                android:onClick="@{() -> clickTyp.click.invoke()}"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/paypal_typ"
+                <de.dertyp7214.rboardthememanager.component.MaskedImageView
+                    android:id="@+id/typ_image"
+                    android:layout_width="@dimen/imageSize"
+                    android:layout_height="@dimen/imageSize"
+                    android:layout_margin="4dp"
+                    android:maxWidth="@dimen/imageSize"
+                    android:maxHeight="@dimen/imageSize"
+                    app:mask="@drawable/squircle"
+                    tools:ignore="ContentDescription"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/typ_title"
-                    android:textColor="@color/primaryText"
-                    android:textSize="18sp" />
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/paypal_typ_sum"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/typ_summary"
-                    android:textColor="@color/primaryTextSec"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/typ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/typ_title"
+                        android:textColor="@color/primaryText"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/typ_sum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/typ_summary"
+                        android:textAlignment="center"
+                        android:textColor="@color/primaryTextSec"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/typ_image"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_margin="4dp"
-                tools:srcCompat="@tools:sample/avatars"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/paypal_rk_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:onClick="@{() -> clickRk.click.invoke()}"
-            android:orientation="horizontal"
-            android:padding="8dp">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/rk_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="180dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal|top"
+                android:onClick="@{() -> clickRk.click.invoke()}"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/paypal_rk"
+                <de.dertyp7214.rboardthememanager.component.MaskedImageView
+                    android:id="@+id/rk_image"
+                    android:layout_width="@dimen/imageSize"
+                    android:layout_height="@dimen/imageSize"
+                    android:layout_margin="4dp"
+                    android:maxWidth="@dimen/imageSize"
+                    android:maxHeight="@dimen/imageSize"
+                    app:mask="@drawable/squircle"
+                    tools:ignore="ContentDescription"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/rk_title"
-                    android:textColor="@color/primaryText"
-                    android:textSize="18sp" />
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/paypal_rk_sum"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rk_summary"
-                    android:textColor="@color/primaryTextSec"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/rk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rk_title"
+                        android:textColor="@color/primaryText"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/rk_sum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rk_summary"
+                        android:textAlignment="center"
+                        android:textColor="@color/primaryTextSec"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/rk_image"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_margin="4dp"
-                tools:srcCompat="@tools:sample/avatars"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/paypal_nylon_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:onClick="@{() -> clickNylon.click.invoke()}"
-            android:orientation="horizontal"
-            android:padding="8dp">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/nylon_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="180dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal|top"
+                android:onClick="@{() -> clickNylon.click.invoke()}"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/paypal_nylon"
+                <de.dertyp7214.rboardthememanager.component.MaskedImageView
+                    android:id="@+id/nylon_image"
+                    android:layout_width="@dimen/imageSize"
+                    android:layout_height="@dimen/imageSize"
+                    android:layout_margin="4dp"
+                    android:maxWidth="@dimen/imageSize"
+                    android:maxHeight="@dimen/imageSize"
+                    app:mask="@drawable/squircle"
+                    tools:ignore="ContentDescription"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/nylon_title"
-                    android:textColor="@color/primaryText"
-                    android:textSize="18sp" />
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/paypal_nylon_sum"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nylon_summary"
-                    android:textColor="@color/primaryTextSec"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/nylon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/nylon_title"
+                        android:textColor="@color/primaryText"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/nylon_sum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/nylon_summary"
+                        android:textAlignment="center"
+                        android:textColor="@color/primaryTextSec"
+                        android:textSize="16sp" />
+                </LinearLayout>
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/nylon_image"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_margin="4dp"
-                tools:srcCompat="@tools:sample/avatars"
-                tools:ignore="ContentDescription" />
-
         </LinearLayout>
-    </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/users"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+            tools:listitem="@layout/user_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

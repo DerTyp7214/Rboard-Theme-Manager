@@ -17,6 +17,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.dertyp7214.preferencesplus.core.dp
 import com.dertyp7214.preferencesplus.core.setHeight
 import com.dertyp7214.preferencesplus.core.setMargins
@@ -92,119 +93,129 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
             commit()
         }
 
-        homeNav.setOnNavigationItemSelectedListener {
-            navigate(it.itemId, true)
-            true
-        }
+        fun setUpClickListener() {
+            homeNav.setOnNavigationItemSelectedListener {
+                navigate(it.itemId, true)
+                true
+            }
 
-        searchButton.setOnClickListener { _ ->
-            inputBottomSheet =
-                InputBottomSheet(
-                    if (currentFragment == R.id.navigation_themes) homeViewModel.getFilter() else homeViewModel.getFilterDownloads().value,
-                    { _, keyCode, _ ->
-                        if (keyCode == KeyEvent.KEYCODE_BACK) inputBottomSheet?.dismiss()
-                        true
-                    },
-                    { text, it ->
-                        when (currentFragment) {
-                            R.id.navigation_themes -> homeViewModel.setFilter(text.toString())
-                            R.id.navigation_downloads -> homeViewModel.setFilterDownloads {
-                                Filter(text.toString(), it.tags)
-                            }
-                        }
-                        it.dismiss()
-                    }) { input, _ ->
-                    val popupMenu = popupMenu {
-                        style = R.style.PopupMenu
-                        if (currentFragment == R.id.navigation_themes) section {
-                            item {
-                                labelRes = R.string.list_grid
-                                icon = R.drawable.ic_list
-                                callback = {
-                                    homeViewModel.setGridLayout(
-                                        GridLayout.SINGLE,
-                                        this@HomeActivity
-                                    )
-                                    inputBottomSheet?.dismiss()
+            searchButton.setOnClickListener { _ ->
+                inputBottomSheet =
+                    InputBottomSheet(
+                        if (currentFragment == R.id.navigation_themes) homeViewModel.getFilter() else homeViewModel.getFilterDownloads().value,
+                        { _, keyCode, _ ->
+                            if (keyCode == KeyEvent.KEYCODE_BACK) inputBottomSheet?.dismiss()
+                            true
+                        },
+                        { text, it ->
+                            when (currentFragment) {
+                                R.id.navigation_themes -> homeViewModel.setFilter(text.toString())
+                                R.id.navigation_downloads -> homeViewModel.setFilterDownloads {
+                                    Filter(text.toString(), it.tags)
                                 }
                             }
-                            item {
-                                labelRes = R.string.grid_small
-                                icon = R.drawable.grid
-                                callback = {
-                                    homeViewModel.setGridLayout(GridLayout.SMALL, this@HomeActivity)
-                                    inputBottomSheet?.dismiss()
+                            it.dismiss()
+                        }) { input, _ ->
+                        val popupMenu = popupMenu {
+                            style = R.style.PopupMenu
+                            if (currentFragment == R.id.navigation_themes) section {
+                                item {
+                                    labelRes = R.string.list_grid
+                                    icon = R.drawable.ic_list
+                                    callback = {
+                                        homeViewModel.setGridLayout(
+                                            GridLayout.SINGLE,
+                                            this@HomeActivity
+                                        )
+                                        inputBottomSheet?.dismiss()
+                                    }
+                                }
+                                item {
+                                    labelRes = R.string.grid_small
+                                    icon = R.drawable.grid
+                                    callback = {
+                                        homeViewModel.setGridLayout(
+                                            GridLayout.SMALL,
+                                            this@HomeActivity
+                                        )
+                                        inputBottomSheet?.dismiss()
+                                    }
+                                }
+                                item {
+                                    labelRes = R.string.grid_big
+                                    icon = R.drawable.grid
+                                    callback = {
+                                        homeViewModel.setGridLayout(
+                                            GridLayout.BIG,
+                                            this@HomeActivity
+                                        )
+                                        inputBottomSheet?.dismiss()
+                                    }
                                 }
                             }
-                            item {
-                                labelRes = R.string.grid_big
-                                icon = R.drawable.grid
-                                callback = {
-                                    homeViewModel.setGridLayout(GridLayout.BIG, this@HomeActivity)
-                                    inputBottomSheet?.dismiss()
+                            else section {
+                                item {
+                                    label = "Comming Soon"
                                 }
                             }
                         }
-                        else section {
-                            item {
-                                label = "Comming Soon"
-                            }
-                        }
-                    }
-                    popupMenu.show(this, input)
-                }.setKeyBoardHeightObserver(this, homeViewModel)
-            inputBottomSheet?.show(supportFragmentManager, "")
-        }
+                        popupMenu.show(this, input)
+                    }.setKeyBoardHeightObserver(this, homeViewModel)
+                inputBottomSheet?.show(supportFragmentManager, "")
+            }
 
-        menuButton.setOnClickListener {
-            bottomSheet = MenuBottomSheet(arrayListOf(
-                MenuItem(
-                    R.drawable.data,
-                    R.string.data,
-                    false
-                ) {
-                    startActivity(Intent(this, InfoScreen::class.java))
-                    bottomSheet?.dismiss()
-                },
-                MenuItem(
-                    R.drawable.about,
-                    R.string.about,
-                    false
-                ) {
-                    startActivity(Intent(this, AboutActivity::class.java))
-                    bottomSheet?.dismiss()
-                },
-                MenuItem(
-                    R.drawable.settings,
-                    R.string.settings,
-                    false
-                ) {
-                    startActivity(Intent(this, Settings::class.java))
-                    bottomSheet?.dismiss()
-                },
-                MenuItem(
-                    R.drawable.ic_flag_24px,
-                    R.string.flags, false
-                ) {
-                    startActivity(Intent(this, FlagsActivity::class.java))
-                    bottomSheet?.dismiss()
-                }
-            ).apply {
-                if (BuildConfig.DEBUG) {
-                    add(MenuItem(
-                        R.drawable.logs,
-                        R.string.logs,
+            menuButton.setOnClickListener {
+                bottomSheet = MenuBottomSheet(arrayListOf(
+                    MenuItem(
+                        R.drawable.data,
+                        R.string.data,
                         false
                     ) {
-                        startActivity(Intent(this@HomeActivity, LogsScreen::class.java))
+                        startActivity(Intent(this, InfoScreen::class.java))
                         bottomSheet?.dismiss()
-                    })
-                }
-            }, "",
-                getThemeView(ThemeUtils.getActiveTheme())
-            )
-            bottomSheet?.show(supportFragmentManager, "")
+                    },
+                    MenuItem(
+                        R.drawable.about,
+                        R.string.about,
+                        false
+                    ) {
+                        startActivity(Intent(this, AboutActivity::class.java))
+                        bottomSheet?.dismiss()
+                    },
+                    MenuItem(
+                        R.drawable.settings,
+                        R.string.settings,
+                        false
+                    ) {
+                        startActivity(Intent(this, Settings::class.java))
+                        bottomSheet?.dismiss()
+                    },
+                    MenuItem(
+                        R.drawable.ic_flag_24px,
+                        R.string.flags, false
+                    ) {
+                        startActivity(Intent(this, FlagsActivity::class.java))
+                        bottomSheet?.dismiss()
+                    }
+                ).apply {
+                    if (BuildConfig.DEBUG) {
+                        add(MenuItem(
+                            R.drawable.logs,
+                            R.string.logs,
+                            false
+                        ) {
+                            startActivity(Intent(this@HomeActivity, LogsScreen::class.java))
+                            bottomSheet?.dismiss()
+                        })
+                    }
+                }, "",
+                    getThemeView(ThemeUtils.getActiveTheme())
+                )
+                bottomSheet?.show(supportFragmentManager, "")
+            }
         }
+        lifecycleScope.launchWhenStarted { setUpClickListener() }
+        lifecycleScope.launchWhenResumed { setUpClickListener() }
     }
 
     @SuppressLint("InflateParams")

@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -363,7 +362,7 @@ class HomeGridFragment : Fragment() {
                     FileUtils.getThemePacksPath(activity),
                     data.data!!.getFileName(activity)
                 ).apply { data.data!!.writeToFile(activity, this) }
-            if (ThemeHelper.installTheme(zip, false)) Toast.makeText(
+            if (ThemeHelper.installTheme(zip, false, requireActivity())) Toast.makeText(
                 context,
                 R.string.theme_added,
                 Toast.LENGTH_SHORT

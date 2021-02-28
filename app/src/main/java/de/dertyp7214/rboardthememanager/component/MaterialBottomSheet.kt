@@ -19,6 +19,8 @@ class MaterialBottomSheet : RoundedBottomSheetDialogFragment() {
     private var func: (MaterialBottomSheet.() -> Unit)? = null
     private var resourceId: Int? = null
 
+    private val cancelListeners = ArrayList<() -> Unit>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,6 +45,11 @@ class MaterialBottomSheet : RoundedBottomSheetDialogFragment() {
         return this
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        cancelListeners.forEach { it() }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         bottomSheetDialog.setOnShowListener { dialog ->
@@ -59,8 +66,5 @@ class MaterialBottomSheet : RoundedBottomSheetDialogFragment() {
         return view?.findViewById(id)
     }
 
-    fun setOnCancelListener(runnable: DialogInterface.OnCancelListener) =
-        dialog?.setOnCancelListener(
-            runnable
-        )
+    fun setOnCancelListener(runnable: () -> Unit) = cancelListeners.add(runnable)
 }

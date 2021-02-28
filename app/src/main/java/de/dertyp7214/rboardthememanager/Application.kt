@@ -1,7 +1,8 @@
 package de.dertyp7214.rboardthememanager
 
 import android.app.Application
-import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.dertyp7214.logs.helpers.Logger
@@ -9,7 +10,10 @@ import com.dertyp7214.logs.helpers.Logger
 class Application : Application() {
 
     companion object {
-        var context: Context? = null
+        var context: Application? = null
+            private set
+
+        var uiHandler: Handler? = null
             private set
     }
 
@@ -17,6 +21,7 @@ class Application : Application() {
         super.onCreate()
         Logger.init(this)
         context = this
+        uiHandler = Handler(Looper.getMainLooper())
         PreferenceManager.getDefaultSharedPreferences(this).apply {
             AppCompatDelegate.setDefaultNightMode(
                 getInt(
