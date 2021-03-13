@@ -49,7 +49,7 @@ class InputBottomSheet(
             onMenu(it, this)
         }
 
-        if (!text.isBlank()) input.setText(text)
+        if (text.isNotBlank()) input.setText(text)
         input.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH)
         input.setOnKeyListener(keyListener)
         input.setOnEditorActionListener { _, i, keyEvent ->

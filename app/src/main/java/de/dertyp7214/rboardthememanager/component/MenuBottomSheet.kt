@@ -2,6 +2,7 @@ package de.dertyp7214.rboardthememanager.component
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -65,6 +66,7 @@ class MenuBottomSheet(
 
             override fun getItemCount(): Int = items.size
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onBindViewHolder(holder: ViewHolder, position: Int) {
                 val item = items[position]
 

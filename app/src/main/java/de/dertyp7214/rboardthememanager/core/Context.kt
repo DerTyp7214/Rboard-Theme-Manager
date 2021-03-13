@@ -14,15 +14,6 @@ fun Context.getStatusBarHeight(): Int {
     return result
 }
 
-fun Context.getNavigationBarHeight(): Int {
-    var result = 0
-    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
-    if (resourceId > 0) {
-        result = resources.getDimensionPixelSize(resourceId)
-    }
-    return result
-}
-
 fun delayed(delay: Long, callback: () -> Unit) {
     Handler(Looper.getMainLooper()).postDelayed(delay) { callback() }
 }

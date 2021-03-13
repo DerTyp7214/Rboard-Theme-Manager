@@ -12,8 +12,6 @@ import de.dertyp7214.rboardthememanager.component.CustomDialogPreference
 import de.dertyp7214.rboardthememanager.core.booleanOrNull
 import de.dertyp7214.rboardthememanager.core.iterator
 import de.dertyp7214.rboardthememanager.helper.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
@@ -39,172 +37,84 @@ class FlagsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.flags_preferences, rootKey)
 
-        bindPreference<SwitchPreference>("flags_emoji_fix", RKBDFlag.EmojiCompatFix, { value ->
-            value == "*"
-        }) { newValue ->
-            if (newValue is Boolean) {
+        val flagsGeneral = preferenceManager.findPreference<PreferenceCategory>("flags_general")
+        val gboardPreferences =
+            preferenceManager.findPreference<PreferenceCategory>("gboard_preferences")
+        val gboardProps = preferenceManager.findPreference<PreferenceCategory>("gboard_props")
+
+        val applyFlag = { flag: RKBDFlag, value: Any ->
+            val parsed = flag.parseValToVal(value)
+            try {
                 ThemeHelper.applyFlag(
-                    RKBDFlag.EmojiCompatFix,
-                    if (newValue) "*" else "disabled",
-                    RKBDFlagType.STRING
+                    flag,
+                    parsed,
+                    flag.flagType,
+                    flag.category.file ?: RKBDFile.Flags
                 )
+            } catch (e: Exception) {
             }
         }
 
-        bindPreference<SwitchPreference>(
-            "flags_joystick_delete",
-            RKBDFlag.EnableJoystickDelete
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EnableJoystickDelete,
-                    newValue,
-                    RKBDFlagType.BOOLEAN
-                )
+        fun <V : Preference> putDefaults(preference: V, flag: RKBDFlag): V {
+            preference.setTitle(flag.title)
+            preference.key = flag.key
+            if (flag.icon != null) preference.setIcon(flag.icon)
+            preference.setDefaultValue(flag.defaultValue)
+            preference.isVisible = flag.visible
+
+            flag.props.forEach { (k, v) ->
+                when (k) {
+                    "summary" -> if (v is Int) preference.setSummary(v)
+                }
             }
+
+            when (flag.category) {
+                RKBDCategory.FLAGS_GENERAL ->
+                    flagsGeneral?.addPreference(preference)
+                RKBDCategory.GBOARD_PREFERENCES ->
+                    gboardPreferences?.addPreference(preference)
+                RKBDCategory.GBOARD_PROPS ->
+                    gboardProps?.addPreference(preference)
+            }
+
+            return preference
         }
 
-        bindPreference<SwitchPreference>(
-            "flags_deprecate_search",
-            RKBDFlag.DeprecateSearch, { value -> (value as? Boolean ?: false).not() }
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.DeprecateSearch,
-                    !newValue,
-                    RKBDFlagType.BOOLEAN
-                )
-            }
-        }
-
-        bindPreference<SwitchPreference>(
-            "flags_enable_sharing",
-            RKBDFlag.EnableSharing
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EnableSharing,
-                    newValue,
-                    RKBDFlagType.BOOLEAN
-                )
-            }
-        }
-
-        bindPreference<SwitchPreference>(
-            "flags_nav_bar_theming",
-            RKBDFlag.ThemedNavBarStyle,
-            { value -> value == "2" }
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.ThemedNavBarStyle,
-                    if (newValue) 2 else 1,
-                    RKBDFlagType.LONG
-                )
-            }
-        }
-
-        bindPreference<SwitchPreference>(
-            "flags_email_provider",
-            RKBDFlag.EnableEmailProviderCompletion
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EnableEmailProviderCompletion,
-                    newValue,
-                    RKBDFlagType.BOOLEAN
-                )
-            }
-        }
-
-        bindPreference<SwitchPreference>("flags_popup_v2", RKBDFlag.EnablePopupViewV2) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EnablePopupViewV2,
-                    newValue,
-                    RKBDFlagType.BOOLEAN
-                )
-            }
-        }
-
-        bindPreference<SwitchPreference>("flags_logging", RKBDFlag.Logging1) { newValue ->
-            if (newValue is Boolean) {
-                GlobalScope.launch {
-                    ThemeHelper.loggingFlags.forEach { flag ->
-                        ThemeHelper.applyFlag(flag, newValue, RKBDFlagType.BOOLEAN)
+        RKBDFlag.values().forEach {
+            when (it.preferenceType) {
+                SwitchPreference::class -> {
+                    putDefaults(SwitchPreference(context), it)
+                    bindPreference<SwitchPreference>(
+                        it.key,
+                        it,
+                        { value -> value == it.parseValToVal(it.defaultValue as Boolean) }) { newValue ->
+                        applyFlag(it, newValue)
                     }
                 }
-            }
-        }
+                EditTextPreference::class -> {
+                    val preference = putDefaults(EditTextPreference(context), it)
 
-        bindPreference<CustomDialogPreference>(
-            "flags_keyboard_height_ratio",
-            RKBDFlag.KeyboardHeightRatio
-        ) { newValue ->
-            if (newValue is Int) {
-                GlobalScope.launch {
-                    ThemeHelper.applyFlag(
-                        RKBDFlag.KeyboardHeightRatio,
-                        newValue.toDouble() / 100,
-                        RKBDFlagType.STRING,
-                        RKBDFile.Preferences
-                    )
+                    it.props.forEach { (k, v) ->
+                        when (k) {
+                            "dialogLayout" -> if (v is Int) preference.dialogLayoutResource = v
+                        }
+                    }
+                    bindPreference<EditTextPreference>(
+                        it.key,
+                        it
+                    ) { newValue ->
+                        applyFlag(it, newValue)
+                    }
                 }
-            }
-        }
-
-        bindPreference<SwitchPreference>(
-            "flags_enable_key_border",
-            RKBDFlag.EnableKeyBorder
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EnableKeyBorder,
-                    newValue,
-                    RKBDFlagType.BOOLEAN,
-                    RKBDFile.Preferences
-                )
-            }
-        }
-
-        bindPreference<SwitchPreference>(
-            "flags_enable_secondary_symbols",
-            RKBDFlag.EnableSecondarySymbols
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EnableSecondarySymbols,
-                    newValue,
-                    RKBDFlagType.BOOLEAN,
-                    RKBDFile.Preferences
-                )
-            }
-        }
-
-        bindPreference<SwitchPreference>(
-            "flags_show_suggestions",
-            RKBDFlag.ShowSuggestions
-        ) { newValue ->
-            if (newValue is Boolean) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.ShowSuggestions,
-                    newValue,
-                    RKBDFlagType.BOOLEAN,
-                    RKBDFile.Preferences
-                )
-            }
-        }
-
-        bindPreference<EditTextPreference>(
-            "flags_emoji_picker_columns",
-            RKBDFlag.EmojiPickerV2Columns
-        ) { newValue ->
-            if (newValue is String && newValue.toLongOrNull() != null) {
-                ThemeHelper.applyFlag(
-                    RKBDFlag.EmojiPickerV2Columns,
-                    newValue.toLong(),
-                    RKBDFlagType.LONG
-                )
+                CustomDialogPreference::class -> {
+                    putDefaults(CustomDialogPreference(context), it)
+                    bindPreference<CustomDialogPreference>(
+                        it.key,
+                        it
+                    ) { newValue ->
+                        applyFlag(it, newValue)
+                    }
+                }
             }
         }
 

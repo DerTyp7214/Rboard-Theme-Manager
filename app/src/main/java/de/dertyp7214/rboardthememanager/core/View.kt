@@ -2,7 +2,6 @@ package de.dertyp7214.rboardthememanager.core
 
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 
 fun View.setMargin(
     leftMargin: Int? = null, topMargin: Int? = null,
@@ -20,26 +19,6 @@ fun View.setMargin(
     }
 }
 
-fun View.doOnApplyWindowInsets(f: (View, WindowInsets, InitialPadding) -> Unit) {
-    val initialPadding = recordInitialPaddingForView(this)
-
-    setOnApplyWindowInsetsListener { v, insets ->
-        f(v, insets, initialPadding)
-        insets
-    }
-
-    requestApplyInsetsWhenAttached()
-}
-
-data class InitialPadding(
-    val left: Int, val top: Int,
-    val right: Int, val bottom: Int
-)
-
-private fun recordInitialPaddingForView(view: View) = InitialPadding(
-    view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom
-)
-
 fun View.parent(max: Int = Int.MAX_VALUE): View {
     var p = this
     var index = 0
@@ -47,17 +26,3 @@ fun View.parent(max: Int = Int.MAX_VALUE): View {
     return p
 }
 
-fun View.requestApplyInsetsWhenAttached() {
-    if (isAttachedToWindow) {
-        requestApplyInsets()
-    } else {
-        addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: View) {
-                v.removeOnAttachStateChangeListener(this)
-                v.requestApplyInsets()
-            }
-
-            override fun onViewDetachedFromWindow(v: View) = Unit
-        })
-    }
-}

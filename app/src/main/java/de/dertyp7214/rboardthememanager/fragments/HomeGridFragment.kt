@@ -15,6 +15,7 @@ import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.animation.doOnEnd
@@ -60,8 +61,24 @@ class HomeGridFragment : Fragment() {
     private lateinit var toolbar: Toolbar
     private val themeList = ArrayList<ThemeDataClass>()
 
-    private val addTheme = 187
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK && result.data != null && result.data?.data != null) {
+            val activity = requireActivity()
+            val zip =
+                File(
+                    FileUtils.getThemePacksPath(activity),
+                    result.data!!.data!!.getFileName(activity)
+                ).apply { result.data!!.data!!.writeToFile(activity, this) }
+            if (ThemeHelper.installTheme(zip, false, requireActivity())) Toast.makeText(
+                context,
+                R.string.theme_added,
+                Toast.LENGTH_SHORT
+            ).show()
+            homeViewModel.setRefetch(true)
+        }
+    }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -116,7 +133,7 @@ class HomeGridFragment : Fragment() {
                 .setType("application/*")
                 .setAction(Intent.ACTION_GET_CONTENT)
 
-            startActivityForResult(Intent.createChooser(intent, "Select a theme"), addTheme)
+            startForResult.launch(Intent.createChooser(intent, "Select a theme"))
         }
 
         val adapter =
@@ -225,6 +242,17 @@ class HomeGridFragment : Fragment() {
             }
         }
 
+        val changeSet = { themeList: ArrayList<ThemeDataClass>?, refetch: Boolean ->
+            if (themeList != null) homeViewModel.setThemes(themeList)
+            recyclerView.stopScroll()
+            adapter.dataSetChanged()
+            refreshLayout.isRefreshing = false
+            if (refetch) {
+                if (homeViewModel.getRefetch()) homeViewModel.setRefetch(false)
+            } else homeViewModel.setFilter(homeViewModel.getFilter())
+            recyclerView.scheduleLayoutAnimation()
+        }
+
         homeViewModel.observeFilter(this) { filter ->
             refreshLayout.isRefreshing = true
             themeList.clear(adapter)
@@ -240,14 +268,7 @@ class HomeGridFragment : Fragment() {
                         Locale.ROOT
                     )
                 })
-                activity?.runOnUiThread {
-                    homeViewModel.setThemes(themeList)
-                    recyclerView.stopScroll()
-                    adapter.dataSetChanged()
-                    refreshLayout.isRefreshing = false
-                    if (homeViewModel.getRefetch()) homeViewModel.setRefetch(false)
-                    recyclerView.scheduleLayoutAnimation()
-                }
+                activity?.runOnUiThread { changeSet(themeList, true) }
                 keyboardImg.alpha = if (themeList.size > 0) 0F else 1F
             }.start()
         }
@@ -259,23 +280,14 @@ class HomeGridFragment : Fragment() {
                     themeList.addAll(sortedBy { it.name.toLowerCase(Locale.ROOT) })
                 }
                 activity?.runOnUiThread {
-                    homeViewModel.setThemes(themeList)
-                    recyclerView.stopScroll()
-                    adapter.dataSetChanged()
-                    refreshLayout.isRefreshing = false
-                    homeViewModel.setFilter(homeViewModel.getFilter())
-                    recyclerView.scheduleLayoutAnimation()
+                    changeSet(themeList, false)
                     keyboardImg.alpha = if (themeList.size > 0) 0F else 1F
                 }
             }.start()
         } else {
             themeList.clear(adapter)
             themeList.addAll(homeViewModel.getThemes())
-            recyclerView.stopScroll()
-            adapter.dataSetChanged()
-            refreshLayout.isRefreshing = false
-            homeViewModel.setFilter(homeViewModel.getFilter())
-            recyclerView.scheduleLayoutAnimation()
+            changeSet(null, false)
         }
 
         val columns = if (homeViewModel.getGridLayout() == GridLayout.SINGLE) 1 else 2
@@ -352,25 +364,6 @@ class HomeGridFragment : Fragment() {
         toolbar.setMargins(0, margin, 0, 0)
     }
 
-    @SuppressLint("InflateParams", "SdCardPath")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == addTheme && resultCode == RESULT_OK && data != null && data.data != null) {
-            val activity = requireActivity()
-            val zip =
-                File(
-                    FileUtils.getThemePacksPath(activity),
-                    data.data!!.getFileName(activity)
-                ).apply { data.data!!.writeToFile(activity, this) }
-            if (ThemeHelper.installTheme(zip, false, requireActivity())) Toast.makeText(
-                context,
-                R.string.theme_added,
-                Toast.LENGTH_SHORT
-            ).show()
-            homeViewModel.setRefetch(true)
-        }
-    }
-
     override fun onDetach() {
         super.onDetach()
         homeViewModel.setRecyclerViewState(recyclerView.layoutManager?.onSaveInstanceState())
@@ -441,7 +434,7 @@ class HomeGridFragment : Fragment() {
 
         override fun getItemCount(): Int = list.size
 
-        @SuppressLint("SetTextI18n", "DefaultLocale")
+        @SuppressLint("SetTextI18n", "DefaultLocale", "NotifyDataSetChanged")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val timingLogger = TimeLogger("OnBind Adapter", false)
             timingLogger.reset()
@@ -533,6 +526,7 @@ class HomeGridFragment : Fragment() {
             setAnimation(holder.card, position)
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         fun dataSetChanged() {
             lastPosition =
                 recyclerView?.layoutManager?.let { (it as GridLayoutManager).findLastVisibleItemPosition() }

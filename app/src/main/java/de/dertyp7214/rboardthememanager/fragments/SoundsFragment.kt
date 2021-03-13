@@ -101,6 +101,7 @@ class SoundsFragment : Fragment() {
         return v
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun fetchDownloadList() {
         list.removeAll(list)
         Thread {

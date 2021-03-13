@@ -81,7 +81,7 @@ class LogsScreen : AppCompatActivity() {
                     packageName,
                     tar
                 )
-                ShareCompat.IntentBuilder.from(this)
+                ShareCompat.IntentBuilder(this)
                     .setStream(uri)
                     .setType("*/*")
                     .intent

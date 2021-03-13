@@ -13,6 +13,8 @@ import de.dertyp7214.rboardthememanager.R
 class CustomDialogPreference(context: Context?, attrs: AttributeSet?) :
     DialogPreference(context, attrs) {
 
+    constructor(context: Context?): this(context, null)
+
     private var defaultValue: Int = 95
 
     override fun onClick() {

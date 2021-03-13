@@ -14,10 +14,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.cardview.widget.CardView
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.EditTextPreference
+import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dertyp7214.logs.helpers.Logger
@@ -33,6 +36,7 @@ import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.Config.GBOARD_PACKAGE_NAME
 import de.dertyp7214.rboardthememanager.Config.MAGISK_THEME_LOC
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.component.CustomDialogPreference
 import de.dertyp7214.rboardthememanager.core.getBitmap
 import de.dertyp7214.rboardthememanager.core.moveToCache
 import de.dertyp7214.rboardthememanager.core.runAsCommand
@@ -47,6 +51,8 @@ import java.io.File
 import java.nio.charset.Charset
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.reflect.KClass
 
 enum class RKBDFlagType(val rawValue: String) {
     BOOLEAN("boolean"),
@@ -58,36 +64,165 @@ enum class RKBDFlagType(val rawValue: String) {
     }
 }
 
-enum class RKBDFlag(val rawValue: String) {
-    EmojiCompatFix("emoji_compat_app_whitelist"),
-    EnableJoystickDelete("enable_joystick_delete"),
-    DeprecateSearch("deprecate_search"),
-    ThemedNavBarStyle("themed_nav_bar_style"),
-    EnableSharing("enable_sharing"),
-    EnableEmailProviderCompletion("enable_email_provider_completion"),
-    EmojiPickerV2Columns("emojipickerv2_columns"),
-    EnablePopupViewV2("enable_popup_view_v2"),
+enum class RKBDCategory(private val category: String) {
+    FLAGS_GENERAL("flags_general"),
+    GBOARD_PREFERENCES("gboard_preferences"),
+    GBOARD_PROPS("gboard_props");
 
-    //Logging flags
-    Logging1("log_all_sticker_shares_to_training_cache"),
-    Logging2("log_all_gif_shares_to_training_cache"),
-    Logging3("log_all_emoji_shares_to_training_cache"),
-    Logging4("log_all_emoji_shares_to_training_cache"),
-    Logging5("log_all_emoji_shares_to_training_cache"),
-    Logging6("log_all_emoji_shares_to_training_cache"),
-    Logging7("log_all_emoji_shares_to_training_cache"),
-    Logging8("log_all_emoji_shares_to_training_cache"),
-    Logging9("log_all_emoji_shares_to_training_cache"),
-    Logging10("log_all_emoji_shares_to_training_cache"),
-    Logging11("log_all_emoji_shares_to_training_cache"),
-    Logging12("log_all_emoji_shares_to_training_cache"),
-    Logging13("log_all_emoji_shares_to_training_cache"),
+    var file: RKBDFile? = null
+        private set
 
-    // Preference flags
-    KeyboardHeightRatio("keyboard_height_ratio"),
-    EnableKeyBorder("enable_key_border"),
-    EnableSecondarySymbols("enable_secondary_symbols"),
-    ShowSuggestions("show_suggestions");
+    operator fun invoke() = category
+    operator fun invoke(file: RKBDFile): RKBDCategory {
+        this.file = file
+        return this
+    }
+}
+
+enum class RKBDFlag(
+    val preferenceType: KClass<*>,
+    val category: RKBDCategory,
+    val rawValue: String,
+    val key: String,
+    @IdRes val title: Int,
+    val defaultValue: Any,
+    @IdRes val icon: Int?,
+    val flagType: RKBDFlagType,
+    val visible: Boolean = true,
+    val props: Map<String, Any> = HashMap(),
+    val parseValToVal: (value: Any) -> Any = { it }
+) {
+    EmojiCompatFix(
+        SwitchPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "emoji_compat_app_whitelist",
+        "flags_emoji_fix",
+        R.string.flags_emoji_fix,
+        false,
+        R.drawable.ic_emoji_compat,
+        RKBDFlagType.STRING,
+        parseValToVal = { if (it == true) "*" else "disabled" }
+    ),
+    EnableJoystickDelete(
+        SwitchPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "enable_joystick_delete",
+        "flags_joystick_delete",
+        R.string.flags_joystick_delete,
+        false,
+        R.drawable.ic_backspace_24px,
+        RKBDFlagType.BOOLEAN
+    ),
+    DeprecateSearch(
+        SwitchPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "deprecate_search",
+        "flags_deprecate_search",
+        R.string.flags_deprecate_search,
+        false,
+        R.drawable.ic_logo,
+        RKBDFlagType.BOOLEAN,
+        false,
+        parseValToVal = { (it as? Boolean ?: false).not() }
+    ),
+    EnableSharing(
+        SwitchPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "enable_sharing",
+        "flags_enable_sharing",
+        R.string.flags_enable_sharing,
+        false,
+        R.drawable.ic_share_24px,
+        RKBDFlagType.BOOLEAN
+    ),
+    ThemedNavBarStyle(
+        SwitchPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "themed_nav_bar_style",
+        "flags_nav_bar_theming",
+        R.string.flags_nav_bar_theming,
+        false,
+        R.drawable.ic_navbar,
+        RKBDFlagType.LONG,
+        parseValToVal = { if (it == true) 2 else 1 }
+    ),
+    EnableEmailProviderCompletion(
+        SwitchPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "enable_email_provider_completion",
+        "flags_email_provider",
+        R.string.flags_email_provider,
+        false,
+        R.drawable.ic_mdi_alternate_email,
+        RKBDFlagType.BOOLEAN
+    ),
+    EmojiPickerV2Columns(
+        EditTextPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "emojipickerv2_columns",
+        "flags_emoji_picker_columns",
+        R.string.flags_emoji_picker_columns,
+        "9",
+        R.drawable.ic_rows,
+        RKBDFlagType.LONG,
+        props = mapOf(
+            Pair("summary", R.string.flags_emoji_picker_columns_summary),
+            Pair("dialogLayout", R.layout.preference_edit_text)
+        ),
+        parseValToVal = { if (it is String && it.toLongOrNull() != null) it.toLong() else it }
+    ),
+    EnablePopupViewV2(
+        SwitchPreference::class,
+        RKBDCategory.FLAGS_GENERAL,
+        "enable_popup_view_v2",
+        "flags_popup_v2",
+        R.string.flags_popup_v2,
+        false,
+        R.drawable.ic_popup_v2,
+        RKBDFlagType.BOOLEAN
+    ),
+
+    EnableKeyBorder(
+        SwitchPreference::class,
+        RKBDCategory.GBOARD_PREFERENCES(RKBDFile.Preferences),
+        "enable_key_border",
+        "flags_enable_key_border",
+        R.string.flags_enable_key_border,
+        false,
+        R.drawable.ic_crop_din_24px_outlined,
+        RKBDFlagType.BOOLEAN
+    ),
+    EnableSecondarySymbols(
+        SwitchPreference::class,
+        RKBDCategory.GBOARD_PREFERENCES(RKBDFile.Preferences),
+        "enable_secondary_symbols",
+        "flags_enable_secondary_symbols",
+        R.string.flags_enable_secondary_symbols,
+        false,
+        R.drawable.ic_numeric,
+        RKBDFlagType.BOOLEAN
+    ),
+    ShowSuggestions(
+        SwitchPreference::class,
+        RKBDCategory.GBOARD_PREFERENCES(RKBDFile.Preferences),
+        "show_suggestions",
+        "flags_show_suggestions",
+        R.string.flags_show_suggestions,
+        false,
+        R.drawable.ic_alphabetical,
+        RKBDFlagType.BOOLEAN
+    ),
+    KeyboardHeightRatio(
+        CustomDialogPreference::class,
+        RKBDCategory.GBOARD_PREFERENCES(RKBDFile.Preferences),
+        "keyboard_height_ratio",
+        "flags_keyboard_height_ratio",
+        R.string.flags_keyboard_height_ratio,
+        10,
+        R.drawable.ic_keyboard_hide_24px_outlined,
+        RKBDFlagType.STRING,
+        parseValToVal = { if (it is Int) it.toDouble() / 100 else it }
+    );
 
     override fun toString(): String {
         return "[${javaClass.simpleName}] $name: $rawValue"
@@ -304,7 +439,7 @@ object ThemeHelper {
             context.packageName,
             zip
         )
-        ShareCompat.IntentBuilder.from(context)
+        ShareCompat.IntentBuilder(context)
             .setStream(uri)
             .setType("application/pack")
             .intent
@@ -402,22 +537,6 @@ object ThemeHelper {
         )
         MagiskUtils.updateModule(meta, file)
     }
-
-    var loggingFlags = arrayListOf(
-        RKBDFlag.Logging1,
-        RKBDFlag.Logging2,
-        RKBDFlag.Logging3,
-        RKBDFlag.Logging4,
-        RKBDFlag.Logging5,
-        RKBDFlag.Logging6,
-        RKBDFlag.Logging7,
-        RKBDFlag.Logging8,
-        RKBDFlag.Logging9,
-        RKBDFlag.Logging10,
-        RKBDFlag.Logging11,
-        RKBDFlag.Logging12,
-        RKBDFlag.Logging13
-    )
 
     fun getSoundsDirectory(): SuFile? {
         val productMedia = SuFile("/system/product/media/audio/ui/KeypressStandard.ogg")

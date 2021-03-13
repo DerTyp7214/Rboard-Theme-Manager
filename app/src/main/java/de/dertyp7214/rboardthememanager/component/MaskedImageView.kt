@@ -34,10 +34,6 @@ class MaskedImageView : androidx.appcompat.widget.AppCompatImageView {
         }
     }
 
-    fun setMask(drawable: Drawable) {
-        mMask = drawable
-    }
-
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas?) {
         val original = when (drawable) {

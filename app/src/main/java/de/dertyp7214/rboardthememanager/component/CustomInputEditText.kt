@@ -58,6 +58,4 @@ class CustomTextInputEditText : TextInputEditText {
         } while (currentView !is TextInputLayout)
         return space
     }
-
-    data class Padding(val l: Int, val t: Int, val r: Int, val b: Int)
 }

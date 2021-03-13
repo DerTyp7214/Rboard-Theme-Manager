@@ -8,6 +8,7 @@ fun Int.dpToPx(context: Context): Float {
     return this * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
 }
 
+@Suppress("unused")
 fun Int.pxToDp(context: Context): Float {
     return this / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
 }

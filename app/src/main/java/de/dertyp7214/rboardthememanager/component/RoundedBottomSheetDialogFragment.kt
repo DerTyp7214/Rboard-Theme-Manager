@@ -2,6 +2,7 @@ package de.dertyp7214.rboardthememanager.component
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.dertyp7214.rboardthememanager.R
@@ -14,10 +15,10 @@ open class RoundedBottomSheetDialogFragment : BottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         BottomSheetDialog(requireContext(), theme)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        view?.parent()
-            ?.setBackgroundColor(requireActivity().getColor(R.color.bottomSheetDimBackground))
+        view.parent()
+            .setBackgroundColor(requireActivity().getColor(R.color.bottomSheetDimBackground))
     }
 }

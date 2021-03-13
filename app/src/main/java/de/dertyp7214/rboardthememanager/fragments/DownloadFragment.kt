@@ -147,6 +147,7 @@ class DownloadFragment : Fragment() {
         return v
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun fetchDownloadList(callback: () -> Unit = {}) {
         if (!fetching) {
             tmpList.clear()
