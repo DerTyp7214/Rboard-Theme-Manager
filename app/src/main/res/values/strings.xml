@@ -122,6 +122,19 @@
     <string name="github">GitHub</string>
     <string name="paypal">PayPal</string>
 
+    <string name="flags_emoji_fix">Emoji compat fix</string>
+    <string name="flags_joystick_delete">Joystick delete</string>
+    <string name="flags_deprecate_search">Google icon</string>
+    <string name="flags_nav_bar_theming">Navbar color</string>
+    <string name="flags_enable_sharing">Share Icon</string>
+    <string name="flags_email_provider">Email provider</string>
+    <string name="flags_emoji_picker_columns">Emoji columns</string>
+    <string name="flags_emoji_picker_columns_summary">Number of emoji in a row</string>
+    <string name="flags_popup_v2">Popup v2</string>
+    <string name="flags_enable_key_border">Enable key border</string>
+    <string name="flags_enable_secondary_symbols">Enable secondary symbols</string>
+    <string name="flags_show_suggestions">Show suggestions</string>
+    <string name="flags_keyboard_height_ratio">Keyboard height ratio</string>
 
     <string name="typ_summary">Developer of this Application</string>
     <string name="typ_title">DerTyp7214</string>
@@ -154,17 +167,4 @@
     <string name="akos_github">https://github.com/AkosPaha</string>
     <string name="akos_paypal">http://paypal.me/akospaha01</string>
     <string name="akos_image">https://avatars.githubusercontent.com/u/57151668</string>
-    <string name="flags_emoji_fix">Emoji compat fix</string>
-    <string name="flags_joystick_delete">Joystick delete</string>
-    <string name="flags_deprecate_search">Google icon</string>
-    <string name="flags_nav_bar_theming">Navbar color</string>
-    <string name="flags_enable_sharing">Share Icon</string>
-    <string name="flags_email_provider">Email provider</string>
-    <string name="flags_emoji_picker_columns">Emoji columns</string>
-    <string name="flags_emoji_picker_columns_summary">Number of emoji in a row</string>
-    <string name="flags_popup_v2">Popup v2</string>
-    <string name="flags_enable_key_border">Enable key border</string>
-    <string name="flags_enable_secondary_symbols">Enable secondary symbols</string>
-    <string name="flags_show_suggestions">Show suggestions</string>
-    <string name="flags_keyboard_height_ratio">Keyboard height ratio</string>
 </resources>

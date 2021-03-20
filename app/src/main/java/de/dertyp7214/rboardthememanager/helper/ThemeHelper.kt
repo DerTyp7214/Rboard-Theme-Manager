@@ -253,7 +253,12 @@ enum class RKBDProp(val rawValue: String) {
 }
 
 object ThemeHelper {
-    fun installTheme(zip: File, move: Boolean = true, activity: FragmentActivity? = null): Boolean {
+    fun installTheme(
+        zip: File,
+        move: Boolean = true,
+        activity: FragmentActivity? = null,
+        close: Boolean = false
+    ): Boolean {
         return if (zip.extension == "pack") {
             Application.context.let {
                 if (it != null) {
@@ -295,7 +300,7 @@ object ThemeHelper {
                                         ).show()
                                         closeDialog()
                                     }, {
-                                        activity.finishAndRemoveTask()
+                                        if (close) activity.finishAndRemoveTask()
                                     }) { pair ->
                                     val adapter =
                                         PreviewAdapter(

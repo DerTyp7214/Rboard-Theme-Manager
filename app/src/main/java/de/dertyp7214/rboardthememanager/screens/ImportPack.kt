@@ -21,7 +21,7 @@ class ImportPack : AppCompatActivity() {
                 getThemePacksPath(this),
                 it.getFileName(this)
             ).apply { delete(); it.writeToFile(this@ImportPack, this) }
-            if (!zip.exists() || !ThemeHelper.installTheme(zip, false, this)) Toast.makeText(
+            if (!zip.exists() || !ThemeHelper.installTheme(zip, false, this, true)) Toast.makeText(
                 this,
                 R.string.error,
                 Toast.LENGTH_LONG
