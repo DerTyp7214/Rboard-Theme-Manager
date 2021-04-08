@@ -167,4 +167,5 @@
     <string name="akos_github">https://github.com/AkosPaha</string>
     <string name="akos_paypal">http://paypal.me/akospaha01</string>
     <string name="akos_image">https://avatars.githubusercontent.com/u/57151668</string>
+    <string name="author">Author</string>
 </resources>

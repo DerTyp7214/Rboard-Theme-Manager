@@ -11,6 +11,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -23,6 +24,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.dertyp7214.logs.helpers.Logger
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -50,6 +52,7 @@ import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
@@ -263,6 +266,7 @@ object ThemeHelper {
             Application.context.let {
                 if (it != null) {
                     val installDir = SuFile(it.cacheDir, "tmpInstall")
+                    installDir.listFiles()?.forEach { file -> file.delete() }
                     val newZip = SuFile(
                         getThemePacksPath(it).apply { if (!exists()) mkdirs() }, zip.name
                     )
@@ -276,10 +280,33 @@ object ThemeHelper {
                         if (installDir.isDirectory) {
                             var noError = true
                             val themes = ArrayList<SuFile>()
-                            installDir.listFiles()?.let { files -> themes.addAll(files) }
+                            var metaName = "Shared Pack"
+                            var metaAuthor = "Rboard Theme Manager"
+                            installDir.listFiles()
+                                ?.let { files ->
+                                    val metaFile =
+                                        files.findLast { file -> file.name.endsWith(".meta") }
+                                    metaFile?.readText()?.apply {
+                                        val matcher =
+                                            Pattern.compile("(name|author)=(.*)\\n").matcher(this)
+                                        while (matcher.find()) {
+                                            when (matcher.group(1)) {
+                                                "name" -> matcher.group(2)
+                                                    ?.let { name -> metaName = name }
+                                                "author" -> matcher.group(2)
+                                                    ?.let { name -> metaAuthor = name }
+                                            }
+                                        }
+                                    }
+                                    themes.addAll(files.filter { file ->
+                                        !file.name.endsWith(
+                                            ".meta"
+                                        )
+                                    })
+                                }
 
                             activity?.let { activity ->
-                                val packItem = PackItem("Shared Pack", "Rboard Theme Manager", "")
+                                val packItem = PackItem(metaName, metaAuthor, "")
                                 previewDialog(
                                     activity,
                                     installDir.absolutePath,
@@ -430,34 +457,57 @@ object ThemeHelper {
 
     fun shareThemes(context: Activity, themes: List<ThemeDataClass>) {
         val files = ArrayList<File>()
-        themes.map { it.moveToCache(context) }.forEach {
-            val image = File(it.path.removeSuffix(".zip"))
-            files.add(File(it.path))
-            if (image.exists()) files.add(image)
-        }
-        val zip = File(context.cacheDir, "themes.pack")
-        zip.delete()
-        ZipHelper().zip(files.map { it.absolutePath }, zip.absolutePath)
-        files.forEach { it.deleteOnExit() }
-        val uri = FileProvider.getUriForFile(
-            context,
-            context.packageName,
-            zip
-        )
-        ShareCompat.IntentBuilder(context)
-            .setStream(uri)
-            .setType("application/pack")
-            .intent
-            .setAction(Intent.ACTION_SEND)
-            .setDataAndType(uri, "application/pack")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).apply {
-                context.startActivity(
-                    Intent.createChooser(
-                        this,
-                        context.getString(R.string.share_themes)
-                    )
+        MaterialDialog(context).show {
+            setContentView(R.layout.share_popup)
+
+            val nameEditText = findViewById<EditText>(R.id.editTextName)
+            val authorEditText = findViewById<EditText>(R.id.editTextAuthor)
+
+            findViewById<MaterialButton>(R.id.cancel).setOnClickListener { dismiss() }
+            findViewById<MaterialButton>(R.id.ok).setOnClickListener {
+                File(context.cacheDir, "pack.meta").apply {
+                    files.add(this)
+                    writeText("name=${
+                        nameEditText.text.let {
+                            if (it.isBlank()) "Shared Pack" else it
+                        }
+                    }\nauthor=${
+                        authorEditText.text.let {
+                            if (it.isBlank()) "Rboard Theme Manager" else it
+                        }
+                    }\n")
+                }
+                themes.map { it.moveToCache(context) }.forEach {
+                    val image = File(it.path.removeSuffix(".zip"))
+                    files.add(File(it.path))
+                    if (image.exists()) files.add(image)
+                }
+                val zip = File(context.cacheDir, "themes.pack")
+                zip.delete()
+                ZipHelper().zip(files.map { it.absolutePath }, zip.absolutePath)
+                files.forEach { it.deleteOnExit() }
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    context.packageName,
+                    zip
                 )
+                ShareCompat.IntentBuilder(context)
+                    .setStream(uri)
+                    .setType("application/pack")
+                    .intent
+                    .setAction(Intent.ACTION_SEND)
+                    .setDataAndType(uri, "application/pack")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).apply {
+                        context.startActivity(
+                            Intent.createChooser(
+                                this,
+                                context.getString(R.string.share_themes)
+                            )
+                        )
+                    }
+                dismiss()
             }
+        }
     }
 
     @SuppressLint("SdCardPath")

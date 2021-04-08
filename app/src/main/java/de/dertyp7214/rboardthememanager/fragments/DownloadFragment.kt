@@ -184,7 +184,9 @@ class DownloadFragment : Fragment() {
                     homeViewModel.setFilterDownloads {
                         val tags = ArrayList<Pair<String, Boolean>>()
                         tmpList.forEach { item ->
-                            tags.addAll(item.tags.map { tag -> Pair(tag, false) })
+                            tags.addAll(item.tags.filter { f1 ->
+                                !tags.map { f2 -> f2.first }.contains(f1)
+                            }.map { tag -> Pair(tag, false) })
                         }
                         if (BuildConfig.DEBUG) for (i in 0..20) tags.add(Pair("YEET-$i", false))
                         refreshChips(tags, requireActivity())
@@ -203,17 +205,18 @@ class DownloadFragment : Fragment() {
 
     private fun refreshChips(tags: List<Pair<String, Boolean>>, activity: Activity) {
         tagsGroup.removeAllViews()
-        tags.forEach { tag ->
-            val defaultColor = activity.getColor(R.color.primaryTextSec)
-            val accentColor = activity.getColor(R.color.colorAccent)
-            val accentTransparentColor =
-                activity.getColor(R.color.colorAccentTransparent)
 
+        val defaultColor = activity.getColor(R.color.primaryTextSec)
+        val accentColor = activity.getColor(R.color.colorAccent)
+        val accentTransparentColor = activity.getColor(R.color.colorAccentTransparent)
+            .changeAlpha(0x30)
+
+        tags.forEach { tag ->
             val chip = Chip(activity)
             chip.rippleColor =
                 ColorStateList.valueOf(if (tag.second) accentColor else defaultColor)
             chip.chipBackgroundColor =
-                ColorStateList.valueOf(if (tag.second) accentTransparentColor.changeAlpha(0x30) else Color.TRANSPARENT)
+                ColorStateList.valueOf(if (tag.second) accentTransparentColor else Color.TRANSPARENT)
             chip.chipStrokeColor =
                 ColorStateList.valueOf(if (tag.second) accentColor else defaultColor)
             chip.chipStrokeWidth = 1.dpToPx(activity)

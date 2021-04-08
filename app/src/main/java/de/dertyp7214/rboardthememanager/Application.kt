@@ -6,6 +6,8 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.dertyp7214.logs.helpers.Logger
+import com.topjohnwu.superuser.Shell
+import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 
 class Application : Application() {
 
@@ -20,6 +22,25 @@ class Application : Application() {
     override fun onCreate() {
         super.onCreate()
         Logger.init(this)
+        Logger.extraData = {
+            StringBuilder("Rooted: ")
+                .append(if (Shell.rootAccess()) "yes" else "no").append("\n")
+                .append("Version-Code: ").append(BuildConfig.VERSION_CODE).append("\n")
+                .append("Version-Name: ").append(BuildConfig.VERSION_NAME).append("\n\n")
+                .apply {
+                    val magisk = MagiskUtils.isMagiskInstalled()
+                    append("Magisk: ").append(if (magisk) "yes" else "no")
+                        .append("\n")
+                    if (magisk) {
+                        append("Magisk-Version: ")
+                            .append(MagiskUtils.getMagiskVersionFullString()).append("\n")
+                        append("Magisk Modules:\n")
+                        MagiskUtils.getModules().forEach { module ->
+                            append("\t\t").append(module.meta.name).append("\n")
+                        }
+                    }
+                }.toString()
+        }
         context = this
         uiHandler = Handler(Looper.getMainLooper())
         PreferenceManager.getDefaultSharedPreferences(this).apply {
