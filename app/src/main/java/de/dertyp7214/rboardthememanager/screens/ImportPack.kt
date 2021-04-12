@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.core.getFileName
 import de.dertyp7214.rboardthememanager.core.writeToFile
-import de.dertyp7214.rboardthememanager.helper.ThemeHelper
+import de.dertyp7214.rboardthememanager.helper.installTheme
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import java.io.File
 
@@ -21,7 +21,7 @@ class ImportPack : AppCompatActivity() {
                 getThemePacksPath(this),
                 it.getFileName(this)
             ).apply { delete(); it.writeToFile(this@ImportPack, this) }
-            if (!zip.exists() || !ThemeHelper.installTheme(zip, false, this, true)) Toast.makeText(
+            if (!zip.exists() || !installTheme(zip, false, this, true)) Toast.makeText(
                 this,
                 R.string.error,
                 Toast.LENGTH_LONG

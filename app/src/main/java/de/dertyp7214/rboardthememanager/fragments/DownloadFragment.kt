@@ -387,7 +387,7 @@ class DownloadFragment : Fragment() {
                         )
                         ZipHelper().unpackZip(cacheDir.absolutePath, path)
                         cacheDir.listFiles()?.forEach {
-                            ThemeHelper.installTheme(it)
+                            installTheme(it)
                         }
                         pair.second.dismiss()
                         callback()

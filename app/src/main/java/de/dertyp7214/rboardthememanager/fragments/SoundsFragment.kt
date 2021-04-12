@@ -196,7 +196,7 @@ class SoundsFragment : Fragment() {
                             override fun end(path: String) {
                                 pair.first.isIndeterminate = true
 
-                                ThemeHelper.getSoundsDirectory()?.path?.let { soundsPath ->
+                                getSoundsDirectory()?.path?.let { soundsPath ->
                                     Logger.log(
                                         Logger.Companion.Type.INFO,
                                         "DOWNLOAD_ZIP",

@@ -45,7 +45,7 @@ class FlagsFragment : PreferenceFragmentCompat() {
         val applyFlag = { flag: RKBDFlag, value: Any ->
             val parsed = flag.parseValToVal(value)
             try {
-                ThemeHelper.applyFlag(
+                applyFlag(
                     flag,
                     parsed,
                     flag.flagType,
@@ -120,43 +120,43 @@ class FlagsFragment : PreferenceFragmentCompat() {
 
         bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_port_b") { newValue ->
             if (newValue is String && newValue.toDoubleOrNull() != null) {
-                ThemeHelper.applyProp(RKBDProp.BottomPadding, newValue.toDouble())
+                applyProp(RKBDProp.BottomPadding, newValue.toDouble())
             }
         }
 
         bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_port_r") { newValue ->
             if (newValue is String && newValue.toDoubleOrNull() != null) {
-                ThemeHelper.applyProp(RKBDProp.RightPadding, newValue.toDouble())
+                applyProp(RKBDProp.RightPadding, newValue.toDouble())
             }
         }
 
         bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_port_l") { newValue ->
             if (newValue is String && newValue.toDoubleOrNull() != null) {
-                ThemeHelper.applyProp(RKBDProp.LeftPadding, newValue.toDouble())
+                applyProp(RKBDProp.LeftPadding, newValue.toDouble())
             }
         }
 
         bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_land_b") { newValue ->
             if (newValue is String && newValue.toDoubleOrNull() != null) {
-                ThemeHelper.applyProp(RKBDProp.BottomLandPadding, newValue.toDouble())
+                applyProp(RKBDProp.BottomLandPadding, newValue.toDouble())
             }
         }
 
         bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_land_r") { newValue ->
             if (newValue is String && newValue.toDoubleOrNull() != null) {
-                ThemeHelper.applyProp(RKBDProp.RightLandPadding, newValue.toDouble())
+                applyProp(RKBDProp.RightLandPadding, newValue.toDouble())
             }
         }
 
         bindPreference<EditTextPreference>("props_ro.com.google.ime.kb_pad_land_l") { newValue ->
             if (newValue is String && newValue.toDoubleOrNull() != null) {
-                ThemeHelper.applyProp(RKBDProp.LeftLandPadding, newValue.toDouble())
+                applyProp(RKBDProp.LeftLandPadding, newValue.toDouble())
             }
         }
 
         bindPreference<EditTextPreference>("props_ro.com.google.ime.corner_key_l") { newValue ->
             if (newValue is String && newValue.toDoubleOrNull() != null) {
-                ThemeHelper.applyProp(RKBDProp.BottomCorners, newValue.toDouble())
+                applyProp(RKBDProp.BottomCorners, newValue.toDouble())
             }
         }
     }

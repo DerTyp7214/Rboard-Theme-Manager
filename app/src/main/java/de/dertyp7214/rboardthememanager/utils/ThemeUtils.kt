@@ -24,7 +24,7 @@ import de.dertyp7214.rboardthememanager.core.decodeBitmap
 import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
-import de.dertyp7214.rboardthememanager.helper.ThemeHelper
+import de.dertyp7214.rboardthememanager.helper.getActiveTheme
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import java.io.BufferedInputStream
 import java.io.File
@@ -119,8 +119,8 @@ object ThemeUtils {
         }
     }
 
-    fun getActiveTheme(): ThemeDataClass {
-        val themeName = ThemeHelper.getActiveTheme()
+    fun getActiveThemeData(): ThemeDataClass {
+        val themeName = getActiveTheme()
         return if (themeName.startsWith("assets:") && Application.context != null) {
             val imgName =
                 themeName

@@ -210,7 +210,7 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                         })
                     }
                 }, "",
-                    getThemeView(ThemeUtils.getActiveTheme())
+                    getThemeView(ThemeUtils.getActiveThemeData())
                 )
                 bottomSheet?.show(supportFragmentManager, "")
             }

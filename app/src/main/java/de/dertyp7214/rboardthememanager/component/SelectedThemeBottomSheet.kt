@@ -20,7 +20,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.topjohnwu.superuser.io.SuFile
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
-import de.dertyp7214.rboardthememanager.helper.ThemeHelper
+import de.dertyp7214.rboardthememanager.helper.applyTheme
 
 class SelectedThemeBottomSheet(
     private val theme: ThemeDataClass,
@@ -110,7 +110,7 @@ class SelectedThemeBottomSheet(
     }
 
     private fun applyTheme(border: Boolean) {
-        if (ThemeHelper.applyTheme("${theme.name}.zip", border)) Toast.makeText(
+        if (applyTheme("${theme.name}.zip", border)) Toast.makeText(
             context,
             getString(R.string.applied),
             Toast.LENGTH_SHORT

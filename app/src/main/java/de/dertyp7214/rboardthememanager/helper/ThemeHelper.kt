@@ -255,362 +255,360 @@ enum class RKBDProp(val rawValue: String) {
     }
 }
 
-object ThemeHelper {
-    fun installTheme(
-        zip: File,
-        move: Boolean = true,
-        activity: FragmentActivity? = null,
-        close: Boolean = false
-    ): Boolean {
-        return if (zip.extension == "pack") {
-            Application.context.let {
-                if (it != null) {
-                    val installDir = SuFile(it.cacheDir, "tmpInstall")
-                    installDir.listFiles()?.forEach { file -> file.delete() }
-                    val newZip = SuFile(
-                        getThemePacksPath(it).apply { if (!exists()) mkdirs() }, zip.name
-                    )
-                    if (!move || listOf(
-                            "cp ${zip.absolutePath} ${newZip.absoluteFile}",
-                            "chmod 664 ${newZip.absoluteFile}"
-                        ).runAsCommand()
-                    ) {
-                        ZipHelper().unpackZip(installDir.absolutePath, newZip.absolutePath)
-                        newZip.delete()
-                        if (installDir.isDirectory) {
-                            var noError = true
-                            val themes = ArrayList<SuFile>()
-                            var metaName = "Shared Pack"
-                            var metaAuthor = "Rboard Theme Manager"
-                            installDir.listFiles()
-                                ?.let { files ->
-                                    val metaFile =
-                                        files.findLast { file -> file.name.endsWith(".meta") }
-                                    metaFile?.readText()?.apply {
-                                        val matcher =
-                                            Pattern.compile("(name|author)=(.*)\\n").matcher(this)
-                                        while (matcher.find()) {
-                                            when (matcher.group(1)) {
-                                                "name" -> matcher.group(2)
-                                                    ?.let { name -> metaName = name }
-                                                "author" -> matcher.group(2)
-                                                    ?.let { name -> metaAuthor = name }
-                                            }
+fun installTheme(
+    zip: File,
+    move: Boolean = true,
+    activity: FragmentActivity? = null,
+    close: Boolean = false
+): Boolean {
+    return if (zip.extension == "pack") {
+        Application.context.let {
+            if (it != null) {
+                val installDir = SuFile(it.cacheDir, "tmpInstall")
+                installDir.listFiles()?.forEach { file -> file.delete() }
+                val newZip = SuFile(
+                    getThemePacksPath(it).apply { if (!exists()) mkdirs() }, zip.name
+                )
+                if (!move || listOf(
+                        "cp ${zip.absolutePath} ${newZip.absoluteFile}",
+                        "chmod 664 ${newZip.absoluteFile}"
+                    ).runAsCommand()
+                ) {
+                    ZipHelper().unpackZip(installDir.absolutePath, newZip.absolutePath)
+                    newZip.delete()
+                    if (installDir.isDirectory) {
+                        var noError = true
+                        val themes = ArrayList<SuFile>()
+                        var metaName = "Shared Pack"
+                        var metaAuthor = "Rboard Theme Manager"
+                        installDir.listFiles()
+                            ?.let { files ->
+                                val metaFile =
+                                    files.findLast { file -> file.name.endsWith(".meta") }
+                                metaFile?.readText()?.apply {
+                                    val matcher =
+                                        Pattern.compile("(name|author)=(.*)\\n").matcher(this)
+                                    while (matcher.find()) {
+                                        when (matcher.group(1)) {
+                                            "name" -> matcher.group(2)
+                                                ?.let { name -> metaName = name }
+                                            "author" -> matcher.group(2)
+                                                ?.let { name -> metaAuthor = name }
                                         }
                                     }
-                                    themes.addAll(files.filter { file ->
-                                        !file.name.endsWith(
-                                            ".meta"
-                                        )
-                                    })
                                 }
+                                themes.addAll(files.filter { file ->
+                                    !file.name.endsWith(
+                                        ".meta"
+                                    )
+                                })
+                            }
 
-                            activity?.let { activity ->
-                                val packItem = PackItem(metaName, metaAuthor, "")
-                                previewDialog(
-                                    activity,
-                                    installDir.absolutePath,
-                                    packItem,
-                                    { closeDialog ->
-                                        var noErrorInstall = true
-                                        themes.forEach { theme ->
-                                            if (!installTheme(theme)) noErrorInstall = false
-                                        }
-                                        if (noErrorInstall) Toast.makeText(
-                                            activity,
-                                            R.string.theme_added,
-                                            Toast.LENGTH_LONG
-                                        ).show() else Toast.makeText(
-                                            activity,
-                                            R.string.error,
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                        closeDialog()
-                                    }, {
-                                        if (close) activity.finishAndRemoveTask()
-                                    }) { pair ->
-                                    val adapter =
-                                        PreviewAdapter(
-                                            activity,
-                                            ArrayList(ThemeUtils.loadThemes(installDir))
-                                        )
-
-                                    pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
-                                        true
-
-                                    val recyclerView =
-                                        pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
-                                    recyclerView?.layoutManager = LinearLayoutManager(activity)
-                                    recyclerView?.setHasFixedSize(true)
-                                    recyclerView?.adapter = adapter
-                                    recyclerView?.addItemDecoration(
-                                        StartOffsetItemDecoration(
-                                            0
-                                        )
+                        activity?.let { activity ->
+                            val packItem = PackItem(metaName, metaAuthor, "")
+                            previewDialog(
+                                activity,
+                                installDir.absolutePath,
+                                packItem,
+                                { closeDialog ->
+                                    var noErrorInstall = true
+                                    themes.forEach { theme ->
+                                        if (!installTheme(theme)) noErrorInstall = false
+                                    }
+                                    if (noErrorInstall) Toast.makeText(
+                                        activity,
+                                        R.string.theme_added,
+                                        Toast.LENGTH_LONG
+                                    ).show() else Toast.makeText(
+                                        activity,
+                                        R.string.error,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    closeDialog()
+                                }, {
+                                    if (close) activity.finishAndRemoveTask()
+                                }) { pair ->
+                                val adapter =
+                                    PreviewAdapter(
+                                        activity,
+                                        ArrayList(ThemeUtils.loadThemes(installDir))
                                     )
 
-                                    recyclerView?.visibility = View.VISIBLE
-                                    pair.first.visibility = View.GONE
+                                pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
+                                    true
 
-                                    val bDialog = pair.second.dialog
-                                    if (bDialog is BottomSheetDialog) {
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            bDialog.behavior.state =
-                                                BottomSheetBehavior.STATE_EXPANDED
-                                        }, 100)
-                                    }
+                                val recyclerView =
+                                    pair.second.findViewById<RecyclerView>(R.id.preview_recyclerview)
+                                recyclerView?.layoutManager = LinearLayoutManager(activity)
+                                recyclerView?.setHasFixedSize(true)
+                                recyclerView?.adapter = adapter
+                                recyclerView?.addItemDecoration(
+                                    StartOffsetItemDecoration(
+                                        0
+                                    )
+                                )
+
+                                recyclerView?.visibility = View.VISIBLE
+                                pair.first.visibility = View.GONE
+
+                                val bDialog = pair.second.dialog
+                                if (bDialog is BottomSheetDialog) {
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        bDialog.behavior.state =
+                                            BottomSheetBehavior.STATE_EXPANDED
+                                    }, 100)
                                 }
-                                true
-                            } ?: themes.forEach { theme ->
-                                if (!installTheme(theme)) noError = false
                             }
-                            noError
-                        } else false
+                            true
+                        } ?: themes.forEach { theme ->
+                            if (!installTheme(theme)) noError = false
+                        }
+                        noError
                     } else false
                 } else false
-            }
-        } else {
-            val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
-            listOf(
-                "mkdir -p $MAGISK_THEME_LOC",
-                "cp ${zip.absolutePath} ${installPath.absolutePath}",
-                "chmod 644 ${installPath.absolutePath}"
-            ).runAsCommand()
+            } else false
         }
+    } else {
+        val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
+        listOf(
+            "mkdir -p $MAGISK_THEME_LOC",
+            "cp ${zip.absolutePath} ${installPath.absolutePath}",
+            "chmod 644 ${installPath.absolutePath}"
+        ).runAsCommand()
     }
+}
 
-    @SuppressLint("SdCardPath")
-    fun applyTheme(
-        name: String,
-        withBorders: Boolean = false,
-        context: Context? = null
-    ): Boolean {
-        val inputPackageName = GBOARD_PACKAGE_NAME
-        val fileName =
-            "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
-        Logger.log(
-            Logger.Companion.Type.INFO,
-            "APPLY",
-            "[ApplyTheme]: $name $inputPackageName $fileName"
-        )
-        return if (!SuFile(fileName).exists()) {
-            context?.apply {
-                Toast.makeText(this, R.string.please_open_app, Toast.LENGTH_LONG).show()
-            }
-            false
-        } else {
-            val content = SuFileInputStream.open(SuFile(fileName)).use {
-                it.bufferedReader().readText()
-            }.let {
-                var changed = it
-
-                changed = if ("<string name=\"additional_keyboard_theme\">" in changed)
-                    changed.replace(
-                        "<string name=\"additional_keyboard_theme\">.*</string>".toRegex(),
-                        "<string name=\"additional_keyboard_theme\">system:$name</string>"
-                    )
-                else
-                    changed.replace(
-                        "<map>",
-                        "<map><string name=\"additional_keyboard_theme\">system:$name</string>"
-                    )
-
-                // Change enable_key_border value
-                changed = if ("<boolean name=\"enable_key_border\"" in changed) {
-                    changed.replace(
-                        "<boolean name=\"enable_key_border\" value=\".*\" />".toRegex(),
-                        "<boolean name=\"enable_key_border\" value=\"$withBorders\" />"
-                    )
-                } else {
-                    changed.replace(
-                        "<map>",
-                        "<map><boolean name=\"enable_key_border\" value=\"$withBorders\" />"
-                    )
-                }
-                return@let changed
-            }
-            SuFileOutputStream.open(File(fileName)).writer(Charset.defaultCharset())
-                .use { outputStreamWriter ->
-                    outputStreamWriter.write(content)
-                }
-
-            "am force-stop $inputPackageName".runAsCommand()
+@SuppressLint("SdCardPath")
+fun applyTheme(
+    name: String,
+    withBorders: Boolean = false,
+    context: Context? = null
+): Boolean {
+    val inputPackageName = GBOARD_PACKAGE_NAME
+    val fileName =
+        "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
+    Logger.log(
+        Logger.Companion.Type.INFO,
+        "APPLY",
+        "[ApplyTheme]: $name $inputPackageName $fileName"
+    )
+    return if (!SuFile(fileName).exists()) {
+        context?.apply {
+            Toast.makeText(this, R.string.please_open_app, Toast.LENGTH_LONG).show()
         }
-    }
-
-    @SuppressLint("SdCardPath")
-    fun getActiveTheme(): String {
-        val inputPackageName = "com.google.android.inputmethod.latin"
-        val fileLol =
-            SuFile("/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml")
-        return try {
-            if (!fileLol.exists()) ""
-            else SuFileInputStream.open(fileLol).bufferedReader().readText()
-                .split("<string name=\"additional_keyboard_theme\">")
-                .let { if (it.size > 1) it[1].split("</string>")[0] else "" }.replace("system:", "")
-                .replace(".zip", "")
-        } catch (error: Exception) {
-            Logger.log(Logger.Companion.Type.ERROR, "ActiveTheme", error.message)
-            ""
-        }
-    }
-
-    fun shareThemes(context: Activity, themes: List<ThemeDataClass>) {
-        val files = ArrayList<File>()
-        MaterialDialog(context).show {
-            setContentView(R.layout.share_popup)
-
-            val nameEditText = findViewById<EditText>(R.id.editTextName)
-            val authorEditText = findViewById<EditText>(R.id.editTextAuthor)
-
-            findViewById<MaterialButton>(R.id.cancel).setOnClickListener { dismiss() }
-            findViewById<MaterialButton>(R.id.ok).setOnClickListener {
-                File(context.cacheDir, "pack.meta").apply {
-                    files.add(this)
-                    writeText("name=${
-                        nameEditText.text.let {
-                            if (it.isBlank()) "Shared Pack" else it
-                        }
-                    }\nauthor=${
-                        authorEditText.text.let {
-                            if (it.isBlank()) "Rboard Theme Manager" else it
-                        }
-                    }\n")
-                }
-                themes.map { it.moveToCache(context) }.forEach {
-                    val image = File(it.path.removeSuffix(".zip"))
-                    files.add(File(it.path))
-                    if (image.exists()) files.add(image)
-                }
-                val zip = File(context.cacheDir, "themes.pack")
-                zip.delete()
-                ZipHelper().zip(files.map { it.absolutePath }, zip.absolutePath)
-                files.forEach { it.deleteOnExit() }
-                val uri = FileProvider.getUriForFile(
-                    context,
-                    context.packageName,
-                    zip
-                )
-                ShareCompat.IntentBuilder(context)
-                    .setStream(uri)
-                    .setType("application/pack")
-                    .intent
-                    .setAction(Intent.ACTION_SEND)
-                    .setDataAndType(uri, "application/pack")
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).apply {
-                        context.startActivity(
-                            Intent.createChooser(
-                                this,
-                                context.getString(R.string.share_themes)
-                            )
-                        )
-                    }
-                dismiss()
-            }
-        }
-    }
-
-    @SuppressLint("SdCardPath")
-    fun applyFlag(
-        flag: RKBDFlag,
-        value: Any,
-        flagType: RKBDFlagType,
-        file: RKBDFile = RKBDFile.Flags
-    ): Boolean {
-        val inputPackageName = GBOARD_PACKAGE_NAME
-        val fileName = "/data/data/$inputPackageName/shared_prefs/${file.rawValue}"
+        false
+    } else {
         val content = SuFileInputStream.open(SuFile(fileName)).use {
             it.bufferedReader().readText()
         }.let {
-            var fileText = it
+            var changed = it
 
-            if (flagType != RKBDFlagType.STRING) {
-                fileText =
-                    if ("<${flagType.rawValue} name=\"${flag.rawValue}\"" in fileText) {
-                        fileText.replace(
-                            """<${flagType.rawValue} name="${flag.rawValue}" value=".*" />""".toRegex(),
-                            """<${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
-                        )
-                    } else {
-                        if (Regex("<map[ |]/>") in fileText)
-                            fileText.replace(
-                                Regex("<map[ |]/>"),
-                                """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" /></map>"""
-                            )
-                        else
-                            fileText.replace(
-                                "<map>",
-                                """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
-                            )
-                    }
+            changed = if ("<string name=\"additional_keyboard_theme\">" in changed)
+                changed.replace(
+                    "<string name=\"additional_keyboard_theme\">.*</string>".toRegex(),
+                    "<string name=\"additional_keyboard_theme\">system:$name</string>"
+                )
+            else
+                changed.replace(
+                    "<map>",
+                    "<map><string name=\"additional_keyboard_theme\">system:$name</string>"
+                )
+
+            // Change enable_key_border value
+            changed = if ("<boolean name=\"enable_key_border\"" in changed) {
+                changed.replace(
+                    "<boolean name=\"enable_key_border\" value=\".*\" />".toRegex(),
+                    "<boolean name=\"enable_key_border\" value=\"$withBorders\" />"
+                )
             } else {
-                fileText =
-                    if ("<${flagType.rawValue} name=\"${flag.rawValue}\">" in fileText) {
-                        fileText.replace(
-                            """<${flagType.rawValue} name="${flag.rawValue}">.*</string>""".toRegex(),
-                            """<${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
-                        )
-                    } else {
-                        if (Regex("<map[ |]/>") in fileText)
-                            fileText.replace(
-                                Regex("<map[ |]/>"),
-                                """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string></map>"""
-                            )
-                        else
-                            fileText.replace(
-                                "<map>",
-                                """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
-                            )
-                    }
+                changed.replace(
+                    "<map>",
+                    "<map><boolean name=\"enable_key_border\" value=\"$withBorders\" />"
+                )
             }
-
-            return@let fileText
+            return@let changed
         }
-
-        Logger.log(Logger.Companion.Type.DEBUG, "Change Flag", "$flag | $value")
-        Logger.log(Logger.Companion.Type.DEBUG, "Change Flag", "$flagType | $value")
-
-        writeSuFile(SuFile(fileName), content)
-
-        return "am force-stop $inputPackageName".runAsCommand()
-    }
-
-    fun applyProp(prop: RKBDProp, value: Any) {
-        val meta = ModuleMeta(
-            Config.MODULE_ID + "_addon",
-            "Rboard Themes Addon",
-            "v20",
-            "200",
-            "RKBDI & DerTyp7214 & Nylon",
-            "Addon for Rboard Themes app"
-        )
-        val file = mapOf(
-            Pair(
-                "system.prop",
-                "${prop.rawValue}=$value"
-            )
-        )
-        MagiskUtils.updateModule(meta, file)
-    }
-
-    fun getSoundsDirectory(): SuFile? {
-        val productMedia = SuFile("/system/product/media/audio/ui/KeypressStandard.ogg")
-        val systemMedia = SuFile("/system/media/audio/ui/KeypressStandard.ogg")
-        return if (productMedia.exists() && productMedia.isFile) {
-            SuFile("/system/product/media")
-        } else if (systemMedia.exists() && systemMedia.isFile) {
-            SuFile("/system/media")
-        } else {
-            null
-        }
-    }
-
-    private fun writeSuFile(file: SuFile, content: String) {
-        SuFileOutputStream.open(file).writer(Charset.defaultCharset())
+        SuFileOutputStream.open(File(fileName)).writer(Charset.defaultCharset())
             .use { outputStreamWriter ->
                 outputStreamWriter.write(content)
             }
+
+        "am force-stop $inputPackageName".runAsCommand()
     }
+}
+
+@SuppressLint("SdCardPath")
+fun getActiveTheme(): String {
+    val inputPackageName = "com.google.android.inputmethod.latin"
+    val fileLol =
+        SuFile("/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml")
+    return try {
+        if (!fileLol.exists()) ""
+        else SuFileInputStream.open(fileLol).bufferedReader().readText()
+            .split("<string name=\"additional_keyboard_theme\">")
+            .let { if (it.size > 1) it[1].split("</string>")[0] else "" }.replace("system:", "")
+            .replace(".zip", "")
+    } catch (error: Exception) {
+        Logger.log(Logger.Companion.Type.ERROR, "ActiveTheme", error.message)
+        ""
+    }
+}
+
+fun shareThemes(context: Activity, themes: List<ThemeDataClass>) {
+    val files = ArrayList<File>()
+    MaterialDialog(context).show {
+        setContentView(R.layout.share_popup)
+
+        val nameEditText = findViewById<EditText>(R.id.editTextName)
+        val authorEditText = findViewById<EditText>(R.id.editTextAuthor)
+
+        findViewById<MaterialButton>(R.id.cancel).setOnClickListener { dismiss() }
+        findViewById<MaterialButton>(R.id.ok).setOnClickListener {
+            File(context.cacheDir, "pack.meta").apply {
+                files.add(this)
+                writeText("name=${
+                    nameEditText.text.let {
+                        if (it.isBlank()) "Shared Pack" else it
+                    }
+                }\nauthor=${
+                    authorEditText.text.let {
+                        if (it.isBlank()) "Rboard Theme Manager" else it
+                    }
+                }\n")
+            }
+            themes.map { it.moveToCache(context) }.forEach {
+                val image = File(it.path.removeSuffix(".zip"))
+                files.add(File(it.path))
+                if (image.exists()) files.add(image)
+            }
+            val zip = File(context.cacheDir, "themes.pack")
+            zip.delete()
+            ZipHelper().zip(files.map { it.absolutePath }, zip.absolutePath)
+            files.forEach { it.deleteOnExit() }
+            val uri = FileProvider.getUriForFile(
+                context,
+                context.packageName,
+                zip
+            )
+            ShareCompat.IntentBuilder(context)
+                .setStream(uri)
+                .setType("application/pack")
+                .intent
+                .setAction(Intent.ACTION_SEND)
+                .setDataAndType(uri, "application/pack")
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).apply {
+                    context.startActivity(
+                        Intent.createChooser(
+                            this,
+                            context.getString(R.string.share_themes)
+                        )
+                    )
+                }
+            dismiss()
+        }
+    }
+}
+
+@SuppressLint("SdCardPath")
+fun applyFlag(
+    flag: RKBDFlag,
+    value: Any,
+    flagType: RKBDFlagType,
+    file: RKBDFile = RKBDFile.Flags
+): Boolean {
+    val inputPackageName = GBOARD_PACKAGE_NAME
+    val fileName = "/data/data/$inputPackageName/shared_prefs/${file.rawValue}"
+    val content = SuFileInputStream.open(SuFile(fileName)).use {
+        it.bufferedReader().readText()
+    }.let {
+        var fileText = it
+
+        if (flagType != RKBDFlagType.STRING) {
+            fileText =
+                if ("<${flagType.rawValue} name=\"${flag.rawValue}\"" in fileText) {
+                    fileText.replace(
+                        """<${flagType.rawValue} name="${flag.rawValue}" value=".*" />""".toRegex(),
+                        """<${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
+                    )
+                } else {
+                    if (Regex("<map[ |]/>") in fileText)
+                        fileText.replace(
+                            Regex("<map[ |]/>"),
+                            """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" /></map>"""
+                        )
+                    else
+                        fileText.replace(
+                            "<map>",
+                            """<map><${flagType.rawValue} name="${flag.rawValue}" value="$value" />"""
+                        )
+                }
+        } else {
+            fileText =
+                if ("<${flagType.rawValue} name=\"${flag.rawValue}\">" in fileText) {
+                    fileText.replace(
+                        """<${flagType.rawValue} name="${flag.rawValue}">.*</string>""".toRegex(),
+                        """<${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
+                    )
+                } else {
+                    if (Regex("<map[ |]/>") in fileText)
+                        fileText.replace(
+                            Regex("<map[ |]/>"),
+                            """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string></map>"""
+                        )
+                    else
+                        fileText.replace(
+                            "<map>",
+                            """<map><${flagType.rawValue} name="${flag.rawValue}">$value</string>"""
+                        )
+                }
+        }
+
+        return@let fileText
+    }
+
+    Logger.log(Logger.Companion.Type.DEBUG, "Change Flag", "$flag | $value")
+    Logger.log(Logger.Companion.Type.DEBUG, "Change Flag", "$flagType | $value")
+
+    writeSuFile(SuFile(fileName), content)
+
+    return "am force-stop $inputPackageName".runAsCommand()
+}
+
+fun applyProp(prop: RKBDProp, value: Any) {
+    val meta = ModuleMeta(
+        Config.MODULE_ID + "_addon",
+        "Rboard Themes Addon",
+        "v20",
+        "200",
+        "RKBDI & DerTyp7214 & Nylon",
+        "Addon for Rboard Themes app"
+    )
+    val file = mapOf(
+        Pair(
+            "system.prop",
+            "${prop.rawValue}=$value"
+        )
+    )
+    MagiskUtils.updateModule(meta, file)
+}
+
+fun getSoundsDirectory(): SuFile? {
+    val productMedia = SuFile("/system/product/media/audio/ui/KeypressStandard.ogg")
+    val systemMedia = SuFile("/system/media/audio/ui/KeypressStandard.ogg")
+    return if (productMedia.exists() && productMedia.isFile) {
+        SuFile("/system/product/media")
+    } else if (systemMedia.exists() && systemMedia.isFile) {
+        SuFile("/system/media")
+    } else {
+        null
+    }
+}
+
+private fun writeSuFile(file: SuFile, content: String) {
+    SuFileOutputStream.open(file).writer(Charset.defaultCharset())
+        .use { outputStreamWriter ->
+            outputStreamWriter.write(content)
+        }
 }
 
 class PreviewAdapter(
@@ -671,8 +669,8 @@ class PreviewAdapter(
         holder.card.setCardBackgroundColor(color)
 
         holder.card.setOnClickListener {
-            val success = ThemeHelper.installTheme(SuFile(dataClass.path))
-                    && if (dataClass.image != null) ThemeHelper.installTheme(
+            val success = installTheme(SuFile(dataClass.path))
+                    && if (dataClass.image != null) installTheme(
                 SuFile(
                     dataClass.path.removeSuffix(
                         ".zip"

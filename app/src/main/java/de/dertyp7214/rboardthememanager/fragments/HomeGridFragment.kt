@@ -40,9 +40,7 @@ import de.dertyp7214.rboardthememanager.component.SelectedThemeBottomSheet
 import de.dertyp7214.rboardthememanager.core.*
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.enums.GridLayout
-import de.dertyp7214.rboardthememanager.helper.SwipeToDeleteCallback
-import de.dertyp7214.rboardthememanager.helper.ThemeHelper
-import de.dertyp7214.rboardthememanager.helper.TimeLogger
+import de.dertyp7214.rboardthememanager.helper.*
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.dominantColor
 import de.dertyp7214.rboardthememanager.utils.ColorUtils.isColorLight
 import de.dertyp7214.rboardthememanager.utils.FileUtils
@@ -69,7 +67,7 @@ class HomeGridFragment : Fragment() {
                     FileUtils.getThemePacksPath(activity),
                     result.data!!.data!!.getFileName(activity)
                 ).apply { result.data!!.data!!.writeToFile(activity, this) }
-            if (ThemeHelper.installTheme(zip, false, requireActivity())) Toast.makeText(
+            if (installTheme(zip, false, requireActivity())) Toast.makeText(
                 context,
                 R.string.theme_added,
                 Toast.LENGTH_SHORT
@@ -186,7 +184,7 @@ class HomeGridFragment : Fragment() {
                     toolbar.title = "${themeList.count { it.selected }}"
                 }
                 R.id.theme_share -> {
-                    ThemeHelper.shareThemes(requireActivity(), themeList.filter { it.selected })
+                    shareThemes(requireActivity(), themeList.filter { it.selected })
                 }
             }
             true
@@ -393,7 +391,7 @@ class HomeGridFragment : Fragment() {
         override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
             super.onAttachedToRecyclerView(recyclerView)
             this.recyclerView = recyclerView
-            activeTheme = ThemeHelper.getActiveTheme()
+            activeTheme = getActiveTheme()
         }
 
         fun removeItem(position: Int) {
