@@ -4,5 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
       - name: Build the app
-        run: ls -la
+        run: ./gradlew build
