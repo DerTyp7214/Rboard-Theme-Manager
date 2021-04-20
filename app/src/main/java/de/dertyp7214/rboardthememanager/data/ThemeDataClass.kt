@@ -8,5 +8,6 @@ data class ThemeDataClass(
     val name: String,
     val path: String,
     var selected: Boolean = false,
-    val colorFilter: ColorFilter? = null
+    val colorFilter: ColorFilter? = null,
+    var installed: Boolean = false
 )

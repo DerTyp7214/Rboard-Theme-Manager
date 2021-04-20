@@ -48,7 +48,7 @@ import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.utils.ColorUtils
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
-import de.dertyp7214.rboardthememanager.utils.ThemeUtils
+import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
@@ -328,10 +328,16 @@ fun installTheme(
                                 }, {
                                     if (close) activity.finishAndRemoveTask()
                                 }) { pair ->
+                                val installedThemes = loadThemes()
                                 val adapter =
                                     PreviewAdapter(
                                         activity,
-                                        ArrayList(ThemeUtils.loadThemes(installDir))
+                                        ArrayList(loadThemes(installDir).map { theme ->
+                                            theme.installed =
+                                                installedThemes.map { t -> t.name }
+                                                    .contains(theme.name)
+                                            theme
+                                        })
                                     )
 
                                 pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
@@ -370,7 +376,8 @@ fun installTheme(
         }
     } else {
         val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
-        listOf(
+        if (installPath.exists()) true
+        else listOf(
             "mkdir -p $MAGISK_THEME_LOC",
             "cp ${zip.absolutePath} ${installPath.absolutePath}",
             "chmod 644 ${installPath.absolutePath}"
@@ -661,10 +668,12 @@ class PreviewAdapter(
 
         holder.themeName.setTextColor(if (ColorUtils.isColorLight(color)) Color.BLACK else Color.WHITE)
 
-        if (dataClass.selected)
+        if (dataClass.installed) {
             holder.selectOverlay.alpha = 1F
-        else
-            holder.selectOverlay.alpha = 0F
+            holder.selectOverlay.setBackgroundColor(context.getColor(R.color.positiveTransparent))
+            holder.themeNameSelect.setTextColor(Color.BLACK)
+            holder.imageView.setImageResource(R.drawable.ic_installed_theme_grid)
+        } else holder.selectOverlay.alpha = 0F
 
         holder.card.setCardBackgroundColor(color)
 
@@ -692,6 +701,7 @@ class PreviewAdapter(
         val themeName: TextView = v.findViewById(R.id.theme_name)
         val themeNameSelect: TextView = v.findViewById(R.id.theme_name_selected)
         val selectOverlay: ViewGroup = v.findViewById(R.id.select_overlay)
+        val imageView: ImageView = v.findViewById(R.id.imageView4)
         val card: CardView = v.findViewById(R.id.card)
         val gradient: View? = try {
             v.findViewById(R.id.gradient)

@@ -1,0 +1,8 @@
+name: Build
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build the app
+        run: ./gradlew build

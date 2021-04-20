@@ -306,10 +306,16 @@ class DownloadFragment : Fragment() {
                                     ZipHelper().unpackZip(previewsPath, path)
 
                                     try {
+                                        val installedThemes = ThemeUtils.loadThemes()
                                         val adapter =
                                             PreviewAdapter(
                                                 activity,
-                                                ArrayList(ThemeUtils.loadPreviewThemes(activity))
+                                                ArrayList(ThemeUtils.loadPreviewThemes(activity).map { theme ->
+                                                    theme.installed =
+                                                        installedThemes.map { t -> t.name }
+                                                            .contains(theme.name)
+                                                    theme
+                                                })
                                             )
 
                                         pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
