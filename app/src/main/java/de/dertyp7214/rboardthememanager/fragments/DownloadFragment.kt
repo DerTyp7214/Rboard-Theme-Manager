@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dertyp7214.logs.helpers.Logger
+import com.dertyp7214.preferencesplus.core.dp
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import com.dgreenhalgh.android.simpleitemdecoration.linear.StartOffsetItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -331,6 +332,11 @@ class DownloadFragment : Fragment() {
                                         recyclerView?.addItemDecoration(
                                             StartOffsetItemDecoration(
                                                 0
+                                            )
+                                        )
+                                        recyclerView?.addItemDecoration(
+                                            EndOffsetItemDecoration(
+                                                12.dp(activity)
                                             )
                                         )
 
