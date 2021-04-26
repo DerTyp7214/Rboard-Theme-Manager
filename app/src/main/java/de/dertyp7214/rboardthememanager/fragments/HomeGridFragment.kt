@@ -499,7 +499,7 @@ class HomeGridFragment : Fragment() {
                             if (true !in list.map { it.selected }) selectToggle(false)
                         }.start()
                 } else {
-                    SelectedThemeBottomSheet(dataClass, default, color, isColorLight(color)) {
+                    SelectedThemeBottomSheet(dataClass, default, color, isColorLight(color), context) {
                         homeViewModel.setRefetch(true)
                     }.show(
                         context.supportFragmentManager,

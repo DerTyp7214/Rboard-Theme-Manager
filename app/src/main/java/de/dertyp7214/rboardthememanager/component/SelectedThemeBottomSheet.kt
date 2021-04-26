@@ -1,6 +1,8 @@
 package de.dertyp7214.rboardthememanager.component
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -13,20 +15,28 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.dertyp7214.logs.helpers.DogbinUtils
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.topjohnwu.superuser.io.SuFile
+import com.topjohnwu.superuser.io.SuFileInputStream
+import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
+import de.dertyp7214.rboardthememanager.core.runAsCommand
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.helper.applyTheme
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 
 class SelectedThemeBottomSheet(
     private val theme: ThemeDataClass,
     private val defaultImage: Bitmap,
     private val color: Int,
     private val isDark: Boolean,
+    private val parentActivity: Activity,
     private val deleteCallback: () -> Unit = {}
 ) : RoundedBottomSheetDialogFragment() {
     @SuppressLint("DefaultLocale")
@@ -109,12 +119,66 @@ class SelectedThemeBottomSheet(
         return v
     }
 
+    @SuppressLint("SdCardPath")
     private fun applyTheme(border: Boolean) {
         if (applyTheme("${theme.name}.zip", border)) Toast.makeText(
             context,
             getString(R.string.applied),
             Toast.LENGTH_SHORT
         ).show()
-        else Toast.makeText(context, getString(R.string.error), Toast.LENGTH_SHORT).show()
+        else {
+            if ("am force-stop ${Config.GBOARD_PACKAGE_NAME}".runAsCommand() && applyTheme(
+                    "${theme.name}.zip",
+                    border
+                )
+            ) Toast.makeText(
+                context,
+                getString(R.string.applied),
+                Toast.LENGTH_SHORT
+            ).show()
+            else {
+                val view = parentActivity.window?.decorView
+                if (view != null) Snackbar.make(
+                    view,
+                    R.string.error,
+                    Snackbar.LENGTH_LONG
+                ).setActionTextColor(getColor(parentActivity, R.color.colorAccent))
+                    .setAction(R.string.share) {
+                        val file =
+                            SuFile("/data/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${Config.GBOARD_PACKAGE_NAME}_preferences.xml")
+                        val content = SuFileInputStream.open(file).use {
+                            it.bufferedReader().readText()
+                        }
+                        DogbinUtils.upload(content, object : DogbinUtils.UploadResultCallback {
+                            override fun onFail(message: String, e: Exception) {
+                                Toast.makeText(
+                                    parentActivity,
+                                    R.string.share_error,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                            override fun onSuccess(url: String) {
+                                val sendIntent: Intent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, url)
+                                    type = "text/plain"
+                                }
+                                parentActivity.startActivity(
+                                    Intent.createChooser(
+                                        sendIntent,
+                                        parentActivity.getString(R.string.send_to)
+                                    )
+                                )
+                            }
+                        })
+                    }.show()
+                else Toast.makeText(
+                    parentActivity,
+                    getString(R.string.error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }

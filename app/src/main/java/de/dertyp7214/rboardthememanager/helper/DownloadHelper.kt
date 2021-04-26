@@ -12,6 +12,7 @@ import com.downloader.PRDownloader
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.switchmaterial.SwitchMaterial
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.MaterialBottomSheet
 import de.dertyp7214.rboardthememanager.data.PackItem
@@ -74,7 +75,7 @@ fun previewDialog(
     activity: FragmentActivity,
     previewPath: String,
     themePack: PackItem,
-    clickDownload: (closeDialog: () -> Unit) -> Unit = { it() },
+    clickDownload: (overrodeTheme: Boolean, closeDialog: () -> Unit) -> Unit = { _, it -> it() },
     onClose: () -> Unit = { },
     onShow: (Pair<ProgressBar, MaterialBottomSheet>) -> Unit
 ) {
@@ -82,6 +83,7 @@ fun previewDialog(
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val title = findViewById<TextView>(R.id.dialog_title)
         val author = findViewById<TextView>(R.id.author)
+        val overrideThemes = findViewById<SwitchMaterial>(R.id.overrideTheme)
         title?.text = themePack.name
         author?.text = themePack.author
 
@@ -96,7 +98,7 @@ fun previewDialog(
         downloadButton?.isEnabled = false
 
         downloadButton?.setOnClickListener {
-            clickDownload {
+            clickDownload(overrideThemes?.isChecked ?: false) {
                 dismiss()
                 onClose()
             }

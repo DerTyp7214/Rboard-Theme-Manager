@@ -168,7 +168,7 @@ class SoundsFragment : Fragment() {
             holder.image.setColorFilter(context.getColor(R.color.colorAccent))
 
             holder.layout.setOnClickListener {
-                previewDialog(context, previewsPath, pack, {
+                previewDialog(context, previewsPath, pack, { _, closeDialog ->
                     val pair = downloadDialog(context).apply {
                         first.isIndeterminate = false
                     }
@@ -217,7 +217,7 @@ class SoundsFragment : Fragment() {
                                         R.string.error,
                                         Toast.LENGTH_LONG
                                     ).show()
-                                    it()
+                                    closeDialog()
                                 }
 
                                 pair.second.dismiss()

@@ -259,7 +259,8 @@ fun installTheme(
     zip: File,
     move: Boolean = true,
     activity: FragmentActivity? = null,
-    close: Boolean = false
+    close: Boolean = false,
+    overrideTheme: Boolean = false
 ): Boolean {
     return if (zip.extension == "pack") {
         Application.context.let {
@@ -310,10 +311,14 @@ fun installTheme(
                                 activity,
                                 installDir.absolutePath,
                                 packItem,
-                                { closeDialog ->
+                                { overrideTheme, closeDialog ->
                                     var noErrorInstall = true
                                     themes.forEach { theme ->
-                                        if (!installTheme(theme)) noErrorInstall = false
+                                        if (!installTheme(
+                                                theme,
+                                                overrideTheme = overrideTheme
+                                            )
+                                        ) noErrorInstall = false
                                     }
                                     if (noErrorInstall) Toast.makeText(
                                         activity,
@@ -376,7 +381,7 @@ fun installTheme(
         }
     } else {
         val installPath = SuFile(MAGISK_THEME_LOC, zip.name)
-        if (installPath.exists()) true
+        if (installPath.exists() && !overrideTheme) true
         else listOf(
             "mkdir -p $MAGISK_THEME_LOC",
             "cp ${zip.absolutePath} ${installPath.absolutePath}",
@@ -399,7 +404,9 @@ fun applyTheme(
         "APPLY",
         "[ApplyTheme]: $name $inputPackageName $fileName"
     )
-    return if (!SuFile(fileName).exists()) {
+    return if (!SuFile(fileName).exists()
+            .also { Logger.log(Logger.Companion.Type.DEBUG, "APPLY", "[ApplyTheme]: exists = $it") }
+    ) {
         context?.apply {
             Toast.makeText(this, R.string.please_open_app, Toast.LENGTH_LONG).show()
         }
@@ -678,13 +685,13 @@ class PreviewAdapter(
         holder.card.setCardBackgroundColor(color)
 
         holder.card.setOnClickListener {
-            val success = installTheme(SuFile(dataClass.path))
+            val success = installTheme(SuFile(dataClass.path), overrideTheme = true)
                     && if (dataClass.image != null) installTheme(
                 SuFile(
                     dataClass.path.removeSuffix(
                         ".zip"
                     )
-                )
+                ), overrideTheme = true
             )
             else true
             Logger.log(

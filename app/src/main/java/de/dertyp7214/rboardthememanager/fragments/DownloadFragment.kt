@@ -275,9 +275,9 @@ class DownloadFragment : Fragment() {
             holder.image.setColorFilter(activity.getColor(R.color.colorAccent))
 
             holder.layout.setOnClickListener {
-                previewDialog(activity, previewsPath, pack, {
-                    downloadThemePack(pack) {
-                        it()
+                previewDialog(activity, previewsPath, pack, { overrideTheme, closeDialog ->
+                    downloadThemePack(pack, overrideTheme) {
+                        closeDialog()
                         if (activity is HomeActivity) activity.navigate(R.id.navigation_themes)
                     }
                 }) { pair ->
@@ -310,12 +310,14 @@ class DownloadFragment : Fragment() {
                                         val adapter =
                                             PreviewAdapter(
                                                 activity,
-                                                ArrayList(ThemeUtils.loadPreviewThemes(activity).map { theme ->
-                                                    theme.installed =
-                                                        installedThemes.map { t -> t.name }
-                                                            .contains(theme.name)
-                                                    theme
-                                                })
+                                                ArrayList(
+                                                    ThemeUtils.loadPreviewThemes(activity)
+                                                        .map { theme ->
+                                                            theme.installed =
+                                                                installedThemes.map { t -> t.name }
+                                                                    .contains(theme.name)
+                                                            theme
+                                                        })
                                             )
 
                                         pair.second.findViewById<MaterialButton>(R.id.download_button)?.isEnabled =
@@ -356,7 +358,11 @@ class DownloadFragment : Fragment() {
             }
         }
 
-        private fun downloadThemePack(pack: PackItem, callback: () -> Unit) {
+        private fun downloadThemePack(
+            pack: PackItem,
+            overrideTheme: Boolean,
+            callback: () -> Unit
+        ) {
             val pair = downloadDialog(activity).apply {
                 first.isIndeterminate = false
             }
@@ -393,7 +399,7 @@ class DownloadFragment : Fragment() {
                         )
                         ZipHelper().unpackZip(cacheDir.absolutePath, path)
                         cacheDir.listFiles()?.forEach {
-                            installTheme(it)
+                            installTheme(it, overrideTheme = overrideTheme)
                         }
                         pair.second.dismiss()
                         callback()
