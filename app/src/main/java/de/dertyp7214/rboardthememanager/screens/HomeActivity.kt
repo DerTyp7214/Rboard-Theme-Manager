@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -25,6 +26,7 @@ import com.dertyp7214.preferencesplus.core.setMargins
 import com.dertyp7214.preferencesplus.core.setWidth
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import de.dertyp7214.rboardthememanager.BuildConfig
+import de.dertyp7214.rboardthememanager.Config
 import de.dertyp7214.rboardthememanager.R
 import de.dertyp7214.rboardthememanager.component.InputBottomSheet
 import de.dertyp7214.rboardthememanager.component.MenuBottomSheet
@@ -40,6 +42,7 @@ import de.dertyp7214.rboardthememanager.fragments.SoundsFragment
 import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightObserver
 import de.dertyp7214.rboardthememanager.keyboardheight.KeyboardHeightProvider
 import de.dertyp7214.rboardthememanager.utils.ColorUtils
+import de.dertyp7214.rboardthememanager.utils.GboardUtils.isPackageInstalled
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils
 import de.dertyp7214.rboardthememanager.viewmodels.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
@@ -209,6 +212,24 @@ class HomeActivity : AppCompatActivity(), KeyboardHeightObserver {
                             bottomSheet?.dismiss()
                         })
                     }
+                    add(MenuItem(
+                        R.drawable.creator,
+                        R.string.creator,
+                        false
+                    ) {
+                        if (isPackageInstalled(
+                                Config.RBOARD_THEME_CREATOR_PACKAGE_NAME,
+                                packageManager
+                            )
+                        ) startActivity(packageManager.getLaunchIntentForPackage(Config.RBOARD_THEME_CREATOR_PACKAGE_NAME))
+                        else startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                            )
+                        )
+                        bottomSheet?.dismiss()
+                    })
                 }, "",
                     getThemeView(ThemeUtils.getActiveThemeData())
                 )

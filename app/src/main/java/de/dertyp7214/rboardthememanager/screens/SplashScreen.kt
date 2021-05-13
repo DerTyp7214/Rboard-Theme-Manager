@@ -115,7 +115,7 @@ class SplashScreen : AppCompatActivity() {
             clazz = null,
             timeout = 1000,
             updateUrl = "https://api.dertyp7214.de/${
-                BuildConfig.BUILD_TYPE.toLowerCase(
+                BuildConfig.BUILD_TYPE.lowercase(
                     Locale.ROOT
                 )
             }",

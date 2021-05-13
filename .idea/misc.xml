@@ -4,12 +4,20 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/debug/res/drawable-v24/ic_launcher_foreground.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable-night/creator.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable-night/data.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable-night/ic_keyboard.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable-night/logs.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/creator.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/cursor.xml" value="0.36770833333333336" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/data.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/ic_fg__1_.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/ic_fg__2_.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/ic_installed_theme_grid.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/ic_keyboard.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/ic_selected_theme_grid.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/logs.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/popup_background.xml" value="0.36770833333333336" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/rounded_background.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/drawable/top_rounded_background.xml" value="0.3651041666666667" />
@@ -25,6 +33,7 @@
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/layout/share_popup.xml" value="0.3515625" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/layout/theme_grid_item_single.xml" value="0.3489583333333333" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lengw/AndroidStudioProjects/Rboard-Theme-Manager/app/src/main/res/xml/flags_preferences.xml" value="0.3489583333333333" />
       </map>
     </option>
