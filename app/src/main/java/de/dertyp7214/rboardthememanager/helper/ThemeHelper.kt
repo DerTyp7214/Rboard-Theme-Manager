@@ -48,7 +48,6 @@ import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.utils.ColorUtils
-import de.dertyp7214.rboardthememanager.utils.FileProvider
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
