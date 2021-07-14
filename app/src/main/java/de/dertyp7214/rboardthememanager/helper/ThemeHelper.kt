@@ -48,6 +48,7 @@ import de.dertyp7214.rboardthememanager.data.ModuleMeta
 import de.dertyp7214.rboardthememanager.data.PackItem
 import de.dertyp7214.rboardthememanager.data.ThemeDataClass
 import de.dertyp7214.rboardthememanager.utils.ColorUtils
+import de.dertyp7214.rboardthememanager.utils.FileProvider
 import de.dertyp7214.rboardthememanager.utils.FileUtils.getThemePacksPath
 import de.dertyp7214.rboardthememanager.utils.MagiskUtils
 import de.dertyp7214.rboardthememanager.utils.ThemeUtils.loadThemes
@@ -405,7 +406,7 @@ fun applyTheme(
 ): Boolean {
     val inputPackageName = GBOARD_PACKAGE_NAME
     val fileName =
-        "/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
+        "/data/user_de/0/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml"
     Logger.log(
         Logger.Companion.Type.INFO,
         "APPLY",
@@ -462,7 +463,7 @@ fun applyTheme(
 fun getActiveTheme(): String {
     val inputPackageName = "com.google.android.inputmethod.latin"
     val fileLol =
-        SuFile("/data/data/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml")
+        SuFile("/data/user_de/0/$inputPackageName/shared_prefs/${inputPackageName}_preferences.xml")
     return try {
         if (!fileLol.exists()) ""
         else SuFileInputStream.open(fileLol).bufferedReader().readText()
@@ -538,7 +539,8 @@ fun applyFlag(
     file: RKBDFile = RKBDFile.Flags
 ): Boolean {
     val inputPackageName = GBOARD_PACKAGE_NAME
-    val fileName = "/data/data/$inputPackageName/shared_prefs/${file.rawValue}"
+    val fileName =
+        if (file == RKBDFile.Preferences) "/data/user_de/0/$GBOARD_PACKAGE_NAME/shared_prefs/${file.rawValue}" else "/data/data/$GBOARD_PACKAGE_NAME/shared_prefs/${file.rawValue}"
     val content = SuFileInputStream.open(SuFile(fileName)).use {
         it.bufferedReader().readText()
     }.let {

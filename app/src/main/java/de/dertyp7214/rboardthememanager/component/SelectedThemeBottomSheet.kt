@@ -145,8 +145,8 @@ class SelectedThemeBottomSheet(
                 ).setActionTextColor(getColor(parentActivity, R.color.colorAccent))
                     .setAction(R.string.share) {
                         val file =
-                            SuFile("/data/data/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${Config.GBOARD_PACKAGE_NAME}_preferences.xml")
-                        val content = SuFileInputStream.open(file).use {
+                            SuFile("/data/user_de/0/${Config.GBOARD_PACKAGE_NAME}/shared_prefs/${Config.GBOARD_PACKAGE_NAME}_preferences.xml")
+                        val content = SuFileInputStream.open(file).use { // maybe check for stupid users
                             it.bufferedReader().readText()
                         }
                         DogbinUtils.upload(content, object : DogbinUtils.UploadResultCallback {
